@@ -1,6 +1,9 @@
 package iris.json
 
-class IrisSequence(private val source: String, private val start: Int, private val end: Int) : CharSequence {
+import java.lang.Appendable
+import java.lang.StringBuilder
+
+class IrisSequence(private val source: CharSequence, private val start: Int, private val end: Int) : CharSequence {
 	override val length: Int
 		get() = end - start
 
@@ -14,5 +17,13 @@ class IrisSequence(private val source: String, private val start: Int, private v
 
 	override fun toString(): String {
 		return source.substring(start, end)
+	}
+
+	fun <A: Appendable> joinTo(buffer: A): A {
+		if (buffer is StringBuilder)
+			buffer.append(source, start, end)
+		else
+			buffer.append(this.toString())
+		return buffer
 	}
 }

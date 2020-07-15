@@ -1,7 +1,5 @@
 package iris.json
 
-import IrisJsonItem
-
 class IrisJsonParser(private val array: String) {
 
 	private var counter = 0
@@ -47,6 +45,7 @@ class IrisJsonParser(private val array: String) {
 
 	private fun readObject(): IrisJsonObject {
 		val entries = mutableListOf<IrisJsonObject.Entry>()
+		val len = array.length
 		do {
 			skipWhitespaces()
 			// "id" : ...
@@ -73,12 +72,13 @@ class IrisJsonParser(private val array: String) {
 			val value = readItem()
 			entries.add(IrisJsonObject.Entry(key, value))
 			//counter--
-		} while (counter < array.length)
+		} while (counter < len)
 		return IrisJsonObject(entries)
 	}
 
 	private fun readArray(): IrisJsonArray {
 		val entries = mutableListOf<IrisJsonItem>()
+		val len = array.length
 		do {
 			skipWhitespaces()
 			// "id" : ...
@@ -98,23 +98,24 @@ class IrisJsonParser(private val array: String) {
 				counter++
 				break
 			}
-		} while (counter < array.length)
+		} while (counter < len)
 		return IrisJsonArray(entries)
 	}
 
 	private fun skipWhitespaces() {
+		val len = array.length
 		do {
 			val char = array[counter]
 			if (!char.isWhitespace()) {
-				//counter--
 				break
 			}
 			counter++
-		} while (counter < array.length)
+		} while (counter < len)
 	}
 
 	private fun readString() {
 		var escaping = false
+		val len = array.length
 		do {
 			val char = array[counter++]
 			if (char == '\\')
@@ -124,17 +125,17 @@ class IrisJsonParser(private val array: String) {
 			} else if (char == '"') {
 				break
 			}
-		} while (counter < array.length)
+		} while (counter < len)
 	}
 
 	private fun readPrimitive(): IrisJson.ValueType {
 		var curType = IrisJson.ValueType.Integer
 		val first = counter
+		val len = array.length
 		loop@ do {
 			val char = array[counter]
 			when {
-				char.isDigit() -> {
-				}
+				char.isDigit() -> {}
 				char == '-' -> {
 					if (first != counter) curType = IrisJson.ValueType.Constant
 				}
@@ -147,7 +148,7 @@ class IrisJsonParser(private val array: String) {
 				else -> break@loop
 			}
 			counter++
-		} while (counter < array.length)
+		} while (counter < len)
 		return curType
 	}
 }

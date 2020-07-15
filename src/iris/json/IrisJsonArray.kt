@@ -1,12 +1,8 @@
 package iris.json
 
-import IrisJsonItem
 import java.lang.Appendable
 
 class IrisJsonArray(private val items: List<IrisJsonItem>) : IrisJsonItem(IrisJson.Type.Array) {
-	override fun toString(): String {
-		return '[' + items.joinToString { it.toString() } + ']'
-	}
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
 		buffer.append('[')
@@ -24,7 +20,15 @@ class IrisJsonArray(private val items: List<IrisJsonItem>) : IrisJsonItem(IrisJs
 		return get(ind)
 	}
 
+	private var obj : Any? = null
+
 	override fun obj(): Any? {
-		return items
+		if (obj != null)
+			return obj
+		val res = mutableListOf<Any?>()
+		for (it in items)
+			res.add(it.obj())
+		obj = res
+		return res
 	}
 }

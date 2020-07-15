@@ -1,6 +1,5 @@
 package iris.json
 
-import IrisJsonItem
 import org.json.JSONObject
 import java.io.File
 import java.lang.StringBuilder
@@ -9,28 +8,39 @@ fun main() {
 
 	val testString = File("test.json").readText()
 
+	// basic start
 	// Demonstration of functional abilities
 	val parser = IrisJsonParser(testString)
-	val res = parser.parse() // parsed to IrisObjectItem's
+	val res = parser.parse() // parsed to IrisJsonItem's
 
 	// stringifies objects
-	println(res)
+	println("IrisJsonItem.toString/JSON string: " + res)
 
 	// stringifies objects to Appendable buffer
 	val b = StringBuilder()
 	res.joinTo(b)
-	println(b)
+	println("IrisJsonItem.joinTo:   " + res)
 
 	// Simple access to required object on objects tree
-	println(res["object"]["message"]["attachments"][0]["wall"]["id"].obj())
+	println("IrisJsonItem toString/JSON string: " + res["object"]["message"]["attachments"][0]["wall"]["id"])
+
+	// Converting to required types
+	println("To Long: " + res["object"]["message"]["attachments"][0]["wall"]["id"].asLong())
+
+	// Access by string path
+	println("To Int: " + res.find("object message attachments 0 wall id").asInt())
+
+	// Stylized to java properties access
+	println("To Double: " + res.find("object.message.attachments[0].wall.id").asDouble())
+	// basic end
 
 	/********************************/
 
-	// Run 1_000_000 iterations to parse json-string with standars org.json parser
+	// Run 100_000 iterations to parse json-string with standars org.json parser
 	//testJsonParser(testString)
 
-	// Run 1_000_000 iterations to parse json-string with Iris Json Parser
-	// testIrisParser(testString)
+	// Run 100_000 iterations to parse json-string with Iris Json Parser
+	//testIrisParser(testString)
 
 }
 
@@ -41,10 +51,10 @@ fun testIrisParser(test: String) {
 	System.gc()
 	val start = System.currentTimeMillis()
 	var rand: IrisJsonItem
-	for (i in 1..1_000_00) {
+	for (i in 1..100_000) {
 		rand = IrisJsonParser(test).parse()
-		val d = rand.obj()
-		if (d == 1) // check for not to let compiler optimize code
+		//val d = rand.obj(); // uncomment it if you want to test full object tree build. Speed is still 30% better than standard JSON lib
+		if (rand === null) // check for not to let compiler optimize code
 			print("true")
 	}
 	val end = System.currentTimeMillis()
@@ -58,10 +68,10 @@ fun testJsonParser(test: String) {
 	System.gc()
 	val start = System.currentTimeMillis()
 	var rand: Any
-	for (i in 1..1_000_00) {
+	for (i in 1..100_000) {
 		rand = JSONObject(test)
 		val d = rand as JSONObject?
-		if (d == null) // check for not to let compiler optimize code
+		if (d === null) // check for not to let compiler optimize code
 			print("true")
 	}
 	val end = System.currentTimeMillis()

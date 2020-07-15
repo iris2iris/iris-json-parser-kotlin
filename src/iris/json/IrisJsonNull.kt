@@ -1,7 +1,5 @@
 package iris.json
 
-import IrisJsonItem
-
 open class IrisJsonNull : IrisJsonItem(IrisJson.Type.Null) {
 
 	companion object {

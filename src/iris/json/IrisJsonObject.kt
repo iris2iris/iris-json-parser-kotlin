@@ -1,6 +1,5 @@
 package iris.json
 
-import IrisJsonItem
 import java.lang.Appendable
 
 class IrisJsonObject(private val entries: List<Entry>) : IrisJsonItem(IrisJson.Type.Object) {
@@ -11,9 +10,9 @@ class IrisJsonObject(private val entries: List<Entry>) : IrisJsonItem(IrisJson.T
 		}
 	}
 
-	override fun toString(): String {
+	/*override fun toString(): String {
 		return "{" + entries.joinToString { it.toString() } + "}"
-	}
+	}*/
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
 		buffer.append("{")
@@ -24,7 +23,7 @@ class IrisJsonObject(private val entries: List<Entry>) : IrisJsonItem(IrisJson.T
 			else
 				firstDone = true
 			buffer.append("\"")
-			buffer.append(entry.key)
+			entry.key.joinTo(buffer)
 			buffer.append("\": ")
 			entry.value.joinTo(buffer)
 
@@ -51,7 +50,15 @@ class IrisJsonObject(private val entries: List<Entry>) : IrisJsonItem(IrisJson.T
 		return map[key] ?: IrisJsonNull.Null
 	}
 
+	private var obj: Any? = null
+
 	override fun obj(): Any? {
-		return map
+		if (obj != null)
+			return obj
+		val res = mutableMapOf<String, Any?>()
+		for (it in map )
+			res[it.key] = it.value.obj()
+		obj = res
+		return res
 	}
 }

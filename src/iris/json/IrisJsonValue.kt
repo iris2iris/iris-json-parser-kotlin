@@ -1,6 +1,5 @@
 package iris.json
 
-import IrisJsonItem
 import java.lang.Appendable
 
 class IrisJsonValue(private val data: IrisSequence, private val valueType: IrisJson.ValueType) : IrisJsonItem(IrisJson.Type.Value) {
@@ -9,7 +8,7 @@ class IrisJsonValue(private val data: IrisSequence, private val valueType: IrisJ
 	}
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
-		buffer.append(data.toString())
+		data.joinTo(buffer)
 		return buffer
 	}
 
