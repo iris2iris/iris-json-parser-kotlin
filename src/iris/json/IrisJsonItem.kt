@@ -59,6 +59,6 @@ abstract class IrisJsonItem(val type: IrisJson.Type) {
 	}
 
 	open fun find(tree: String): IrisJsonItem {
-		return find(tree.replace('[', '.').replace("]", "", true).replace(' ', '.').split('.'))
+		return find(tree.replace('[', '.').replace("]", "").replace(' ', '.').split('.'))
 	}
 }

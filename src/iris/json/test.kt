@@ -3,6 +3,7 @@ package iris.json
 import org.json.JSONObject
 import java.io.File
 import java.lang.StringBuilder
+import java.net.URL
 
 fun main() {
 
@@ -13,13 +14,13 @@ fun main() {
 	val parser = IrisJsonParser(testString)
 	val res = parser.parse() // parsed to IrisJsonItem's
 
-	// stringifies objects
-	println("IrisJsonItem.toString/JSON string: " + res)
+	// stringifies result objects
+	println("IrisJsonItem.toString/JSON string: $res")
 
 	// stringifies objects to Appendable buffer
 	val b = StringBuilder()
 	res.joinTo(b)
-	println("IrisJsonItem.joinTo/JSON string:   " + res)
+	println("IrisJsonItem.joinTo/JSON string:   $res")
 
 	// Simple access to required object on objects tree
 	println("IrisJsonItem toString/JSON string: " + res["object"]["message"]["attachments"][0]["wall"]["id"])
@@ -30,7 +31,7 @@ fun main() {
 	// Access by string path
 	println("To Int: " + res.find("object message attachments 0 wall id").asInt())
 
-	// Stylized to java properties access
+	// Stylized to Java/JavaScript properties access
 	println("To Double: " + res.find("object.message.attachments[0].wall.id").asDouble())
 	// basic end
 
