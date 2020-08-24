@@ -31,7 +31,7 @@ class IrisJsonParser(private val array: String) {
 			val start = counter
 			readString()
 			val end = counter - 1
-			counter++ // поправка, т.к. мы вышли из строки, узнав про кавычку. на неё и двигаемся
+			//counter++ // поправка, т.к. мы вышли из строки, узнав про кавычку. на неё и двигаемся
 			return IrisJsonString(IrisSequence(array, start, end))
 		} else if (type == IrisJson.Type.Array) {
 			return readArray()
