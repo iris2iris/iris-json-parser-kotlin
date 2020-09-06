@@ -11,32 +11,86 @@ abstract class IrisJsonItem(val type: IrisJson.Type) {
 	override fun toString(): String {
 		return joinTo(StringBuilder()).toString()
 	}
-
-	open fun asInt() : Int? {
-		return (obj() as Number?)?.toInt()
+	
+	open fun asIntOrNull(): Int? {
+		return when (val obj = obj()) {
+			is Int -> obj
+			is Number -> obj.toInt()
+			else -> null
+		}
 	}
 
-	open fun asLong() : Long? {
-		return (obj() as Number?)?.toLong()
+	open fun asInt(): Int {
+		return when (val obj = obj()) {
+			is Int -> obj
+			else -> (obj() as Number).toInt()
+		}
 	}
 
-	open fun asDouble() : Double? {
-		return (obj() as Number?)?.toDouble()
+	open fun asLongOrNull() : Long? {
+		return when (val obj = obj()) {
+			is Long -> obj
+			is Number -> obj.toLong()
+			else -> null
+		}
 	}
 
-	open fun asFloat() : Float? {
-		return (obj() as Number?)?.toFloat()
+	open fun asLong() : Long {
+		return when (val obj = obj()) {
+			is Long -> obj
+			else -> (obj() as Number).toLong()
+		}
 	}
 
-	open fun asBoolean() : Boolean? {
-		return (obj() as Boolean?)
+	open fun asDoubleOrNull() : Double? {
+		return when (val obj = obj()) {
+			is Double -> obj
+			is Number -> obj.toDouble()
+			else -> null
+		}
+	}
+
+	open fun asDouble() : Double {
+		return when (val obj = obj()) {
+			is Double -> obj
+			else -> (obj() as Number).toDouble()
+		}
+	}
+
+	open fun asFloatOrNull() : Float? {
+		return when (val obj = obj()) {
+			is Float -> obj
+			is Number -> obj.toFloat()
+			else -> null
+		}
+	}
+
+	open fun asFloat() : Float {
+		return when (val obj = obj()) {
+			is Float -> obj
+			else -> (obj() as Number).toFloat()
+		}
+	}
+
+	open fun asBooleanOrNull() : Boolean? {
+		return when (val obj = obj()) {
+			is Boolean -> obj
+			else -> null
+		}
+	}
+
+	open fun asBoolean() : Boolean {
+		return (obj() as Boolean)
 	}
 
 	open fun asList(): List<Any?> {
-		return (obj() as Collection<Any?>).toList()
+		return when (val obj = obj()) {
+			is List<Any?> -> obj
+			else -> (obj as Iterable<Any?>).toList()
+		}
 	}
 
-	open fun asObject(): Map<String, Any?> {
+	open fun asMap(): Map<String, Any?> {
 		return (obj() as Map<String, Any?>)
 	}
 
