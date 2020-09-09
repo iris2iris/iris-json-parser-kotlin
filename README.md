@@ -33,3 +33,8 @@ println("To Int: " + res.find("object message attachments 0 wall id").asInt())
 // Stylized to Java/JavaScript properties access
 println("To Double: " + res.find("object.message.attachments[0].wall.id").asDouble())
 ```
+
+
+Check out [CHANGELOG.md](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/CHANGELOG.md)
+
+⭐ If this tool was useful for you, don't forget to give star.
