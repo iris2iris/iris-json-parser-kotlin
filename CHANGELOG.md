@@ -1,5 +1,9 @@
 # Changelog
 
+## v 0.2.1
+- `IrisJsonItem.asXxx()` optimization
+- `IrisJsonItem.asXxxOrNull()` added
+
 ## v 0.2
 - `IrisJsonItem.find` selectors.
 - `IrisJsonItem.obj()` fixed. Now it generates full tree of target objects without proxies
