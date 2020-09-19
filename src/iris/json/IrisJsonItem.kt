@@ -94,8 +94,12 @@ abstract class IrisJsonItem(val type: IrisJson.Type) {
 		return (obj() as Map<String, Any?>)
 	}
 
-	open fun asString(): String? {
+	open fun asStringOrNull(): String? {
 		return obj() as String?
+	}
+
+	open fun asString(): String {
+		return obj() as String
 	}
 
 	open fun find(tree: Array<String>): IrisJsonItem {
@@ -107,8 +111,10 @@ abstract class IrisJsonItem(val type: IrisJson.Type) {
 
 	open fun find(tree: List<String>): IrisJsonItem {
 		var cur = this
-		for (t in tree)
+		for (t in tree) {
+			if (t.isEmpty()) continue
 			cur = cur[t]
+		}
 		return cur
 	}
 
