@@ -15,7 +15,7 @@ class IrisJsonParser(private val source: String) {
 			char.isDigit() || char.isLetter() || char == '-' -> IrisJson.Type.Value
 			char == '{' -> IrisJson.Type.Object
 			char == '[' -> IrisJson.Type.Array
-			char == '"' -> IrisJson.Type.String
+			char == '"' || char == '\'' -> IrisJson.Type.String
 			else -> throw IllegalArgumentException("Character: \"$char\" at $pointer\n" + getPlace())
 		}
 
@@ -29,7 +29,7 @@ class IrisJsonParser(private val source: String) {
 			return readObject()
 		} else if (type == IrisJson.Type.String) {
 			val start = pointer
-			readString()
+			readString(char)
 			val end = pointer - 1
 			//counter++ // поправка, т.к. мы вышли из строки, узнав про кавычку. на неё и двигаемся
 			return IrisJsonString(IrisSequence(source, start, end))
@@ -56,12 +56,12 @@ class IrisJsonParser(private val source: String) {
 				skipWhitespaces()
 				char = source[pointer++]
 			}
-			if (char != '"')
-				throw IllegalArgumentException("\" (quote) was expected in position $pointer\n" + getPlace())
+			if (!(char == '"' || char == '\''))
+				throw IllegalArgumentException("\" (quote) or \"'\" was expected in position $pointer\n" + getPlace())
 
 			val start = pointer
 			// ключ
-			readString()
+			readString(char)
 			val end = pointer - 1
 			val key = IrisSequence(source, start, end)
 			skipWhitespaces()
@@ -113,7 +113,7 @@ class IrisJsonParser(private val source: String) {
 		} while (pointer < len)
 	}
 
-	private fun readString() {
+	private fun readString(quote: Char) {
 		var escaping = false
 		val len = source.length
 		do {
@@ -122,7 +122,7 @@ class IrisJsonParser(private val source: String) {
 				escaping = true
 			else if (escaping) {
 				escaping = false
-			} else if (char == '"') {
+			} else if (char == quote) {
 				break
 			}
 		} while (pointer < len)
