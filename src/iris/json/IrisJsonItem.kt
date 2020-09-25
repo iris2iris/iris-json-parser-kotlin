@@ -1,8 +1,13 @@
 package iris.json
 
 import java.lang.Appendable
+import java.lang.Exception
 
-abstract class IrisJsonItem(val type: IrisJson.Type) {
+/**
+ * @created 14.04.2020
+ * @author [Ivan Ivanov](https://vk.com/irisism)
+ */
+abstract class IrisJsonItem() {
 	abstract operator fun get(ind: Int): IrisJsonItem
 	abstract operator fun get(key: String): IrisJsonItem
 	abstract fun obj(): Any?
@@ -10,6 +15,10 @@ abstract class IrisJsonItem(val type: IrisJson.Type) {
 
 	override fun toString(): String {
 		return joinTo(StringBuilder()).toString()
+	}
+
+	open fun iterable() : Iterable<IrisJsonItem> {
+		throw IllegalStateException("This is not iterable json item")
 	}
 	
 	open fun asIntOrNull(): Int? {
@@ -21,9 +30,14 @@ abstract class IrisJsonItem(val type: IrisJson.Type) {
 	}
 
 	open fun asInt(): Int {
-		return when (val obj = obj()) {
-			is Int -> obj
-			else -> (obj() as Number).toInt()
+		try {
+			return when (val obj = obj()) {
+				is Int -> obj
+				else -> (obj() as Number).toInt()
+			}
+		} catch (e: Exception) {
+			e.printStackTrace()
+			throw e
 		}
 	}
 
@@ -85,8 +99,15 @@ abstract class IrisJsonItem(val type: IrisJson.Type) {
 
 	open fun asList(): List<Any?> {
 		return when (val obj = obj()) {
-			is List<Any?> -> obj
-			else -> (obj as Iterable<Any?>).toList()
+			is List<*> -> obj
+			else -> (obj as Iterable<*>).toList()
+		}
+	}
+
+	open fun <T>asTypedList(): List<T> {
+		return when (val obj = obj()) {
+			is List<*> -> obj as List<T>
+			else -> (obj as Iterable<*>).toList() as List<T>
 		}
 	}
 
@@ -121,4 +142,6 @@ abstract class IrisJsonItem(val type: IrisJson.Type) {
 	open fun find(tree: String): IrisJsonItem {
 		return find(tree.replace('[', '.').replace("]", "").replace(' ', '.').split('.'))
 	}
+
+
 }

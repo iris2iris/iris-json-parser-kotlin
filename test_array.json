@@ -1,0 +1,452 @@
+[
+   {
+      "ID":"3",
+      "Title":"Замена жидкости в кондиционере",
+      "Cost":"3040",
+      "Duration":"8 час.",
+      "Description":null,
+      "Discount":"0.25",
+      "MainImagePath":"zamena.jpg"
+   },
+   {
+      "ID":"4",
+      "Title":"Ремонт и замена коллектора",
+      "Cost":"2770",
+      "Duration":"150 мин.",
+      "Description":null,
+      "Discount":"0.15",
+      "MainImagePath":"collector.jpg"
+   },
+   {
+      "ID":"5",
+      "Title":"Замена актуатора сцепления",
+      "Cost":"4100",
+      "Duration":"330 мин.",
+      "Description":null,
+      "Discount":"0.15",
+      "MainImagePath":"actuator.jpg"
+   },
+   {
+      "ID":"6",
+      "Title":"Замена жидкости ГУР",
+      "Cost":"2380",
+      "Duration":"9 час.",
+      "Description":null,
+      "Discount":"0.2",
+      "MainImagePath":"zamena_gur.jpg"
+   },
+   {
+      "ID":"7",
+      "Title":"Заправка кондиционеров",
+      "Cost":"4860",
+      "Duration":"2 час.",
+      "Description":null,
+      "Discount":"0.05",
+      "MainImagePath":"zapravka_cond.png"
+   },
+   {
+      "ID":"8",
+      "Title":"Замена масла в вариаторе",
+      "Cost":"4720",
+      "Duration":"2 час.",
+      "Description":null,
+      "Discount":"0.05",
+      "MainImagePath":"variator.jpg"
+   },
+   {
+      "ID":"9",
+      "Title":"Ремонт двигателя",
+      "Cost":"2470",
+      "Duration":"4 час.",
+      "Description":null,
+      "Discount":"0.25",
+      "MainImagePath":"remont_dvig.jpg"
+   },
+   {
+      "ID":"10",
+      "Title":"Замена заднего сальника АКПП",
+      "Cost":"1510",
+      "Duration":"390 мин.",
+      "Description":null,
+      "Discount":"0.25",
+      "MainImagePath":"salnik.jpg"
+   },
+   {
+      "ID":"11",
+      "Title":"Покраска",
+      "Cost":"2370",
+      "Duration":"2 час.",
+      "Description":null,
+      "Discount":"0.15",
+      "MainImagePath":"pokraska.jpg"
+   },
+   {
+      "ID":"12",
+      "Title":"Мойка колес",
+      "Cost":"3490",
+      "Duration":"570 мин.",
+      "Description":null,
+      "Discount":"0",
+      "MainImagePath":"moika_koles.jpg"
+   },
+   {
+      "ID":"13",
+      "Title":"Замена прокладки впускного-выпуского коллектора",
+      "Cost":"2980",
+      "Duration":"3 час.",
+      "Description":null,
+      "Discount":"0",
+      "MainImagePath":"zamena_collector.jpg"
+   },
+   {
+      "ID":"14",
+      "Title":"Диагностика работы двигателя",
+      "Cost":"2760",
+      "Duration":"150 мин.",
+      "Description":null,
+      "Discount":"0.1",
+      "MainImagePath":"diagnostika_dvig.jpg"
+   },
+   {
+      "ID":"15",
+      "Title":"Установка сигнализации",
+      "Cost":"1760",
+      "Duration":"4 час.",
+      "Description":null,
+      "Discount":"0",
+      "MainImagePath":"signal.jpg"
+   },
+   {
+      "ID":"16",
+      "Title":"Замена компрессора кондиционера",
+      "Cost":"2720",
+      "Duration":"270 мин.",
+      "Description":null,
+      "Discount":"0.1",
+      "MainImagePath":"compressor_cond.jpg"
+   },
+   {
+      "ID":"17",
+      "Title":"Замена ремня привода ГУР",
+      "Cost":"3350",
+      "Duration":"10 час.",
+      "Description":null,
+      "Discount":"0",
+      "MainImagePath":"remen_gur.jpg"
+   },
+   {
+      "ID":"18",
+      "Title":"Замена тормозных колодок",
+      "Cost":"4260",
+      "Duration":"8 час.",
+      "Description":null,
+      "Discount":"0.05",
+      "MainImagePath":"tormoz.jpg"
+   },
+   {
+      "ID":"19",
+      "Title":"Замена масла",
+      "Cost":"1430",
+      "Duration":"510 мин.",
+      "Description":null,
+      "Discount":"0.25",
+      "MainImagePath":"zamena_maslo.jpg"
+   },
+   {
+      "ID":"20",
+      "Title":"Замена цепи ГРМ",
+      "Cost":"4570",
+      "Duration":"6 час.",
+      "Description":null,
+      "Discount":"0.2",
+      "MainImagePath":"cepi.jpg"
+   },
+   {
+      "ID":"21",
+      "Title":"Замена бензонасоса",
+      "Cost":"1780",
+      "Duration":"4 час.",
+      "Description":null,
+      "Discount":"0.1",
+      "MainImagePath":"benzonasos.jpg"
+   },
+   {
+      "ID":"22",
+      "Title":"Ремонт приводного вала",
+      "Cost":"4520",
+      "Duration":"210 мин.",
+      "Description":null,
+      "Discount":"0.05",
+      "MainImagePath":"Услуги автосервиса\rulevoe-upravlenie-avtomobilya.jpg"
+   },
+   {
+      "ID":"23",
+      "Title":"Замена подшипника компрессора кондиционера",
+      "Cost":"1110",
+      "Duration":"330 мин.",
+      "Description":null,
+      "Discount":"0.2",
+      "MainImagePath":"Услуги автосервисаКондиционер.jpg"
+   },
+   {
+      "ID":"24",
+      "Title":"Снятие и установка колес",
+      "Cost":"3130",
+      "Duration":"390 мин.",
+      "Description":null,
+      "Discount":"0",
+      "MainImagePath":"Услуги автосервисаШиномонтаж.jpg"
+   },
+   {
+      "ID":"25",
+      "Title":"Замена лямбда зонда",
+      "Cost":"770",
+      "Duration":"270 мин.",
+      "Description":null,
+      "Discount":"0.05",
+      "MainImagePath":"Услуги автосервисаВыхлопная система.jpg"
+   },
+   {
+      "ID":"26",
+      "Title":"Замена привода в сборе",
+      "Cost":"3890",
+      "Duration":"8 час.",
+      "Description":null,
+      "Discount":"0.15",
+      "MainImagePath":"Услуги автосервиса\transmission.jpg"
+   },
+   {
+      "ID":"27",
+      "Title":"Замена трубки кондиционера",
+      "Cost":"2810",
+      "Duration":"3 час.",
+      "Description":null,
+      "Discount":"0.15",
+      "MainImagePath":"Услуги автосервисаКондиционер.jpg"
+   },
+   {
+      "ID":"28",
+      "Title":"Замена ремня кондиционера",
+      "Cost":"4650",
+      "Duration":"8 час.",
+      "Description":null,
+      "Discount":"0",
+      "MainImagePath":"Услуги автосервисаКондиционер.jpg"
+   },
+   {
+      "ID":"29",
+      "Title":"Замена охлаждающей жидкости",
+      "Cost":"1590",
+      "Duration":"210 мин.",
+      "Description":null,
+      "Discount":"0",
+      "MainImagePath":"Услуги автосервисаТехническое обслуживание.png"
+   },
+   {
+      "ID":"30",
+      "Title":"Замена троса сцепления",
+      "Cost":"4460",
+      "Duration":"8 час.",
+      "Description":null,
+      "Discount":"0.05",
+      "MainImagePath":"Услуги автосервисаСцепление.jpg"
+   },
+   {
+      "ID":"31",
+      "Title":"Замена масла в МКПП",
+      "Cost":"4490",
+      "Duration":"9 час.",
+      "Description":null,
+      "Discount":"0.2",
+      "MainImagePath":"Услуги автосервисаКПП.png"
+   },
+   {
+      "ID":"32",
+      "Title":"Замена рулевой рейки",
+      "Cost":"4840",
+      "Duration":"570 мин.",
+      "Description":null,
+      "Discount":"0.25",
+      "MainImagePath":"Услуги автосервиса\rulevoe-upravlenie-avtomobilya.jpg"
+   },
+   {
+      "ID":"33",
+      "Title":"Ремонт дисков",
+      "Cost":"3860",
+      "Duration":"270 мин.",
+      "Description":null,
+      "Discount":"0.1",
+      "MainImagePath":"Услуги автосервисаШиномонтаж.jpg"
+   },
+   {
+      "ID":"34",
+      "Title":"Замена масла заднего редуктора (моста)",
+      "Cost":"840",
+      "Duration":"7 час.",
+      "Description":null,
+      "Discount":"0.25",
+      "MainImagePath":"Услуги автосервиса\transmission.jpg"
+   },
+   {
+      "ID":"35",
+      "Title":"Замена подшипника задней ступицы",
+      "Cost":"1860",
+      "Duration":"270 мин.",
+      "Description":null,
+      "Discount":"0.25",
+      "MainImagePath":"Услуги автосервиса\transmission.jpg"
+   },
+   {
+      "ID":"36",
+      "Title":"Восстановление рулевых реек",
+      "Cost":"1020",
+      "Duration":"2 час.",
+      "Description":null,
+      "Discount":"0.2",
+      "MainImagePath":"Услуги автосервисаПодвеска.png"
+   },
+   {
+      "ID":"37",
+      "Title":"Замена рулевой тяги",
+      "Cost":"570",
+      "Duration":"3 час.",
+      "Description":null,
+      "Discount":"0",
+      "MainImagePath":"Услуги автосервиса\rulevoe-upravlenie-avtomobilya.jpg"
+   },
+   {
+      "ID":"38",
+      "Title":"Ремонт и замена гидроблока АКПП",
+      "Cost":"2040",
+      "Duration":"270 мин.",
+      "Description":null,
+      "Discount":"0",
+      "MainImagePath":"Услуги автосервисаАКПП.jpg"
+   },
+   {
+      "ID":"39",
+      "Title":"Замена масла раздаточной коробки",
+      "Cost":"2070",
+      "Duration":"510 мин.",
+      "Description":null,
+      "Discount":"0",
+      "MainImagePath":"Услуги автосервиса\transmission.jpg"
+   },
+   {
+      "ID":"40",
+      "Title":"Диагностика кондиционера",
+      "Cost":"2590",
+      "Duration":"10 час.",
+      "Description":null,
+      "Discount":"0.1",
+      "MainImagePath":"Услуги автосервисаКондиционер.jpg"
+   },
+   {
+      "ID":"41",
+      "Title":"Ремонт и замена катализатора",
+      "Cost":"500",
+      "Duration":"270 мин.",
+      "Description":null,
+      "Discount":"0.25",
+      "MainImagePath":"Услуги автосервисаВыхлопная система.jpg"
+   },
+   {
+      "ID":"42",
+      "Title":"Замена гофры глушителя",
+      "Cost":"760",
+      "Duration":"270 мин.",
+      "Description":null,
+      "Discount":"0.25",
+      "MainImagePath":"Услуги автосервисаВыхлопная система.jpg"
+   },
+   {
+      "ID":"43",
+      "Title":"Замена ремня ГРМ",
+      "Cost":"4630",
+      "Duration":"150 мин.",
+      "Description":null,
+      "Discount":"0.25",
+      "MainImagePath":"Услуги автосервисаДвигатель.png"
+   },
+   {
+      "ID":"44",
+      "Title":"Ремонт редуктора",
+      "Cost":"870",
+      "Duration":"8 час.",
+      "Description":null,
+      "Discount":"0.15",
+      "MainImagePath":"Услуги автосервисаКПП.png"
+   },
+   {
+      "ID":"45",
+      "Title":"Замена электромагнитного клапана без снятия ТНВД",
+      "Cost":"4610",
+      "Duration":"450 мин.",
+      "Description":null,
+      "Discount":"0.1",
+      "MainImagePath":"Услуги автосервисаdiz.jpg"
+   },
+   {
+      "ID":"46",
+      "Title":"Вулканизация шин",
+      "Cost":"540",
+      "Duration":"330 мин.",
+      "Description":null,
+      "Discount":"0.2",
+      "MainImagePath":"Услуги автосервисаШиномонтаж.jpg"
+   },
+   {
+      "ID":"47",
+      "Title":"Ремонт стартера",
+      "Cost":"2680",
+      "Duration":"8 час.",
+      "Description":null,
+      "Discount":"0",
+      "MainImagePath":"Услуги автосервисаЭлектрика.png"
+   },
+   {
+      "ID":"48",
+      "Title":"Ремонт коробки передач",
+      "Cost":"1850",
+      "Duration":"450 мин.",
+      "Description":null,
+      "Discount":"0.25",
+      "MainImagePath":"Услуги автосервисаКПП.png"
+   },
+   {
+      "ID":"49",
+      "Title":"Жидкостная промывка топливной системы",
+      "Cost":"3620",
+      "Duration":"6 час.",
+      "Description":null,
+      "Discount":"0.15",
+      "MainImagePath":"Услуги автосервисаТопливная система.png"
+   },
+   {
+      "ID":"50",
+      "Title":"Ремонт генератора",
+      "Cost":"1700",
+      "Duration":"210 мин.",
+      "Description":null,
+      "Discount":"0.2",
+      "MainImagePath":"Услуги автосервисаЭлектрика.png"
+   },
+   {
+      "ID":"51",
+      "Title":"Замена масла АКПП",
+      "Cost":"2430",
+      "Duration":"450 мин.",
+      "Description":null,
+      "Discount":"0.25",
+      "MainImagePath":"Услуги автосервисаАКПП.jpg"
+   },
+   {
+      "ID":"52",
+      "Title":"Диагностика трансмиссии",
+      "Cost":"2790",
+      "Duration":"2 час.",
+      "Description":null,
+      "Discount":"0.2",
+      "MainImagePath":"Услуги автосервиса\transmission.jpg"
+   }
+]

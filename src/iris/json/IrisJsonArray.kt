@@ -2,7 +2,11 @@ package iris.json
 
 import java.lang.Appendable
 
-class IrisJsonArray(private val items: List<IrisJsonItem>) : IrisJsonItem(IrisJson.Type.Array) {
+/**
+ * @created 14.04.2020
+ * @author [Ivan Ivanov](https://vk.com/irisism)
+ */
+class IrisJsonArray(private val items: List<IrisJsonItem>) : IrisJsonItem(), Iterable<IrisJsonItem> {
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
 		buffer.append('[')
@@ -30,5 +34,27 @@ class IrisJsonArray(private val items: List<IrisJsonItem>) : IrisJsonItem(IrisJs
 			res.add(it.obj())
 		obj = res
 		return res
+	}
+
+	override fun iterable() = this
+
+	override fun iterator(): Iterator<IrisJsonItem> {
+		return Iter()
+	}
+
+	private inner class Iter : Iterator<IrisJsonItem> {
+
+		private val size = items.size
+		private var pointer = 0
+
+		override fun hasNext(): Boolean {
+			return pointer < size
+		}
+
+		override fun next(): IrisJsonItem {
+			val item = items[pointer]
+			pointer++
+			return item
+		}
 	}
 }

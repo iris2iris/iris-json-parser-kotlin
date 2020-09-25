@@ -1,18 +1,19 @@
 package iris.json
 
+import iris.sequence.IrisSequence
 import java.lang.Appendable
 
-class IrisJsonObject(private val entries: List<Entry>) : IrisJsonItem(IrisJson.Type.Object) {
+/**
+ * @created 14.04.2020
+ * @author [Ivan Ivanov](https://vk.com/irisism)
+ */
+class IrisJsonObject(private val entries: List<Entry>) : IrisJsonItem() {
 
 	class Entry(val key: IrisSequence, val value: IrisJsonItem) {
 		override fun toString(): String {
 			return "\"$key\": $value"
 		}
 	}
-
-	/*override fun toString(): String {
-		return "{" + entries.joinToString { it.toString() } + "}"
-	}*/
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
 		buffer.append("{")

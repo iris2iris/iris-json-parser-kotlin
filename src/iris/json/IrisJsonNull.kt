@@ -1,6 +1,10 @@
 package iris.json
 
-open class IrisJsonNull : IrisJsonItem(IrisJson.Type.Null) {
+/**
+ * @created 14.04.2020
+ * @author [Ivan Ivanov](https://vk.com/irisism)
+ */
+open class IrisJsonNull : IrisJsonItem() {
 
 	companion object {
 		val Null = IrisJsonNull()

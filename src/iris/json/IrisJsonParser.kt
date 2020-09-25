@@ -1,5 +1,13 @@
 package iris.json
 
+import iris.sequence.IrisSubSequence
+import kotlin.math.max
+import kotlin.math.min
+
+/**
+ * @created 14.04.2020
+ * @author [Ivan Ivanov](https://vk.com/irisism)
+ */
 class IrisJsonParser(private val source: String) {
 
 	private var pointer = 0
@@ -24,7 +32,7 @@ class IrisJsonParser(private val source: String) {
 			val start = pointer
 			val value = readPrimitive()
 			val end = pointer
-			return IrisJsonValue(IrisSequence(source, start, end), value)
+			return IrisJsonValue(IrisSubSequence(source, start, end), value)
 		} else if (type == IrisJson.Type.Object) {
 			return readObject()
 		} else if (type == IrisJson.Type.String) {
@@ -32,7 +40,7 @@ class IrisJsonParser(private val source: String) {
 			readString(char)
 			val end = pointer - 1
 			//counter++ // поправка, т.к. мы вышли из строки, узнав про кавычку. на неё и двигаемся
-			return IrisJsonString(IrisSequence(source, start, end))
+			return IrisJsonString(IrisSubSequence(source, start, end))
 		} else if (type == IrisJson.Type.Array) {
 			return readArray()
 		} else
@@ -40,7 +48,7 @@ class IrisJsonParser(private val source: String) {
 	}
 
 	private fun getPlace(): String {
-		return '"' + source.substring(Math.max(0, pointer - 10), Math.min(pointer + 10, source.length - 1))+'"'
+		return '"' + source.substring(max(0, pointer - 10), min(pointer + 10, source.length - 1))+'"'
 	}
 
 	private fun readObject(): IrisJsonObject {
@@ -63,7 +71,7 @@ class IrisJsonParser(private val source: String) {
 			// ключ
 			readString(char)
 			val end = pointer - 1
-			val key = IrisSequence(source, start, end)
+			val key = IrisSubSequence(source, start, end)
 			skipWhitespaces()
 			char = source[pointer++]
 			if (char != ':')
@@ -81,7 +89,6 @@ class IrisJsonParser(private val source: String) {
 		val len = source.length
 		do {
 			skipWhitespaces()
-			// "id" : ...
 			var char = source[pointer++]
 			if (char == ']')
 				break
@@ -132,14 +139,14 @@ class IrisJsonParser(private val source: String) {
 		var curType = IrisJson.ValueType.Integer
 		val first = pointer
 		val len = source.length
-		loop@ do {
+		do {
 			val char = source[pointer]
 			when {
 				char.isDigit() -> {}
 				char == '-' -> if (first != pointer) curType = IrisJson.ValueType.Constant
 				char == '.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
 				char.isLetter() -> curType = IrisJson.ValueType.Constant
-				else -> break@loop
+				else -> break
 			}
 			pointer++
 		} while (pointer < len)

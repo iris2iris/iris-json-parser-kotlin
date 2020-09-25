@@ -1,8 +1,9 @@
 package iris.json
 
-/** Создано 14.04.2020 */
-
-
+/**
+ * @created 14.04.2020
+ * @author [Ivan Ivanov](https://vk.com/irisism)
+ */
 class IrisJson {
 
 	enum class Type {
@@ -16,7 +17,7 @@ class IrisJson {
 	enum class ValueType {
 		Integer,
 		Float,
-		Constant // в том числе: true, false, null
+		Constant // among them: true, false, null
 	}
 }
 

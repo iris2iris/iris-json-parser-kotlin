@@ -1,17 +1,25 @@
-package iris.json
+package iris.json.flow
 
+import iris.json.IrisJsonItem
+import iris.json.IrisJsonNull
 import iris.sequence.IrisSequence
 import java.lang.Appendable
 
 /**
- * @created 14.04.2020
+ * @created 20.09.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class IrisJsonString(private val data: IrisSequence) : IrisJsonItem() {
+class FlowString(tokener: Tokener, val quote: Char) : FlowItem(tokener) {
+
+	private val data: CharSequence by lazy(LazyThreadSafetyMode.NONE) { this.tokener.readString(quote) }
+
+	override fun toString(): String {
+		return '"' + data.toString() + '"'
+	}
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
 		buffer.append('"')
-		data.joinTo(buffer)
+		(data as? IrisSequence)?.joinTo(buffer) ?: buffer.append(data)
 		buffer.append('"')
 		return buffer
 	}
@@ -24,11 +32,17 @@ class IrisJsonString(private val data: IrisSequence) : IrisJsonItem() {
 		return IrisJsonNull.Null
 	}
 
+	override fun parse() {
+		data
+	}
+
 	private val ready by lazy(LazyThreadSafetyMode.NONE) { init() }
 
 	private fun init(): String {
 		val res = StringBuilder()
 		val len = data.length
+		if (len == 0)
+			return ""
 		var isEscape = false
 		var fromIndex = 0
 		var i = 0

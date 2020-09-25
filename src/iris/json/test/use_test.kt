@@ -4,7 +4,12 @@ import iris.json.IrisJsonParser
 import java.io.File
 import java.lang.StringBuilder
 
-/** Создано 06.09.2020 */
+/**
+ * @created 06.09.2020
+ * @author [Ivan Ivanov](https://vk.com/irisism)
+ *
+ */
+
 fun main() {
 	val testString = File("test.json").readText()
 

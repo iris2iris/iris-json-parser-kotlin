@@ -1,8 +1,13 @@
 package iris.json
 
+import iris.sequence.IrisSequence
 import java.lang.Appendable
 
-class IrisJsonValue(private val data: IrisSequence, private val valueType: IrisJson.ValueType) : IrisJsonItem(IrisJson.Type.Value) {
+/**
+ * @created 14.04.2020
+ * @author [Ivan Ivanov](https://vk.com/irisism)
+ */
+class IrisJsonValue(private val data: IrisSequence, private val valueType: IrisJson.ValueType) : IrisJsonItem() {
 	override fun toString(): String {
 		return data.toString()
 	}
