@@ -29,11 +29,7 @@ class FlowArray(tokener: Tokener) : FlowItem(tokener), JsonArray {
 		if (toAdd < 0)
 			return items[ind]
 
-		val localNeed = needToParse
-		if (localNeed != null) {
-			localNeed.parse()
-			needToParse = null
-		}
+		testNeedToParse()
 		if (toAdd > 0) {
 			for (i in 0 until toAdd) {
 				val next = parseNext()
@@ -82,12 +78,21 @@ class FlowArray(tokener: Tokener) : FlowItem(tokener), JsonArray {
 	override fun parse() {
 		if (isDone)
 			return
+		testNeedToParse()
 		do {
 			val next = parseNext() ?: break
 			next.parse()
 			items += next
 		} while (true)
 		isDone = true
+	}
+
+	private fun testNeedToParse() {
+		val needToParse = this.needToParse
+		if (needToParse != null) {
+			needToParse.parse()
+			this.needToParse = null
+		}
 	}
 
 	override fun get(key: String): JsonItem {
