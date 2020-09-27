@@ -1,6 +1,7 @@
 package iris.json.flow.test
 
 import iris.json.flow.JsonFlowParser
+import iris.json.proxy.JsonProxyValue
 import java.io.File
 import java.lang.StringBuilder
 
@@ -30,4 +31,8 @@ fun main() {
 
 	// Stylized to Java/JavaScript properties access
 	println("To Double: " + obj.find("object.message.attachments[0].wall.id").asDouble())
+
+	obj["object"]["message"]["attachments"] = 12
+
+	println(obj["object"]["message"]["attachments"])
 }

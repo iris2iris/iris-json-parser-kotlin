@@ -1,5 +1,8 @@
-package iris.json
+package iris.json.plain
 
+import iris.json.IrisJson
+import iris.json.JsonObject
+import iris.json.JsonObject.*
 import iris.sequence.IrisSubSequence
 import kotlin.math.max
 import kotlin.math.min
@@ -52,7 +55,7 @@ class IrisJsonParser(private val source: String) {
 	}
 
 	private fun readObject(): IrisJsonObject {
-		val entries = mutableListOf<IrisJsonObject.Entry>()
+		val entries = mutableListOf<Entry>()
 		val len = source.length
 		do {
 			skipWhitespaces()
@@ -78,7 +81,7 @@ class IrisJsonParser(private val source: String) {
 				throw IllegalArgumentException("\":\" was expected in position $pointer\n" + getPlace())
 			skipWhitespaces()
 			val value = readItem()
-			entries.add(IrisJsonObject.Entry(key, value))
+			entries.add(Entry(key, value))
 			//counter--
 		} while (pointer < len)
 		return IrisJsonObject(entries)
@@ -139,14 +142,14 @@ class IrisJsonParser(private val source: String) {
 		var curType = IrisJson.ValueType.Integer
 		val first = pointer
 		val len = source.length
-		do {
+		loop@ do {
 			val char = source[pointer]
 			when {
 				char.isDigit() -> {}
 				char == '-' -> if (first != pointer) curType = IrisJson.ValueType.Constant
 				char == '.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
 				char.isLetter() -> curType = IrisJson.ValueType.Constant
-				else -> break
+				else -> break@loop
 			}
 			pointer++
 		} while (pointer < len)

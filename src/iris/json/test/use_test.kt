@@ -1,6 +1,6 @@
 package iris.json.test
 
-import iris.json.IrisJsonParser
+import iris.json.plain.IrisJsonParser
 import java.io.File
 import java.lang.StringBuilder
 

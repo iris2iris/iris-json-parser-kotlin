@@ -1,10 +1,12 @@
-package iris.json
+package iris.json.plain
+
+import iris.json.JsonNull
 
 /**
  * @created 14.04.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-open class IrisJsonNull : IrisJsonItem() {
+open class IrisJsonNull : IrisJsonItem(), JsonNull {
 
 	companion object {
 		val Null = IrisJsonNull()
@@ -30,4 +32,6 @@ open class IrisJsonNull : IrisJsonItem() {
 	override fun toString(): String {
 		return "null"
 	}
+
+	override fun isNull() = true
 }

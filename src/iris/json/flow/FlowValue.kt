@@ -1,15 +1,16 @@
 package iris.json.flow
 
 import iris.json.IrisJson
-import iris.json.IrisJsonItem
-import iris.json.IrisJsonNull
+import iris.json.JsonValue
+import iris.json.plain.IrisJsonItem
+import iris.json.plain.IrisJsonNull
 import java.lang.Appendable
 
 /**
  * @created 20.09.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class FlowValue(tokener: Tokener) : FlowItem(tokener) {
+class FlowValue(tokener: Tokener) : FlowItem(tokener), JsonValue {
 
     private val data: Tokener.PrimitiveData by lazy(LazyThreadSafetyMode.NONE) { this.tokener.readPrimitive() }
 
@@ -54,4 +55,6 @@ class FlowValue(tokener: Tokener) : FlowItem(tokener) {
     override fun parse() {
         data
     }
+
+    override fun isPrimitive() = true
 }

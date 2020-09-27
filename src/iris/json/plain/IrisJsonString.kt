@@ -1,5 +1,6 @@
-package iris.json
+package iris.json.plain
 
+import iris.json.JsonString
 import iris.sequence.IrisSequence
 import java.lang.Appendable
 
@@ -7,7 +8,7 @@ import java.lang.Appendable
  * @created 14.04.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class IrisJsonString(private val data: IrisSequence) : IrisJsonItem() {
+class IrisJsonString(private val data: IrisSequence) : IrisJsonItem(), JsonString {
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
 		buffer.append('"')
@@ -74,7 +75,17 @@ class IrisJsonString(private val data: IrisSequence) : IrisJsonItem() {
 		}
 	}
 
+	override fun equals(other: Any?): Boolean {
+		return asString() == other
+	}
+
+	override fun hashCode(): Int {
+		return asString().hashCode()
+	}
+
 	override fun obj(): Any? {
 		return ready
 	}
+
+	override fun isPrimitive() = true
 }

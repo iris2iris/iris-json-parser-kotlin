@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.4
+- JSON Proxy items added to imitate parsed JSON-nodes
+- Added setters
+- Added iterable items 
+
 ## v0.3
 - JSON Flow Parser added (`iris.json.flow`)
 - `iris.sequence` package

@@ -1,15 +1,18 @@
 package iris.json.flow
 
-import iris.json.IrisJsonItem
+import iris.json.JsonArray
+import iris.json.JsonItem
+import iris.json.plain.IrisJsonItem
+import iris.json.proxy.JsonProxyUtil
 import java.lang.Appendable
 
 /**
  * @created 20.09.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class FlowArray(tokener: Tokener) : FlowItem(tokener), Iterable<IrisJsonItem> {
+class FlowArray(tokener: Tokener) : FlowItem(tokener), JsonArray {
 
-	private val items = mutableListOf<FlowItem>()
+	private val items = mutableListOf<JsonItem>()
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
 		buffer.append('[')
@@ -21,7 +24,7 @@ class FlowArray(tokener: Tokener) : FlowItem(tokener), Iterable<IrisJsonItem> {
 	private var isDone = false
 	private var needToParse: FlowItem? = null
 
-	override fun get(ind: Int): IrisJsonItem {
+	override fun get(ind: Int): JsonItem {
 		if (isDone)
 			return items[ind]
 		val toAdd = ind - items.size
@@ -89,28 +92,40 @@ class FlowArray(tokener: Tokener) : FlowItem(tokener), Iterable<IrisJsonItem> {
 		isDone = true
 	}
 
-	override fun get(key: String): IrisJsonItem {
+	override fun get(key: String): JsonItem {
 		val ind = key.toInt()
 		return get(ind)
 	}
 
-	private var obj : Any? = null
+	override fun set(ind: Int, value: Any?): JsonItem {
+		items[ind] = JsonProxyUtil.wrap(value)
+		val obj = this.obj
+		if (obj != null)
+			obj[ind] = value
+		return this
+	}
+
+	override fun set(key: String, value: Any?): JsonItem {
+		return set(key.toInt(), value)
+	}
+
+	private var obj : MutableList<Any?>? = null
 
 	override fun obj(): Any? {
 		return obj ?: run {
 			parse()
-			obj = items.map { it.obj() }
+			obj = items.mapTo(mutableListOf()) { it.obj() }
 			obj
 		}
 	}
 
 	override fun iterable() = this
 
-	override fun iterator(): Iterator<IrisJsonItem> {
+	override fun iterator(): Iterator<JsonItem> {
 		return Iter()
 	}
 
-	private inner class Iter : Iterator<IrisJsonItem> {
+	private inner class Iter : Iterator<JsonItem> {
 
 		private var pointer = 0
 
@@ -125,8 +140,10 @@ class FlowArray(tokener: Tokener) : FlowItem(tokener), Iterable<IrisJsonItem> {
 			return pointer < items.size
 		}
 
-		override fun next(): IrisJsonItem {
+		override fun next(): JsonItem {
 			return get(pointer++)
 		}
 	}
+
+	override fun isArray() = true
 }

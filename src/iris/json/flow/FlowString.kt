@@ -1,7 +1,8 @@
 package iris.json.flow
 
-import iris.json.IrisJsonItem
-import iris.json.IrisJsonNull
+import iris.json.JsonString
+import iris.json.plain.IrisJsonItem
+import iris.json.plain.IrisJsonNull
 import iris.sequence.IrisSequence
 import java.lang.Appendable
 
@@ -9,7 +10,7 @@ import java.lang.Appendable
  * @created 20.09.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class FlowString(tokener: Tokener, val quote: Char) : FlowItem(tokener) {
+class FlowString(tokener: Tokener, val quote: Char) : FlowItem(tokener), JsonString {
 
 	private val data: CharSequence by lazy(LazyThreadSafetyMode.NONE) { this.tokener.readString(quote) }
 
@@ -88,7 +89,7 @@ class FlowString(tokener: Tokener, val quote: Char) : FlowItem(tokener) {
 		}
 	}
 
-	override fun obj(): Any? {
-		return ready
-	}
+	override fun obj() = ready
+
+	override fun isPrimitive() = true
 }

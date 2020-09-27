@@ -1,10 +1,13 @@
 package iris.json.flow.test
 
-import iris.json.IrisJsonParser
+import iris.json.plain.IrisJsonParser
 import iris.json.flow.JsonFlowParser
 import iris.json.flow.TokenerString
+import iris.json.proxy.JsonProxyArray
 import org.json.JSONArray
+import org.json.simple.parser.JSONParser
 import java.io.File
+import java.lang.RuntimeException
 import kotlin.math.roundToInt
 
 fun main() {
@@ -13,37 +16,76 @@ fun main() {
 	val repeats = 100_000
 
 	var totalIris = 0.0
+	var totalIrisProxy = 0.0
 	var totalIrisOld = 0.0
 	var totalJson = 0.0
+	var totalSimpleJson = 0.0
+	var totalPlainAccess = 0.0
 
 	var totalIrisLast = 0.0
+	var totalIrisProxyLast = 0.0
 	var totalIrisOldLast = 0.0
 	var totalJsonLast = 0.0
+	var totalSimpleJsonLast = 0.0
+	var totalPlainAccessLast = 0.0
+	val map = IrisJsonParser(testString).parse().asList()
 
+	// little warmup
+	testJsonParser(testString, 0)
+	testSimpleJsonParser(testString, 0)
+	testIrisParser(testString, 0)
+	testIrisProxy(map, 0)
+	testIrisParserOld(testString, 0)
+	testPlainAccess(map, 0)
+
+	testJsonParser(testString, 49)
+	testSimpleJsonParser(testString, 49)
+	testIrisParser(testString, 49)
+	testIrisProxy(map, 49)
+	testIrisParserOld(testString, 49)
+	testPlainAccess(map, 49)
 
 	repeat(repeats) {
 		val json = testJsonParser(testString, 0)
+		val simpleJson = testSimpleJsonParser(testString, 0)
 		val iris = testIrisParser(testString, 0)
 		val irisOld = testIrisParserOld(testString, 0)
+		val irisProxy = testIrisProxy(map, 0)
+		val plainAccess = testPlainAccess(map, 0)
 		totalIris += iris
+		totalIrisProxy += irisProxy
 		totalIrisOld += irisOld
 		totalJson += json
+		totalSimpleJson += simpleJson
+		totalPlainAccess += plainAccess
 
 		val jsonLast = testJsonParser(testString, 49)
+		val simpleJsonLast = testSimpleJsonParser(testString, 49)
 		val irisLast = testIrisParser(testString, 49)
 		val irisOldLast = testIrisParserOld(testString, 49)
+		val irisProxyLast = testIrisProxy(map, 49)
+		val plainAccessLast = testPlainAccess(map, 49)
 		totalIrisLast += irisLast
 		totalIrisOldLast += irisOldLast
 		totalJsonLast += jsonLast
+		totalSimpleJsonLast += simpleJsonLast
+		totalIrisProxyLast += irisProxyLast
+		totalPlainAccessLast += plainAccessLast
 	}
 
 	totalIris /= 1000000.0
+	totalIrisProxy /= 1000000.0
 	totalIrisOld /= 1000000.0
 	totalJson /= 1000000.0
+	totalSimpleJson /= 1000000.0
+	totalPlainAccess /= 1000000.0
 	println("AVG[0]:" +
 			"\norg.json:   ${totalJson.roundToInt()}" +
+			"\norg.json.simple: ${totalSimpleJson.roundToInt()}" +
 			"\nIris Plain: ${totalIrisOld.roundToInt()}" +
-			"\nIris Flow:  ${totalIris.roundToInt()}"
+			"\nIris Flow:  ${totalIris.roundToInt()}" +
+			"\nIris Proxy: ${totalIrisProxy.roundToInt()}" +
+			"\nPOJO:       ${totalPlainAccess.roundToInt()}"
 	)
 
 	println()
@@ -51,11 +93,36 @@ fun main() {
 	totalIrisLast /= 1000000.0
 	totalIrisOldLast /= 1000000.0
 	totalJsonLast /= 1000000.0
+	totalSimpleJsonLast /= 1000000.0
+	totalIrisProxyLast /= 1000000.0
+	totalPlainAccessLast /= 1000000.0
 	println("AVG[49]:" +
 			"\norg.json:   ${totalJsonLast.roundToInt()}" +
+			"\norg.json.simple: ${totalSimpleJsonLast.roundToInt()}" +
 			"\nIris Plain: ${totalIrisOldLast.roundToInt()}" +
-			"\nIris Flow:  ${totalIrisLast.roundToInt()}"
+			"\nIris Flow:  ${totalIrisLast.roundToInt()}" +
+			"\nIris Proxy: ${totalIrisProxyLast.roundToInt()}" +
+			"\nPOJO:       ${totalPlainAccessLast.roundToInt()}"
 	)
+}
+
+fun testPlainAccess(map: List<Any?>, ind: Int): Long {
+	val start = System.nanoTime()
+	val d = (map[ind] as Map<String, Any?>)["ID"] as String
+	if (d == "1") // check for not to let compiler optimize code
+		print("true")
+	val end = System.nanoTime()
+	return end - start
+}
+
+fun testIrisProxy(map: List<Any?>, ind: Int): Long {
+	val start = System.nanoTime()
+	val rand = JsonProxyArray(map)
+	val d = rand[ind]["ID"].asString()
+	if (d == "1") // check for not to let compiler optimize code
+		print("true")
+	val end = System.nanoTime()
+	return end - start
 }
 
 fun testIrisParserOld(test: String, ind: Int): Long {
@@ -83,6 +150,15 @@ fun testJsonParser(test: String, ind: Int): Long {
 	val start = System.nanoTime()
 	val rand = JSONArray(test)
 	val d = rand.getJSONObject(ind).getString("ID")
+	if (d == "1") // check for not to let compiler optimize code
+		print("true")
+	val end = System.nanoTime()
+	return end - start
+}
+fun testSimpleJsonParser(test: String, ind: Int): Long {
+	val start = System.nanoTime()
+	val rand = JSONParser().parse(test)
+	val d = ((rand as List<Any?>)[ind] as Map<String, Any?>)["ID"]
 	if (d == "1") // check for not to let compiler optimize code
 		print("true")
 	val end = System.nanoTime()

@@ -1,27 +1,22 @@
-package iris.json
+package iris.json.plain
 
-import java.lang.Appendable
-import java.lang.Exception
+import iris.json.JsonItem
 
 /**
  * @created 14.04.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-abstract class IrisJsonItem() {
-	abstract operator fun get(ind: Int): IrisJsonItem
-	abstract operator fun get(key: String): IrisJsonItem
-	abstract fun obj(): Any?
-	abstract fun <A: Appendable>joinTo(buffer: A): A
+abstract class IrisJsonItem() : JsonItem {
 
 	override fun toString(): String {
 		return joinTo(StringBuilder()).toString()
 	}
 
-	open fun iterable() : Iterable<IrisJsonItem> {
+	override fun iterable() : Iterable<JsonItem> {
 		throw IllegalStateException("This is not iterable json item")
 	}
 	
-	open fun asIntOrNull(): Int? {
+	override fun asIntOrNull(): Int? {
 		return when (val obj = obj()) {
 			is Int -> obj
 			is Number -> obj.toInt()
@@ -29,19 +24,14 @@ abstract class IrisJsonItem() {
 		}
 	}
 
-	open fun asInt(): Int {
-		try {
-			return when (val obj = obj()) {
-				is Int -> obj
-				else -> (obj() as Number).toInt()
-			}
-		} catch (e: Exception) {
-			e.printStackTrace()
-			throw e
+	override fun asInt(): Int {
+		return when (val obj = obj()) {
+			is Int -> obj
+			else -> (obj() as Number).toInt()
 		}
 	}
 
-	open fun asLongOrNull() : Long? {
+	override fun asLongOrNull() : Long? {
 		return when (val obj = obj()) {
 			is Long -> obj
 			is Number -> obj.toLong()
@@ -49,14 +39,14 @@ abstract class IrisJsonItem() {
 		}
 	}
 
-	open fun asLong() : Long {
+	override fun asLong() : Long {
 		return when (val obj = obj()) {
 			is Long -> obj
 			else -> (obj() as Number).toLong()
 		}
 	}
 
-	open fun asDoubleOrNull() : Double? {
+	override fun asDoubleOrNull() : Double? {
 		return when (val obj = obj()) {
 			is Double -> obj
 			is Number -> obj.toDouble()
@@ -64,14 +54,14 @@ abstract class IrisJsonItem() {
 		}
 	}
 
-	open fun asDouble() : Double {
+	override fun asDouble() : Double {
 		return when (val obj = obj()) {
 			is Double -> obj
 			else -> (obj() as Number).toDouble()
 		}
 	}
 
-	open fun asFloatOrNull() : Float? {
+	override fun asFloatOrNull() : Float? {
 		return when (val obj = obj()) {
 			is Float -> obj
 			is Number -> obj.toFloat()
@@ -79,59 +69,52 @@ abstract class IrisJsonItem() {
 		}
 	}
 
-	open fun asFloat() : Float {
+	override fun asFloat() : Float {
 		return when (val obj = obj()) {
 			is Float -> obj
 			else -> (obj() as Number).toFloat()
 		}
 	}
 
-	open fun asBooleanOrNull() : Boolean? {
+	override fun asBooleanOrNull() : Boolean? {
 		return when (val obj = obj()) {
 			is Boolean -> obj
 			else -> null
 		}
 	}
 
-	open fun asBoolean() : Boolean {
+	override fun asBoolean() : Boolean {
 		return (obj() as Boolean)
 	}
 
-	open fun asList(): List<Any?> {
+	override fun asList(): List<Any?> {
 		return when (val obj = obj()) {
 			is List<*> -> obj
 			else -> (obj as Iterable<*>).toList()
 		}
 	}
 
-	open fun <T>asTypedList(): List<T> {
+	override fun <T>asTypedList(): List<T> {
 		return when (val obj = obj()) {
 			is List<*> -> obj as List<T>
 			else -> (obj as Iterable<*>).toList() as List<T>
 		}
 	}
 
-	open fun asMap(): Map<String, Any?> {
+	override fun asMap(): Map<String, Any?> {
 		return (obj() as Map<String, Any?>)
 	}
 
-	open fun asStringOrNull(): String? {
+	override fun asStringOrNull(): String? {
 		return obj() as String?
 	}
 
-	open fun asString(): String {
+	override fun asString(): String {
 		return obj() as String
 	}
 
-	open fun find(tree: Array<String>): IrisJsonItem {
-		var cur = this
-		for (t in tree)
-			cur = cur[t]
-		return cur
-	}
-
-	open fun find(tree: List<String>): IrisJsonItem {
-		var cur = this
+	override fun find(tree: Array<String>): JsonItem {
+		var cur: JsonItem = this
 		for (t in tree) {
 			if (t.isEmpty()) continue
 			cur = cur[t]
@@ -139,9 +122,32 @@ abstract class IrisJsonItem() {
 		return cur
 	}
 
-	open fun find(tree: String): IrisJsonItem {
+	override fun find(tree: List<String>): JsonItem {
+		var cur: JsonItem = this
+		for (t in tree) {
+			if (t.isEmpty()) continue
+			cur = cur[t]
+		}
+		return cur
+	}
+
+	override fun find(tree: String): JsonItem {
 		return find(tree.replace('[', '.').replace("]", "").replace(' ', '.').split('.'))
 	}
 
+	override fun set(ind: Int, value: Any?): JsonItem {
+		throw IllegalStateException("Set operation is not available")
+	}
 
+	override fun set(key: String, value: Any?): JsonItem {
+		throw IllegalStateException("Set operation is not available")
+	}
+
+	override fun equals(other: Any?): Boolean {
+		return when(other) {
+			null -> false
+			is JsonItem -> obj() == other.obj()
+			else -> obj() == other
+		}
+	}
 }

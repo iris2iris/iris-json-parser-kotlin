@@ -1,7 +1,7 @@
 package iris.json.test
 
-import iris.json.IrisJsonItem
-import iris.json.IrisJsonParser
+import iris.json.plain.IrisJsonItem
+import iris.json.plain.IrisJsonParser
 import org.json.JSONObject
 import java.io.File
 

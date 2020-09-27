@@ -78,14 +78,20 @@ Test JSON file is in [test_array.json](https://github.com/iris2iris/iris-json-pa
 Testing access to first element of array and access to last element of array.
 ```
 AVG[0]:
-org.json:   24706
-Iris Plain: 7195
-Iris Flow:  98
+org.json:   22611
+org.json.simple: 27232
+Iris Plain: 7110
+Iris Flow:  93
+Iris Proxy: 25
+POJO:       11
 
 AVG[49]:
-org.json:   24599
-Iris Plain: 7187
-Iris Flow:  7839
+org.json:   22631
+org.json.simple: 27161
+Iris Plain: 7067
+Iris Flow:  7498
+Iris Proxy: 23
+POJO:       10
 ```
 
 Check out [CHANGELOG.md](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/CHANGELOG.md)
