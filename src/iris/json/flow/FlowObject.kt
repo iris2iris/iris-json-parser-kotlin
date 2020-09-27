@@ -33,11 +33,7 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 				return e.value
 		}
 		if (isDone) return IrisJsonNull.Null
-		val needToParse = this.needToParse
-		if (needToParse != null) {
-			needToParse.parse()
-			this.needToParse = null
-		}
+		testNeedToParse()
 		do {
 			val next = parseNext() ?: break
 			entries += next
@@ -107,6 +103,7 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 
 	override fun parse() {
 		if (isDone) return
+		testNeedToParse()
 		do {
 			val next = parseNext() ?: break
 			entries += next
@@ -114,6 +111,14 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 		} while (true)
 
 		isDone = true
+	}
+
+	private fun testNeedToParse() {
+		val needToParse = this.needToParse
+		if (needToParse != null) {
+			needToParse.parse()
+			this.needToParse = null
+		}
 	}
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
