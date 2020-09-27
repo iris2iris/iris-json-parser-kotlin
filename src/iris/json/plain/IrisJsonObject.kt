@@ -84,6 +84,8 @@ class IrisJsonObject(private val entries: List<Entry>) : IrisJsonItem(), JsonObj
 		return res
 	}
 
+	override fun isObject() = true
+
 	override fun iterator(): Iterator<Entry> {
 		return Iter()
 	}

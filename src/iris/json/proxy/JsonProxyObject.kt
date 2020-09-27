@@ -43,6 +43,8 @@ class JsonProxyObject(private val map: Map<String, Any?>) : JsonProxyItem(map), 
 		return map
 	}
 
+	override fun isObject() = true
+
 	override fun iterator(): Iterator<Entry> {
 		return Iter()
 	}

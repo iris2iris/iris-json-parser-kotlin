@@ -24,13 +24,6 @@ object JsonEncoder {
 		}
 	}
 
-	/*@Suppress("MemberVisibilityCanBePrivate")
-	fun encode(obj: Map<Any, Any?>, escapeUtf: Boolean = false): String {
-		val sb = StringBuilder()
-		encode2(obj, sb, escapeUtf)
-		return sb.toString()
-	}*/
-
 	private fun encode2(obj: Map<Any, Any?>?, sb: StringBuilder, escapeUtf: Boolean = false) {
 		if (obj == null) {
 			sb.append("null")

@@ -14,4 +14,6 @@ class JsonProxyString(private val str: String?) : JsonProxyItem(str), JsonString
 	override fun asString(): String {
 		return str!!
 	}
+
+	override fun isPrimitive() = true
 }

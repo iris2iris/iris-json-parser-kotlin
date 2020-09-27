@@ -24,4 +24,6 @@ abstract class JsonProxyItem(private val obj: Any?) : IrisJsonItem() {
 		buffer.append(obj.toString())
 		return buffer
 	}
+
+
 }

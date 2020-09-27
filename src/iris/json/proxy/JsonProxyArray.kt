@@ -11,12 +11,7 @@ import iris.json.plain.IrisJsonItem
 class JsonProxyArray(private val items: List<Any?>) : JsonProxyItem(items), JsonArray {
 
 	override fun get(ind: Int): IrisJsonItem {
-		return JsonProxyUtil.wrap(items[ind]) /*when (val item = items[ind]) {
-			is Map<*, *> -> JsonProxyObject(item as Map<String, Any?>)
-			is List<*> -> JsonProxyArray(item as List<Any?>)
-			null -> IrisJsonNull.Null
-			else -> JsonProxyValue(item)
-		}*/
+		return JsonProxyUtil.wrap(items[ind])
 	}
 
 	override fun get(key: String): IrisJsonItem {
@@ -35,6 +30,8 @@ class JsonProxyArray(private val items: List<Any?>) : JsonProxyItem(items), Json
 	override fun asList(): List<Any?> {
 		return items
 	}
+
+	override fun isArray() = true
 
 	override fun <T> asTypedList(): List<T> {
 		return items as List<T>

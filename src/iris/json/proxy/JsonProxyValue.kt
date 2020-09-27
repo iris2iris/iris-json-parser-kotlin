@@ -7,5 +7,5 @@ import iris.json.JsonValue
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 class JsonProxyValue(value: Any?) : JsonProxyItem(value), JsonValue {
-
+	override fun isPrimitive() = true
 }

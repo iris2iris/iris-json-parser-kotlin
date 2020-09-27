@@ -128,6 +128,8 @@ class FlowArray(tokener: Tokener) : FlowItem(tokener), JsonArray {
 		return Iter()
 	}
 
+	override fun isArray() = true
+
 	private inner class Iter : Iterator<JsonItem> {
 
 		private var pointer = 0
@@ -147,6 +149,4 @@ class FlowArray(tokener: Tokener) : FlowItem(tokener), JsonArray {
 			return get(pointer++)
 		}
 	}
-
-	override fun isArray() = true
 }

@@ -150,4 +150,14 @@ abstract class IrisJsonItem() : JsonItem {
 			else -> obj() == other
 		}
 	}
+
+	override fun isNull() = false
+
+	override fun isNotNull() = !isNull()
+
+	override fun isPrimitive() = false
+
+	override fun isArray() = false
+
+	override fun isObject() = false
 }

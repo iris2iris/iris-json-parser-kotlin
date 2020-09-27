@@ -50,6 +50,8 @@ class IrisJsonArray(private val items: List<IrisJsonItem>) : IrisJsonItem(), Jso
 		return res
 	}
 
+	override fun isArray() = true
+
 	override fun iterable() = this
 
 	override fun iterator(): Iterator<IrisJsonItem> {
