@@ -2,9 +2,7 @@ package iris.json.flow
 
 import iris.json.JsonArray
 import iris.json.JsonItem
-import iris.json.plain.IrisJsonItem
 import iris.json.proxy.JsonProxyUtil
-import java.lang.Appendable
 
 /**
  * @created 20.09.2020

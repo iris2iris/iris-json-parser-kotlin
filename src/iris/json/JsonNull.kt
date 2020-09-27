@@ -1,7 +1,5 @@
 package iris.json
 
-import iris.json.plain.IrisJsonNull
-
 /**
  * @created 26.09.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)

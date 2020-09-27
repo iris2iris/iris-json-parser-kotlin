@@ -1,9 +1,7 @@
 package iris.json.flow
 
 import iris.sequence.CharArrayBuilder
-import java.io.File
 import java.io.Reader
-import java.io.StringReader
 
 /**
  * TODO: Works very slow. Need to get, how does [org.json.JSONTokener] works faster with same idea

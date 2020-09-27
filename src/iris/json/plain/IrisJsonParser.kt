@@ -1,8 +1,7 @@
 package iris.json.plain
 
 import iris.json.IrisJson
-import iris.json.JsonObject
-import iris.json.JsonObject.*
+import iris.json.JsonObject.Entry
 import iris.sequence.IrisSubSequence
 import kotlin.math.max
 import kotlin.math.min

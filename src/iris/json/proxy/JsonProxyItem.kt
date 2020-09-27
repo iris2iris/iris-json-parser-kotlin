@@ -1,9 +1,7 @@
 package iris.json.proxy
 
-import iris.json.JsonItem
 import iris.json.plain.IrisJsonItem
 import iris.json.plain.IrisJsonNull
-import java.lang.Appendable
 
 /**
  * @created 26.09.2020

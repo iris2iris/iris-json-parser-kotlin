@@ -4,7 +4,6 @@ import iris.json.JsonString
 import iris.json.plain.IrisJsonItem
 import iris.json.plain.IrisJsonNull
 import iris.sequence.IrisSequence
-import java.lang.Appendable
 
 /**
  * @created 20.09.2020

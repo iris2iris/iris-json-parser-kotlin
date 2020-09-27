@@ -1,9 +1,7 @@
 package iris.json.flow.test
 
 import iris.json.flow.JsonFlowParser
-import iris.json.proxy.JsonProxyValue
 import java.io.File
-import java.lang.StringBuilder
 
 /** Created 20.09.2020 */
 fun main() {

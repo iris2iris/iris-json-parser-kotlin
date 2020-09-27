@@ -2,7 +2,6 @@ package iris.json.test
 
 import iris.json.plain.IrisJsonParser
 import java.io.File
-import java.lang.StringBuilder
 
 /**
  * @created 06.09.2020

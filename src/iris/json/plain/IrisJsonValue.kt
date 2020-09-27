@@ -3,7 +3,6 @@ package iris.json.plain
 import iris.json.IrisJson
 import iris.json.JsonValue
 import iris.sequence.IrisSequence
-import java.lang.Appendable
 
 /**
  * @created 14.04.2020

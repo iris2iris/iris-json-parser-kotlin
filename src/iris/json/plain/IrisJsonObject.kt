@@ -4,7 +4,6 @@ import iris.json.JsonItem
 import iris.json.JsonObject
 import iris.json.JsonObject.Entry
 import iris.json.proxy.JsonProxyUtil
-import java.lang.Appendable
 
 /**
  * @created 14.04.2020

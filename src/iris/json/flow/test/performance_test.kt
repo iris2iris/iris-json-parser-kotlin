@@ -1,13 +1,12 @@
 package iris.json.flow.test
 
-import iris.json.plain.IrisJsonParser
 import iris.json.flow.JsonFlowParser
 import iris.json.flow.TokenerString
+import iris.json.plain.IrisJsonParser
 import iris.json.proxy.JsonProxyArray
 import org.json.JSONArray
 import org.json.simple.parser.JSONParser
 import java.io.File
-import java.lang.RuntimeException
 import kotlin.math.roundToInt
 
 fun main() {

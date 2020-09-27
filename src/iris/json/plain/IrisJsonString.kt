@@ -2,7 +2,6 @@ package iris.json.plain
 
 import iris.json.JsonString
 import iris.sequence.IrisSequence
-import java.lang.Appendable
 
 /**
  * @created 14.04.2020

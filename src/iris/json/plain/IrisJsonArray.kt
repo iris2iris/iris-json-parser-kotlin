@@ -3,7 +3,6 @@ package iris.json.plain
 import iris.json.JsonArray
 import iris.json.JsonItem
 import iris.json.proxy.JsonProxyUtil
-import java.lang.Appendable
 
 /**
  * @created 14.04.2020

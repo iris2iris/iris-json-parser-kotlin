@@ -3,7 +3,6 @@ package iris.json.proxy
 import iris.json.JsonArray
 import iris.json.JsonItem
 import iris.json.plain.IrisJsonItem
-import iris.json.plain.IrisJsonNull
 
 /**
  * @created 26.09.2020
