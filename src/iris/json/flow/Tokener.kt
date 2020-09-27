@@ -8,16 +8,16 @@ import iris.json.IrisJson
  */
 interface Tokener {
 
-    fun nextChar(): Char
+	fun nextChar(): Char
 
-    fun exception(s: String): IllegalArgumentException
+	fun exception(s: String): IllegalArgumentException
 
-    fun readString(quote: Char): CharSequence
+	fun readString(quote: Char): CharSequence
 
-    fun readPrimitive(): PrimitiveData
+	fun readPrimitive(): PrimitiveData
 
-    class PrimitiveData(val sequence: CharSequence, val type: IrisJson.ValueType)
+	class PrimitiveData(val sequence: CharSequence, val type: IrisJson.ValueType)
 
-    fun back()
+	fun back()
 
 }

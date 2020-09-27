@@ -12,10 +12,10 @@ abstract class IrisJsonItem() : JsonItem {
 		return joinTo(StringBuilder()).toString()
 	}
 
-	override fun iterable() : Iterable<JsonItem> {
+	override fun iterable(): Iterable<JsonItem> {
 		throw IllegalStateException("This is not iterable json item")
 	}
-	
+
 	override fun asIntOrNull(): Int? {
 		return when (val obj = obj()) {
 			is Int -> obj
@@ -31,7 +31,7 @@ abstract class IrisJsonItem() : JsonItem {
 		}
 	}
 
-	override fun asLongOrNull() : Long? {
+	override fun asLongOrNull(): Long? {
 		return when (val obj = obj()) {
 			is Long -> obj
 			is Number -> obj.toLong()
@@ -39,14 +39,14 @@ abstract class IrisJsonItem() : JsonItem {
 		}
 	}
 
-	override fun asLong() : Long {
+	override fun asLong(): Long {
 		return when (val obj = obj()) {
 			is Long -> obj
 			else -> (obj() as Number).toLong()
 		}
 	}
 
-	override fun asDoubleOrNull() : Double? {
+	override fun asDoubleOrNull(): Double? {
 		return when (val obj = obj()) {
 			is Double -> obj
 			is Number -> obj.toDouble()
@@ -54,14 +54,14 @@ abstract class IrisJsonItem() : JsonItem {
 		}
 	}
 
-	override fun asDouble() : Double {
+	override fun asDouble(): Double {
 		return when (val obj = obj()) {
 			is Double -> obj
 			else -> (obj() as Number).toDouble()
 		}
 	}
 
-	override fun asFloatOrNull() : Float? {
+	override fun asFloatOrNull(): Float? {
 		return when (val obj = obj()) {
 			is Float -> obj
 			is Number -> obj.toFloat()
@@ -69,21 +69,21 @@ abstract class IrisJsonItem() : JsonItem {
 		}
 	}
 
-	override fun asFloat() : Float {
+	override fun asFloat(): Float {
 		return when (val obj = obj()) {
 			is Float -> obj
 			else -> (obj() as Number).toFloat()
 		}
 	}
 
-	override fun asBooleanOrNull() : Boolean? {
+	override fun asBooleanOrNull(): Boolean? {
 		return when (val obj = obj()) {
 			is Boolean -> obj
 			else -> null
 		}
 	}
 
-	override fun asBoolean() : Boolean {
+	override fun asBoolean(): Boolean {
 		return (obj() as Boolean)
 	}
 
@@ -94,7 +94,7 @@ abstract class IrisJsonItem() : JsonItem {
 		}
 	}
 
-	override fun <T>asTypedList(): List<T> {
+	override fun <T> asTypedList(): List<T> {
 		return when (val obj = obj()) {
 			is List<*> -> obj as List<T>
 			else -> (obj as Iterable<*>).toList() as List<T>
@@ -144,7 +144,7 @@ abstract class IrisJsonItem() : JsonItem {
 	}
 
 	override fun equals(other: Any?): Boolean {
-		return when(other) {
+		return when (other) {
 			null -> false
 			is JsonItem -> obj() == other.obj()
 			else -> obj() == other

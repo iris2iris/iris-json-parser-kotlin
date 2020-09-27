@@ -7,5 +7,5 @@ import iris.json.plain.IrisJsonItem
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 abstract class FlowItem(protected val tokener: Tokener) : IrisJsonItem() {
-    abstract fun parse()
+	abstract fun parse()
 }

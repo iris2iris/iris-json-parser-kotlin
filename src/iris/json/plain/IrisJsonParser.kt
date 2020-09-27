@@ -50,7 +50,7 @@ class IrisJsonParser(private val source: String) {
 	}
 
 	private fun getPlace(): String {
-		return '"' + source.substring(max(0, pointer - 10), min(pointer + 10, source.length - 1))+'"'
+		return '"' + source.substring(max(0, pointer - 10), min(pointer + 10, source.length - 1)) + '"'
 	}
 
 	private fun readObject(): IrisJsonObject {

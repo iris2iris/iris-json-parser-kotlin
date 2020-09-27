@@ -9,7 +9,7 @@ import kotlin.math.min
  * @created 20.09.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class TokenerString(val source: String): Tokener {
+class TokenerString(val source: String) : Tokener {
 
 	var pointer: Int = 0
 
@@ -34,7 +34,7 @@ class TokenerString(val source: String): Tokener {
 	}
 
 	private fun getPlace(): String {
-		return '"' + source.substring(max(0, pointer - 10), min(pointer + 10, source.length - 1))+'"'
+		return '"' + source.substring(max(0, pointer - 10), min(pointer + 10, source.length - 1)) + '"'
 	}
 
 	override fun readString(quote: Char): CharSequence {
@@ -51,21 +51,22 @@ class TokenerString(val source: String): Tokener {
 				break
 			}
 		} while (pointer < len)
-		return IrisSubSequence(source, start, pointer-1)
+		return IrisSubSequence(source, start, pointer - 1)
 	}
 
 	override fun readPrimitive(): Tokener.PrimitiveData {
 		var curType = IrisJson.ValueType.Integer
 		val first = pointer
 		val len = source.length
-		do {
+		loop@ do {
 			val char = source[pointer]
 			when {
-				char.isDigit() -> {}
+				char.isDigit() -> {
+				}
 				char == '-' -> if (first != pointer) curType = IrisJson.ValueType.Constant
 				char == '.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
 				char.isLetter() -> curType = IrisJson.ValueType.Constant
-				else -> break
+				else -> break@loop
 			}
 			pointer++
 		} while (pointer < len)

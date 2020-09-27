@@ -7,11 +7,11 @@ import iris.json.IrisJson
  * @author [Ivan Ivanov](https://vk.com/irisism)
  *
  */
-abstract class TokenerAbstractWithPointer: Tokener {
+abstract class TokenerAbstractWithPointer : Tokener {
 
 	override fun nextChar(): Char {
 		skipWhitespaces()
-		return curCharInc()?: throw exception("End of source data")
+		return curCharInc() ?: throw exception("End of source data")
 	}
 
 	protected abstract fun curChar(): Char?
@@ -34,7 +34,7 @@ abstract class TokenerAbstractWithPointer: Tokener {
 		var escaping = false
 		val start = this.pointer()
 		do {
-			val char = curCharInc()?: break
+			val char = curCharInc() ?: break
 			if (char == '\\')
 				escaping = true
 			else if (escaping) {
@@ -43,21 +43,22 @@ abstract class TokenerAbstractWithPointer: Tokener {
 				break
 			}
 		} while (true)
-		return charSequence(start, pointer()-1)
+		return charSequence(start, pointer() - 1)
 	}
 
 	override fun readPrimitive(): Tokener.PrimitiveData {
 		var curType = IrisJson.ValueType.Integer
 		val first = pointer()
 		var isFirst = true
-		do {
-			val char = curChar()?: break
+		loop@ do {
+			val char = curChar() ?: break
 			when {
-				char.isDigit() -> {}
+				char.isDigit() -> {
+				}
 				char == '-' -> if (!isFirst) curType = IrisJson.ValueType.Constant
 				char == '.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
 				char.isLetter() -> curType = IrisJson.ValueType.Constant
-				else -> break
+				else -> break@loop
 			}
 			if (isFirst)
 				isFirst = false

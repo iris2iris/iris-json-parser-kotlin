@@ -6,11 +6,11 @@ import iris.json.IrisJson
  * @created 20.09.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-abstract class TokenerAbstractWithSequence(): Tokener {
+abstract class TokenerAbstractWithSequence() : Tokener {
 
 	override fun nextChar(): Char {
 		skipWhitespaces()
-		return curCharInc()?: throw exception("End of source data")
+		return curCharInc() ?: throw exception("End of source data")
 	}
 
 	protected abstract fun curChar(): Char?
@@ -19,7 +19,7 @@ abstract class TokenerAbstractWithSequence(): Tokener {
 	protected abstract fun sequenceStart(): TokenSequence
 
 	interface TokenSequence {
-		fun finish(shift: Int = 0) : CharSequence
+		fun finish(shift: Int = 0): CharSequence
 		fun append(char: Char)
 	}
 
@@ -54,14 +54,14 @@ abstract class TokenerAbstractWithSequence(): Tokener {
 		var curType = IrisJson.ValueType.Integer
 		val seq = this.sequenceStart()
 		var isFirst = true
-		do {
-			val char = curChar()?: break
+		loop@ do {
+			val char = curChar() ?: break
 			when {
 				char.isDigit() -> {}
 				char == '-' -> if (!isFirst) curType = IrisJson.ValueType.Constant
 				char == '.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
 				char.isLetter() -> curType = IrisJson.ValueType.Constant
-				else -> break
+				else -> break@loop
 			}
 			if (isFirst)
 				isFirst = false
