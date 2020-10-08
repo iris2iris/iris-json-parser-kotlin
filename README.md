@@ -9,12 +9,28 @@ Speed improvement is achieved by idea of Proxy pattern, where objects are create
 
 ## Examples of use
 
+#### Deserialization
+🔥 New feature (v0.5). Deserialization to objects.
+
+Full source code on [iris/json/test/serialization.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/src/iris/json/test/serialization.kt)
+````kotlin
+val item = IrisJsonParser("""{"id": 3, 
+		|"person1": {"name": "Akbar", "age": 35, "cashAmount": 12200.12, "property": {"name": "Домик в деревне"}}, 
+		|"type": "MaleFirst", 
+		|"person2": {"name": "Alla Who", "height": 170, "income": 1214.81}
+		|}""".trimMargin()).parse()
+
+val user: User = item.asObject(User::class)
+println(user.person1)
+println(user.person2)
+````
+
 #### Flow pre-parse
-🔥 New feature (v0.3). Flow preparing JSON-tree information only until required field.
+Interesting feature (v0.3). Flow preparing JSON-tree information only until required field.
 
 Useful when required fields are located at first part of JSON string.
 
-```Kotlin
+```kotlin
 val testString = File("test.json").readText()
 
 // Demonstration of functional abilities
@@ -44,7 +60,7 @@ println("To Double: " + obj.find("object.message.attachments[0].wall.id").asDoub
 #### Full pre-parse
 Prepares full JSON-tree information. Useful when lots of fields are requested.
 
-```Kotlin
+```kotlin
 // Demonstration of functional abilities
 val parser = IrisJsonParser(testString)
 val res = parser.parse() // parsed to IrisJsonItem's
@@ -73,7 +89,7 @@ println("To Double: " + res.find("object.message.attachments[0].wall.id").asDoub
 ## Performance test
 
 #### Array of 50 elements
-Test code is in [iris/json/flow/test/performance_array.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/src/iris/json/flow/test/performance_array.kt) file. 
+Test code is in [iris/json/test/performance_array.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/src/iris/json/test/performance_array.kt) file. 
 
 Test JSON file is in [test_array.json](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/test_array.json) file.
 
@@ -98,7 +114,7 @@ POJO:       10
 
 #### Complex json-tree structure
 
-Test code is in [iris/json/flow/test/performance_object_tree.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/src/iris/json/flow/test/performance_object_tree.kt) file. 
+Test code is in [iris/json/test/performance_object_tree.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/src/iris/json/test/performance_object_tree.kt) file. 
 
 Test JSON file is in [test.json](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/test.json) file.
 
