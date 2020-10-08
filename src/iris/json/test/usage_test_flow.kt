@@ -1,4 +1,4 @@
-package iris.json.flow.test
+package iris.json.test
 
 import iris.json.flow.JsonFlowParser
 import java.io.File

@@ -1,10 +1,11 @@
 package iris.json.proxy
 
+import iris.json.JsonEntry
 import iris.json.JsonItem
 import iris.json.JsonObject
-import iris.json.JsonObject.Entry
 import iris.json.plain.IrisJsonItem
 import iris.json.plain.IrisJsonNull
+import iris.json.serialization.NodeInfo
 
 /**
  * @created 26.09.2020
@@ -31,25 +32,24 @@ class JsonProxyObject(private val map: Map<String, Any?>) : JsonProxyItem(map), 
 	}
 
 	override fun get(key: String): IrisJsonItem {
-		return JsonProxyUtil.wrap(map[key]) /*when (val item = map[key]) {
-			is Map<*, *> -> JsonProxyObject(item as Map<String, Any?>)
-			is List<*> -> JsonProxyArray(item as List<Any?>)
-			null -> IrisJsonNull.Null
-			else -> JsonProxyValue(item)
-		}*/
+		return JsonProxyUtil.wrap(map[key])
 	}
 
 	override fun asMap(): Map<String, Any?> {
 		return map
 	}
 
+	override fun <T : Any> asObject(info: NodeInfo): T {
+		return map as T
+	}
+
 	override fun isObject() = true
 
-	override fun iterator(): Iterator<Entry> {
+	override fun iterator(): Iterator<JsonEntry> {
 		return Iter()
 	}
 
-	inner class Iter: Iterator<Entry> {
+	inner class Iter: Iterator<JsonEntry> {
 
 		private val iterator = map.iterator()
 
@@ -57,7 +57,7 @@ class JsonProxyObject(private val map: Map<String, Any?>) : JsonProxyItem(map), 
 			return iterator.hasNext()
 		}
 
-		override fun next(): Entry {
+		override fun next(): JsonEntry {
 			val item = iterator.next()
 			val value = when (item.value) {
 				is Map<*, *> -> JsonProxyObject(item as Map<String, Any?>)
@@ -65,7 +65,7 @@ class JsonProxyObject(private val map: Map<String, Any?>) : JsonProxyItem(map), 
 				null -> IrisJsonNull.Null
 				else -> JsonProxyValue(item)
 			}
-			return Entry(item.key, value)
+			return JsonEntry(item.key, value)
 		}
 	}
 }

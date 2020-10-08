@@ -1,5 +1,8 @@
 package iris.json
 
+import iris.json.serialization.NodeInfo
+import kotlin.reflect.KClass
+
 /**
  * @created 26.09.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
@@ -13,7 +16,6 @@ interface JsonItem {
 
 	fun obj(): Any?
 	fun <A: Appendable>joinTo(buffer: A): A
-	override fun toString(): String
 
 	fun iterable() : Iterable<JsonItem>
 
@@ -43,6 +45,10 @@ interface JsonItem {
 
 	fun asMap(): Map<String, Any?>
 
+	fun <T: Any>asObject(d: KClass<T>): T
+
+	fun <T: Any>asObject(info: NodeInfo): T
+
 	fun asStringOrNull(): String?
 
 	fun asString(): String
@@ -62,4 +68,6 @@ interface JsonItem {
 	fun isObject(): Boolean
 
 	fun find(tree: String): JsonItem
+
+
 }

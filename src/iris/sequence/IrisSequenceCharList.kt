@@ -31,14 +31,13 @@ class IrisSequenceCharList(source: List<Char>, start: Int = 0, end: Int = source
 		when (buffer) {
 			is StringBuilder -> buffer.append(charArray)
 			is StringBuffer -> buffer.append(charArray)
-			else -> buffer.append(/*IrisSequenceCharArray(charArray)*/this.toString())
+			else -> buffer.append(this.toString())
 		}
 		return buffer
 	}
 
 	override fun hashCode(): Int {
-		val l = subList.size
-		return l + if (l == 0) 0 else get(0).toInt()*1023
+		return subList.hashCode()
 	}
 
 	override fun equals(other: Any?): Boolean {
@@ -66,7 +65,6 @@ class IrisSequenceCharList(source: List<Char>, start: Int = 0, end: Int = source
 
 	override fun toCharArray(dest: CharArray, destOffset: Int, start: Int, len: Int): CharArray {
 		charArray.copyInto(dest, destOffset, start, start + len)
-		//System.arraycopy(charArray, start, dest, destOffset, len)
 		return dest
 	}
 }

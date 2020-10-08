@@ -23,4 +23,18 @@ class IrisSequenceSingleChar(private val ch: Char) : IrisSequence {
 		buffer.append(ch)
 		return buffer
 	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
+		other as IrisSequenceSingleChar
+		if (ch != other.ch) return false
+		return true
+	}
+
+	override fun hashCode(): Int {
+		return ch.hashCode()
+	}
+
+
 }

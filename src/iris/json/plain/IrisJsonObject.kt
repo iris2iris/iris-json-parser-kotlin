@@ -1,17 +1,58 @@
 package iris.json.plain
 
+import iris.json.JsonEntry
 import iris.json.JsonItem
 import iris.json.JsonObject
-import iris.json.JsonObject.Entry
 import iris.json.proxy.JsonProxyUtil
+import iris.json.serialization.ClassInfo
+import iris.json.serialization.NodeInfo
 
 /**
  * @created 14.04.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class IrisJsonObject(private val entries: List<Entry>) : IrisJsonItem(), JsonObject {
+open class IrisJsonObject(private val entries: List<JsonEntry>) : IrisJsonItem(), JsonObject {
 
-	constructor(vararg items: Pair<CharSequence, JsonItem>) : this(items.map { Entry(it.first, it.second) })
+	constructor(vararg items: Pair<String, JsonItem>) : this(items.asList())
+
+	override fun get(key: String): JsonItem {
+		return (entries.find {it.first == key }?.second) ?: IrisJsonNull.Null
+	}
+
+	override fun get(ind: Int): JsonItem {
+		return get(ind.toString())
+	}
+
+	override fun set(ind: Int, value: Any?): JsonItem {
+		return set(ind.toString(), value)
+	}
+
+	override fun set(key: String, value: Any?): JsonItem {
+		val el = entries as MutableList<JsonEntry>
+		val index = el.indexOfFirst { it.first == key }
+		val wrapValue = JsonProxyUtil.wrap(value)
+		if (index == -1)
+			el += JsonEntry(key, wrapValue)
+		else
+			el[index] = JsonEntry(key, wrapValue)
+		val obj = obj
+		if (obj != null) {
+			obj[key] = value
+		}
+		return this
+	}
+
+	private var obj: MutableMap<String, Any?>? = null
+
+	override fun obj(): Any? {
+		if (obj != null)
+			return obj
+		val res = HashMap<String, Any?>(entries.size)
+		for (it in entries)
+			res[it.first.toString()] = it.second.obj()
+		obj = res
+		return res
+	}
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
 		buffer.append("{")
@@ -22,75 +63,22 @@ class IrisJsonObject(private val entries: List<Entry>) : IrisJsonItem(), JsonObj
 			else
 				firstDone = true
 			buffer.append("\"")
-			buffer.append(entry.key)
+			buffer.append(entry.first)
 			buffer.append("\": ")
-			entry.value.joinTo(buffer)
+			entry.second.joinTo(buffer)
 
 		}
 		buffer.append('}')
 		return buffer
 	}
 
-	override fun set(ind: Int, value: Any?): JsonItem {
-		return set(ind.toString(), value)
-
-	}
-
-	override fun set(key: String, value: Any?): JsonItem {
-		val el = entries as MutableList<Entry>
-		val index = el.indexOfFirst { it.key == key }
-		val wrapValue = JsonProxyUtil.wrap(value)
-		if (index == -1)
-			el += Entry(key, wrapValue)
-		else
-			el[index] = Entry(key, wrapValue)
-		val obj = obj
-		if (obj != null) {
-			obj[key] = value
-		}
-		return this
-	}
-
-	override fun get(ind: Int): IrisJsonItem {
-		return get(ind.toString())
-	}
-
-	/*private val map by lazy(LazyThreadSafetyMode.NONE) { init() }
-
-	private fun init(): MutableMap<String, IrisJsonItem> {
-		val t = mutableMapOf<String, IrisJsonItem>()
-		for (it in entries) {
-			t[it.key.toString()] = it.value as IrisJsonItem
-		}
-		return t
-	}*/
-
-	override fun get(key: String): IrisJsonItem {
-
-		return (entries.find { it.key == key }?.value as IrisJsonItem?) ?: IrisJsonNull.Null
-		//return map[key] ?: IrisJsonNull.Null
-	}
-
-	private var obj: MutableMap<String, Any?>? = null
-
-	override fun obj(): Any? {
-		if (obj != null)
-			return obj
-		val res = mutableMapOf<String, Any?>()
-		//for (it in map )
-		for (it in entries)
-			res[it.key.toString()] = it.value.obj()
-		obj = res
-		return res
-	}
-
 	override fun isObject() = true
 
-	override fun iterator(): Iterator<Entry> {
+	override fun iterator(): Iterator<JsonEntry> {
 		return Iter()
 	}
 
-	inner class Iter: Iterator<Entry> {
+	inner class Iter: Iterator<JsonEntry> {
 
 		private val iterator = entries.iterator()
 
@@ -98,8 +86,14 @@ class IrisJsonObject(private val entries: List<Entry>) : IrisJsonItem(), JsonObj
 			return iterator.hasNext()
 		}
 
-		override fun next(): Entry {
+		override fun next(): JsonEntry {
 			return iterator.next()
 		}
 	}
+
+	override fun <T: Any>asObject(info: NodeInfo): T {
+		return (info as ClassInfo).getObject(entries)
+	}
 }
+
+

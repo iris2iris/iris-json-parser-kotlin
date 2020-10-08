@@ -4,6 +4,9 @@ import iris.json.IrisJson
 import iris.json.JsonValue
 import iris.json.plain.IrisJsonItem
 import iris.json.plain.IrisJsonNull
+import iris.json.serialization.NodeInfo
+import iris.json.serialization.TypeInfo
+import iris.sequence.*
 
 /**
  * @created 20.09.2020
@@ -11,14 +14,11 @@ import iris.json.plain.IrisJsonNull
  */
 class FlowValue(tokener: Tokener) : FlowItem(tokener), JsonValue {
 
-	private val data: Tokener.PrimitiveData by lazy(LazyThreadSafetyMode.NONE) { this.tokener.readPrimitive() }
-
-	override fun toString(): String {
-		return data.sequence.toString() + "[" + data.type + "]"
-	}
+	private var data: Tokener.PrimitiveData? = null
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
-		buffer.append(data.sequence)
+		parse()
+		buffer.append(data!!.sequence)
 		return buffer
 	}
 
@@ -31,13 +31,15 @@ class FlowValue(tokener: Tokener) : FlowItem(tokener), JsonValue {
 	}
 
 	private fun init(): Any? {
-		val s = data.sequence.toString()
+		parse()
+		val data = data!!
+		val s = data.sequence
 		return when (data.type) {
             IrisJson.ValueType.Constant -> when (s) {
                 "null" -> null
                 "true" -> true
                 "false" -> false
-                else -> s
+                else -> s.toString()
             }
             IrisJson.ValueType.Integer -> s.toLong()
             IrisJson.ValueType.Float -> s.toDouble()
@@ -45,14 +47,106 @@ class FlowValue(tokener: Tokener) : FlowItem(tokener), JsonValue {
 		}
 	}
 
-	private val ready by lazy(LazyThreadSafetyMode.NONE) { init() }
+	override fun asIntOrNull(): Int? {
+		if (done)
+			return super.asIntOrNull()
+		parse()
+		val res = data!!.sequence.toIntOrNull()
+		ready = res
+		done = true
+		return res
+	}
+
+	override fun asInt(): Int {
+		if (done)
+			return super.asInt()
+		parse()
+		val res = data!!.sequence.toInt()
+		ready = res
+		done = true
+		return res
+	}
+
+	override fun asLongOrNull(): Long? {
+		if (done)
+			return super.asLongOrNull()
+		parse()
+		val res = data!!.sequence.toLongOrNull()
+		ready = res
+		done = true
+		return res
+	}
+
+	override fun asLong(): Long {
+		if (done)
+			return super.asLong()
+		parse()
+		val res = data!!.sequence.toLong()
+		ready = res
+		done = true
+		return res
+	}
+
+	override fun asDoubleOrNull(): Double? {
+		if (done)
+			return super.asDoubleOrNull()
+		parse()
+		val res = data!!.sequence.toDoubleOrNull()
+		ready = res
+		done = true
+		return res
+	}
+
+	override fun asDouble(): Double {
+		if (done)
+			return super.asDouble()
+		parse()
+		val res = data!!.sequence.toDouble()
+		ready = res
+		done = true
+		return res
+	}
+
+	override fun asFloatOrNull(): Float? {
+		if (done)
+			return super.asFloatOrNull()
+		parse()
+		val res = data!!.sequence.toFloatOrNull()
+		ready = res
+		done = true
+		return res
+	}
+
+	override fun asFloat(): Float {
+		if (done)
+			return super.asFloat()
+		parse()
+		val res = data!!.sequence.toFloat()
+		ready = res
+		done = true
+		return res
+	}
+
+	private var ready: Any? = null
+	private var done = false
 
 	override fun obj(): Any? {
+		if (done)
+			return ready
+		ready = init()
+		done = true
 		return ready
 	}
 
 	override fun parse() {
-		data
+		if (data != null)
+			return
+		data = this.tokener.readPrimitive()
+	}
+
+	override fun <T : Any> asObject(info: NodeInfo): T {
+		parse()
+		return (info as TypeInfo).getValue(this) as T
 	}
 
 	override fun isPrimitive() = true

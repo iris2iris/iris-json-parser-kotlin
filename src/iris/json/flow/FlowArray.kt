@@ -3,6 +3,8 @@ package iris.json.flow
 import iris.json.JsonArray
 import iris.json.JsonItem
 import iris.json.proxy.JsonProxyUtil
+import iris.json.serialization.ListInfo
+import iris.json.serialization.NodeInfo
 
 /**
  * @created 20.09.2020
@@ -117,7 +119,7 @@ class FlowArray(tokener: Tokener) : FlowItem(tokener), JsonArray {
 	override fun obj(): Any? {
 		return obj ?: run {
 			parse()
-			obj = items.mapTo(mutableListOf()) { it.obj() }
+			obj = items.mapTo(ArrayList(items.size)) { it.obj() }
 			obj
 		}
 	}
@@ -148,5 +150,10 @@ class FlowArray(tokener: Tokener) : FlowItem(tokener), JsonArray {
 		override fun next(): JsonItem {
 			return get(pointer++)
 		}
+	}
+
+	override fun <T : Any> asObject(info: NodeInfo): T {
+		parse()
+		return (info as ListInfo).getObject(this.items) as T
 	}
 }

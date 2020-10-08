@@ -1,10 +1,13 @@
 package iris.json.flow
 
+import iris.json.JsonEntry
 import iris.json.JsonItem
 import iris.json.JsonObject
-import iris.json.JsonObject.Entry
 import iris.json.plain.IrisJsonNull
 import iris.json.proxy.JsonProxyUtil
+import iris.json.serialization.ClassInfo
+import iris.json.serialization.NodeInfo
+import java.util.*
 
 /**
  * @created 20.09.2020
@@ -12,35 +15,29 @@ import iris.json.proxy.JsonProxyUtil
  */
 class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 
-	/*private class Entry(val key: CharSequence, val value: JsonItem) {
-		override fun toString(): String {
-			return "\"$key\": $value"
-		}
-	}*/
-
 	override fun get(ind: Int): JsonItem {
 		return get(ind.toString())
 	}
 
-	private val entries = mutableListOf<Entry>()
+	private val entries = LinkedList<JsonEntry>()
 
 	private var isDone = false
 	private var needToParse: FlowItem? = null
 
 	override fun get(key: String): JsonItem {
 		for (e in entries) {
-			if (e.key == key)
-				return e.value
+			if (e.first == key)
+				return e.second
 		}
 		if (isDone) return IrisJsonNull.Null
 		testNeedToParse()
 		do {
 			val next = parseNext() ?: break
 			entries += next
-			val nextVal = next.value as FlowItem
-			if (next.key == key) {
+			val nextVal = next.second as FlowItem
+			if (next.first == key) {
 				this.needToParse = nextVal
-				return next.value
+				return next.second
 			}
 			nextVal.parse()
 		} while (true)
@@ -49,7 +46,7 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 		return IrisJsonNull.Null
 	}
 
-	private fun parseNext(): Entry? {
+	private fun parseNext(): JsonEntry? {
 		var char = tokener.nextChar()
 		if (char == '}') {
 			isDone = true
@@ -61,12 +58,12 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 		if (!(char == '"' || char == '\''))
 			throw tokener.exception("\" (quote) or \"'\" was expected")
 
-		val key = tokener.readString(char)
+		val key = tokener.readFieldName(char)
 		char = tokener.nextChar()
 		if (char != ':')
 			throw tokener.exception("\":\" was expected")
 		val value = JsonFlowParser.readItem(tokener)
-		return Entry(key, value)
+		return JsonEntry(key, value)
 	}
 
 	private var obj: MutableMap<String, Any?>? = null
@@ -75,21 +72,21 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 		if (obj != null)
 			return obj
 		parse()
-		val res = mutableMapOf<String, Any?>()
+		val res = HashMap<String, Any?>(entries.size)
 		for (it in entries)
-			res[it.key.toString()] = it.value.obj()
+			res[it.first.toString()] = it.second.obj()
 		obj = res
 		return res
 	}
 
 	override fun set(key: String, value: Any?): JsonItem {
 		val el = entries
-		val index = el.indexOfFirst { it.key == key }
+		val index = el.indexOfFirst { it.first == key }
 		val wrapValue = JsonProxyUtil.wrap(value)
 		if (index == -1)
-			el += Entry(key, wrapValue)
+			el += JsonEntry(key, wrapValue)
 		else
-			el[index] = Entry(key, wrapValue)
+			el[index] = JsonEntry(key, wrapValue)
 		val obj = obj
 		if (obj != null) {
 			obj[key] = value
@@ -107,9 +104,8 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 		do {
 			val next = parseNext() ?: break
 			entries += next
-			(next.value as FlowItem).parse()
+			(next.second as FlowItem).parse()
 		} while (true)
-
 		isDone = true
 	}
 
@@ -131,24 +127,29 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 			else
 				firstDone = true
 			buffer.append("\"")
-			buffer.append(entry.key)
+			buffer.append(entry.first)
 			buffer.append("\": ")
-			entry.value.joinTo(buffer)
+			entry.second.joinTo(buffer)
 
 		}
 		buffer.append('}')
 		return buffer
 	}
 
+	override fun <T : Any> asObject(info: NodeInfo): T {
+		parse()
+		return (info as ClassInfo).getObject(entries)
+	}
+
 	override fun isObject() = true
 
-	override fun iterator(): Iterator<Entry> {
+	override fun iterator(): Iterator<JsonEntry> {
 		// TODO: Надо бы тут парсить по мере итератора, а не всё сразу
 		parse()
 		return Iter()
 	}
 
-	inner class Iter : Iterator<Entry> {
+	inner class Iter : Iterator<JsonEntry> {
 
 		private val iterator = entries.iterator()
 
@@ -156,9 +157,8 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 			return iterator.hasNext()
 		}
 
-		override fun next(): Entry {
-			val e = iterator.next()
-			return Entry(e.key, e.value)
+		override fun next(): JsonEntry {
+			return iterator.next()
 		}
 	}
 }

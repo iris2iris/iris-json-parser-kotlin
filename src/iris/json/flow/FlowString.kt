@@ -3,6 +3,7 @@ package iris.json.flow
 import iris.json.JsonString
 import iris.json.plain.IrisJsonItem
 import iris.json.plain.IrisJsonNull
+import iris.json.serialization.NodeInfo
 import iris.sequence.IrisSequence
 
 /**
@@ -11,13 +12,10 @@ import iris.sequence.IrisSequence
  */
 class FlowString(tokener: Tokener, val quote: Char) : FlowItem(tokener), JsonString {
 
-	private val data: CharSequence by lazy(LazyThreadSafetyMode.NONE) { this.tokener.readString(quote) }
-
-	override fun toString(): String {
-		return '"' + data.toString() + '"'
-	}
+	private var data: CharSequence? = null
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
+		parse()
 		buffer.append('"')
 		(data as? IrisSequence)?.joinTo(buffer) ?: buffer.append(data)
 		buffer.append('"')
@@ -33,13 +31,16 @@ class FlowString(tokener: Tokener, val quote: Char) : FlowItem(tokener), JsonStr
 	}
 
 	override fun parse() {
-		data
+		if (data == null)
+			data = tokener.readString(quote)
 	}
 
-	private val ready by lazy(LazyThreadSafetyMode.NONE) { init() }
+	private var ready: String? = null// by lazy(LazyThreadSafetyMode.NONE) { init() }
 
 	private fun init(): String {
+		parse()
 		val res = StringBuilder()
+		val data = data!!
 		val len = data.length
 		if (len == 0)
 			return ""
@@ -88,7 +89,16 @@ class FlowString(tokener: Tokener, val quote: Char) : FlowItem(tokener), JsonStr
 		}
 	}
 
-	override fun obj() = ready
+	override fun obj(): String {
+		if (ready != null)
+			return ready!!
+		ready = init()
+		return ready!!
+	}
+
+	override fun <T : Any> asObject(info: NodeInfo): T {
+		return obj() as T
+	}
 
 	override fun isPrimitive() = true
 }

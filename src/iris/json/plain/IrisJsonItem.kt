@@ -1,16 +1,14 @@
 package iris.json.plain
 
 import iris.json.JsonItem
+import iris.json.serialization.SerializationCache
+import kotlin.reflect.KClass
 
 /**
  * @created 14.04.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 abstract class IrisJsonItem() : JsonItem {
-
-	override fun toString(): String {
-		return joinTo(StringBuilder()).toString()
-	}
 
 	override fun iterable(): Iterable<JsonItem> {
 		throw IllegalStateException("This is not iterable json item")
@@ -160,4 +158,8 @@ abstract class IrisJsonItem() : JsonItem {
 	override fun isArray() = false
 
 	override fun isObject() = false
+
+	override fun <T : Any> asObject(d: KClass<T>): T {
+		return asObject(SerializationCache.getInstance(d))
+	}
 }

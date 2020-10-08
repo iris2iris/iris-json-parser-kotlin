@@ -67,4 +67,8 @@ abstract class TokenerAbstractWithPointer : Tokener {
 		return Tokener.PrimitiveData(charSequence(first, pointer()), curType)
 	}
 
+	override fun readFieldName(quote: Char): CharSequence {
+		return readString(quote)
+	}
+
 }

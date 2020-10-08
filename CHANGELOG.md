@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5
+- Deserialization to objects
+- Performance improvements
+
 ## v0.4
 - JSON Proxy items added to imitate parsed JSON-nodes
 - Added setters

@@ -71,27 +71,45 @@ println("To Double: " + res.find("object.message.attachments[0].wall.id").asDoub
 ```
 
 ## Performance test
-Test code is in [iris/json/flow/test/performance_test.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/src/iris/json/flow/test/performance_test.kt) file. 
+
+#### Array of 50 elements
+Test code is in [iris/json/flow/test/performance_array.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/src/iris/json/flow/test/performance_array.kt) file. 
 
 Test JSON file is in [test_array.json](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/test_array.json) file.
 
-Testing access to first element of array and access to last element of array.
+Testing access to first element of array and access to last element of array. 100k iterations
 ```
 AVG[0]:
-org.json:   22611
-org.json.simple: 27232
-Iris Plain: 7110
-Iris Flow:  93
-Iris Proxy: 25
+org.json:   22363
+org.json.simple: 27080
+Iris Plain: 5394 // previous 7110
+Iris Flow:  564 // previous 93
+Iris Proxy: 27
 POJO:       11
 
 AVG[49]:
-org.json:   22631
-org.json.simple: 27161
-Iris Plain: 7067
-Iris Flow:  7498
-Iris Proxy: 23
+org.json:   22416
+org.json.simple: 26869
+Iris Plain: 5411 // previous 7067
+Iris Flow:  5870 // previous 7498
+Iris Proxy: 26
 POJO:       10
+```
+
+#### Complex json-tree structure
+
+Test code is in [iris/json/flow/test/performance_object_tree.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/src/iris/json/flow/test/performance_object_tree.kt) file. 
+
+Test JSON file is in [test.json](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/test.json) file.
+
+Testing access to `object.message.attachments[0].wall.id` and converting it to Long. 100k iterations
+```
+org.json:   9149
+org.json.simple: 11186
+Iris Plain: 2652
+Iris Flow:  617
+Iris Proxy: 53
+POJO:       21
 ```
 
 Check out [CHANGELOG.md](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/CHANGELOG.md)

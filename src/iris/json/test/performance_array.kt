@@ -1,4 +1,4 @@
-package iris.json.flow.test
+package iris.json.test
 
 import iris.json.flow.JsonFlowParser
 import iris.json.flow.TokenerString
@@ -45,31 +45,21 @@ fun main() {
 	testPlainAccess(map, 49)
 
 	repeat(repeats) {
-		val json = testJsonParser(testString, 0)
-		val simpleJson = testSimpleJsonParser(testString, 0)
-		val iris = testIrisParser(testString, 0)
-		val irisOld = testIrisParserOld(testString, 0)
-		val irisProxy = testIrisProxy(map, 0)
-		val plainAccess = testPlainAccess(map, 0)
-		totalIris += iris
-		totalIrisProxy += irisProxy
-		totalIrisOld += irisOld
-		totalJson += json
-		totalSimpleJson += simpleJson
-		totalPlainAccess += plainAccess
+		totalJson += testJsonParser(testString, 0)
+		totalSimpleJson += testSimpleJsonParser(testString, 0)
+		totalIris += testIrisParser(testString, 0)
+		totalIrisOld += testIrisParserOld(testString, 0)
+		totalIrisProxy += testIrisProxy(map, 0)
+		totalPlainAccess += testPlainAccess(map, 0)
 
-		val jsonLast = testJsonParser(testString, 49)
-		val simpleJsonLast = testSimpleJsonParser(testString, 49)
-		val irisLast = testIrisParser(testString, 49)
-		val irisOldLast = testIrisParserOld(testString, 49)
-		val irisProxyLast = testIrisProxy(map, 49)
-		val plainAccessLast = testPlainAccess(map, 49)
-		totalIrisLast += irisLast
-		totalIrisOldLast += irisOldLast
-		totalJsonLast += jsonLast
-		totalSimpleJsonLast += simpleJsonLast
-		totalIrisProxyLast += irisProxyLast
-		totalPlainAccessLast += plainAccessLast
+		totalJsonLast += testJsonParser(testString, 49)
+		totalSimpleJsonLast += testSimpleJsonParser(testString, 49)
+		totalIrisLast += testIrisParser(testString, 49)
+		totalIrisOldLast += testIrisParserOld(testString, 49)
+		totalIrisProxyLast += testIrisProxy(map, 49)
+		totalPlainAccessLast += testPlainAccess(map, 49)
+		if (it != 0 && it % 10_000 == 0)
+			println("$it iteration")
 	}
 
 	totalIris /= 1000000.0

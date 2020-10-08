@@ -79,7 +79,7 @@ class TokenerBufferedReader(private val reader: Reader, private val buffer: Char
 		@JvmStatic
 		fun main(args: Array<String>) {
 			val text = File("test.json").readText()
-			val t = JsonFlowParser.readItem(TokenerBufferedReader(StringReader(text)))
+			val t = JsonFlowParser.start(TokenerBufferedReader(StringReader(text)))
 			println(t.obj())
 		}
 	}

@@ -14,6 +14,8 @@ interface Tokener {
 
 	fun readString(quote: Char): CharSequence
 
+	fun readFieldName(quote: Char): CharSequence
+
 	fun readPrimitive(): PrimitiveData
 
 	class PrimitiveData(val sequence: CharSequence, val type: IrisJson.ValueType)

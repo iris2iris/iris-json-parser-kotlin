@@ -6,8 +6,9 @@ package iris.sequence
  */
 class IrisSubSequence(private val source: CharSequence, val start: Int, val end: Int) : IrisSequence {
 
+	private val len = end - start
 	override val length: Int
-		get() = end - start
+		get() = len
 
 	override fun get(index: Int): Char {
 		return source[start + index]
@@ -26,9 +27,17 @@ class IrisSubSequence(private val source: CharSequence, val start: Int, val end:
 		return buffer
 	}
 
+	private var hash = 0
+	private var hashed = false
 	override fun hashCode(): Int {
-		val l = length
-		return l + if (l == 0) 0 else get(0).toInt()*31
+		if (hashed)
+			return hash
+		var res = 0
+		for (i in 0 until length)
+			res = (res * 33) + source[start + i].toInt()
+		hash = res
+		hashed = true
+		return res
 	}
 
 	override fun equals(other: Any?): Boolean {

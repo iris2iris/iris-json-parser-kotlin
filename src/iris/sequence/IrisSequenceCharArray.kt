@@ -1,13 +1,19 @@
 package iris.sequence
 
+import java.util.*
+
 /**
  * @created 01.08.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class IrisSequenceCharArray(val source: CharArray, val start: Int = 0, val end: Int = source.size) : IrisSequence, CharArraySource {
+class IrisSequenceCharArray(val source: CharArray, val start: Int, val end: Int) : IrisSequence, CharArraySource {
 
+	constructor(source: CharArray) : this(source, 0, source.size)
+	constructor(source: CharArray, start: Int) : this(source, start, source.size)
+
+	private val len = end - start
 	override val length: Int
-		get() = end - start
+		get() = len
 
 	override fun get(index: Int): Char {
 		return source[start + index]
@@ -25,22 +31,40 @@ class IrisSequenceCharArray(val source: CharArray, val start: Int = 0, val end: 
 		when (buffer) {
 			is StringBuilder -> buffer.append(source, start, length)
 			is StringBuffer -> buffer.append(source, start, length)
-			else -> buffer.append(this/*.toString()*/)
+			else -> buffer.append(this)
 		}
 		return buffer
 	}
 
+	private var hash = 0
+	private var hashed = false
 	override fun hashCode(): Int {
-		val l = length
-		return l + if (l == 0) 0 else get(0).toInt()*31
+		if (hashed)
+			return hash
+		var res = 0
+		for (i in start until end)
+			res = (res * 33) + source[i].toInt()
+		hash = res
+		hashed = true
+		return res
 	}
 
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
-		if (other !is CharSequence) return false
-		if (length != other.length) return false
-		for (i in 0 until length)
-			if (source[start + i] != other[i])
+		if (other == null) return false
+
+		if (this.javaClass == other.javaClass) {
+			other as IrisSequenceCharArray
+			return Arrays.equals(source, start, end, other.source, other.start, other.end)
+		}
+		if (other !is CharSequence)
+			return false
+		val len = len
+		if (len != other.length) return false
+		val source = source
+		var pos = start
+		for (i in 0 until len)
+			if (source[pos++] != other[i])
 				return false
 		return true
 	}
@@ -61,7 +85,6 @@ class IrisSequenceCharArray(val source: CharArray, val start: Int = 0, val end: 
 	override fun toCharArray(dest: CharArray, destOffset: Int, start: Int, len: Int): CharArray {
 		val st = this.start + start
 		source.copyInto(dest, destOffset, st, st + len)
-		//System.arraycopy(source, this.start + start, dest, destOffset, len)
 		return dest
 	}
 }

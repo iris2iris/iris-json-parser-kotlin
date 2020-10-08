@@ -17,45 +17,51 @@ class SimpleStringReader(private val source: CharSequence) : Reader() {
 	private val buff = (source as? CharArraySource)
 
 	override fun read(cbuf: CharArray): Int {
+		val length = source.length
+		val pointer = this.pointer
 		val realLen = min(length - pointer, cbuf.size)
 		if (realLen <= 0)
 			return -1
 
 		if (strSource != null) {
-			strSource.toCharArray(cbuf, pointer, 0, pointer + realLen)
-			pointer += realLen
+			strSource.toCharArray(cbuf, 0, pointer, pointer + realLen)
+			this.pointer += realLen
 		} else if (buff != null) {
 			buff.toCharArray(cbuf, 0, pointer, realLen)
-			//System.arraycopy(buff.source, buff.start + pointer, cbuf, 0, realLen)
-			pointer += realLen
+			this.pointer += realLen
 		} else {
 			val till = pointer + realLen
 			var off = 0
-			while (pointer - till < 0) {
+			var pointer = this.pointer
+			while (pointer < till) {
 				cbuf[off++] = source[pointer++]
 			}
+			this.pointer = pointer
 		}
 		return realLen
 	}
 
 	override fun read(cbuf: CharArray, off: Int, len: Int): Int {
+		val length = source.length
+		val pointer = this.pointer
 		val realLen = min(length - pointer, len)
 		if (realLen <= 0)
 			return -1
 
 		if (strSource != null) {
-			strSource.toCharArray(cbuf, pointer, off, pointer + realLen)
-			pointer += realLen
+			strSource.toCharArray(cbuf, off, pointer, pointer + realLen)
+			this.pointer += realLen
 		} else if (buff != null) {
 			buff.toCharArray(cbuf, off, pointer, realLen)
-			//System.arraycopy(buff.source, buff.start + pointer, cbuf, off, realLen)
-			pointer += realLen
+			this.pointer += realLen
 		} else {
 			val till = pointer + realLen
 			var off = off
-			while (pointer - till < 0) {
+			var pointer = this.pointer
+			while (pointer < till) {
 				cbuf[off++] = source[pointer++]
 			}
+			this.pointer = pointer
 		}
 		return realLen
 	}

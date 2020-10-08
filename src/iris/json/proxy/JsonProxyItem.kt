@@ -2,6 +2,7 @@ package iris.json.proxy
 
 import iris.json.plain.IrisJsonItem
 import iris.json.plain.IrisJsonNull
+import iris.json.serialization.NodeInfo
 
 /**
  * @created 26.09.2020
@@ -18,6 +19,10 @@ abstract class JsonProxyItem(private val obj: Any?) : IrisJsonItem() {
 
 	override fun obj(): Any? {
 		return obj
+	}
+
+	override fun <T : Any> asObject(info: NodeInfo): T {
+		return obj as T
 	}
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
