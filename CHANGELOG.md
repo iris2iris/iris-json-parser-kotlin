@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5.1
+- Deserialization improvements
+- `.asObject<ClassName>()` instead of `.asObject(ClassName::class)`
+- Primitives, Collections, Maps support
+
 ## v0.5
 - Deserialization to objects
 - Performance improvements
