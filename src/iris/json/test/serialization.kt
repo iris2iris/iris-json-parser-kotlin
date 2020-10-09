@@ -1,5 +1,6 @@
 package iris.json.test
 
+import iris.json.asObject
 import iris.json.plain.IrisJsonParser
 import iris.json.serialization.PolymorphCaseString
 import iris.json.serialization.PolymorphData
@@ -40,6 +41,39 @@ fun main() {
 	testListInt(); println()
 	testListListInt(); println()
 	testListedData(); println()
+	testPureList(); println()
+	testPrimitive(); println()
+	testMap(); println()
+}
+
+fun testMap() {
+	println("testMap:")
+	val parser = IrisJsonParser("""{ 
+		|"person1": {"name": "Akbar", "age": 35, "cashAmount": 12200.12, "property": {"name": "Домик в деревне"}}, 
+		|"person2": {"name": "Alla Who", "age": 15, "cashAmount": 23232.12, "property": {"name": "В центре высотка"}} 
+		|}""".trimMargin())
+	val item = parser.parse()
+	val list = item.asObject<Map<String, Male>>()
+	println(list)
+}
+
+fun testPrimitive() {
+	println("testPrimitive:")
+	val parser = IrisJsonParser("""1""".trimMargin())
+	val item = parser.parse()
+	val list = item.asObject<Int>()
+	println(list)
+}
+
+fun testPureList() {
+	println("testPureList:")
+	val parser = IrisJsonParser("""[
+		|1,2,3,4,5
+		|,6,7,8,9,10
+		|]""".trimMargin())
+	val item = parser.parse()
+	val list = item.asObject<List<Int>>()
+	println(list)
 }
 
 fun testListListInt() {
@@ -50,7 +84,7 @@ fun testListListInt() {
 		|,[6,7,8,9,10]
 		|]}""".trimMargin())
 	val item = parser.parse()
-	val list = item.asObject(ListedListInt::class)
+	val list = item.asObject<ListedListInt>()
 	println(list)
 }
 
@@ -59,7 +93,7 @@ fun testListInt() {
 	val parser = IrisJsonParser("""{
 		|"listed":[1,2,3,4,5]}""".trimMargin())
 	val item = parser.parse()
-	val list = item.asObject(ListedInt::class)
+	val list = item.asObject<ListedInt>()
 	println(list)
 }
 
@@ -71,7 +105,7 @@ fun testListedData() {
 		|, {"name": "Akbar", "age": 46, "cashAmount": 44.3, "property": {"name": "Деревня"}}
 		|]}""".trimMargin())
 	val item = parser.parse()
-	val list = item.asObject(ListedClass::class)
+	val list = item.asObject<ListedClass>()
 	println(list)
 }
 
@@ -84,7 +118,7 @@ fun testUser() {
 		|}""".trimMargin())
 
 	val item = parser.parse()
-	val user = item.asObject(User::class)
+	val user = item.asObject<User>()
 	println(user.person1)
 	println(user.person2)
 

@@ -20,7 +20,7 @@ val item = IrisJsonParser("""{"id": 3,
 		|"person2": {"name": "Alla Who", "height": 170, "income": 1214.81}
 		|}""".trimMargin()).parse()
 
-val user: User = item.asObject(User::class)
+val user: User = item.asObject<User>()
 println(user.person1)
 println(user.person2)
 ````

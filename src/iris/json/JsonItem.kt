@@ -1,7 +1,9 @@
 package iris.json
 
-import iris.json.serialization.NodeInfo
+import iris.json.serialization.Deserializer
+import iris.json.serialization.DeserializerCache
 import kotlin.reflect.KClass
+import kotlin.reflect.typeOf
 
 /**
  * @created 26.09.2020
@@ -45,9 +47,10 @@ interface JsonItem {
 
 	fun asMap(): Map<String, Any?>
 
+	@Deprecated("Use JsonItem.asObject<T>() instead")
 	fun <T: Any>asObject(d: KClass<T>): T
 
-	fun <T: Any>asObject(info: NodeInfo): T
+	fun <T: Any>asObject(info: Deserializer): T
 
 	fun asStringOrNull(): String?
 
@@ -68,6 +71,9 @@ interface JsonItem {
 	fun isObject(): Boolean
 
 	fun find(tree: String): JsonItem
+}
 
-
+inline fun <reified T>JsonItem.asObject(): T {
+	val deserializer = DeserializerCache.getDeserializer(typeOf<T>())
+	return this.asObject(deserializer)
 }

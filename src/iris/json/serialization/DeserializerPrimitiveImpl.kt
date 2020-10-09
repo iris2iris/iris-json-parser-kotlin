@@ -11,24 +11,24 @@ import kotlin.reflect.jvm.javaType
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 
-class TypeInfo(val type: Type) : NodeInfo {
+class DeserializerPrimitiveImpl(val type: Type) : DeserializerPrimitive {
 
 	enum class Type {
 		INTEGER, LONG, DOUBLE, FLOAT, BOOLEAN, STRING, DATE
 	}
 	
 	companion object {
-		val DATE = TypeInfo(Type.DATE)
-		val INTEGER = TypeInfo(Type.INTEGER)
-		val LONG = TypeInfo(Type.LONG)
-		val DOUBLE = TypeInfo(Type.DOUBLE)
-		val FLOAT = TypeInfo(Type.FLOAT)
-		val BOOLEAN = TypeInfo(Type.BOOLEAN)
-		val STRING = TypeInfo(Type.STRING)
+		val DATE = DeserializerPrimitiveImpl(Type.DATE)
+		val INTEGER = DeserializerPrimitiveImpl(Type.INTEGER)
+		val LONG = DeserializerPrimitiveImpl(Type.LONG)
+		val DOUBLE = DeserializerPrimitiveImpl(Type.DOUBLE)
+		val FLOAT = DeserializerPrimitiveImpl(Type.FLOAT)
+		val BOOLEAN = DeserializerPrimitiveImpl(Type.BOOLEAN)
+		val STRING = DeserializerPrimitiveImpl(Type.STRING)
 
 		private val format = SimpleDateFormat("YYYY-MM-dd HH:mm:ss")
 
-		fun convertType(s: KType, fieldData: Field?): TypeInfo? {
+		fun convertType(s: KType, fieldData: Field?): DeserializerPrimitiveImpl? {
 			return if (fieldData?.type.isNullOrBlank()) {
 				when (s.javaType.typeName) {
 					"java.util.Date" -> DATE
@@ -56,7 +56,7 @@ class TypeInfo(val type: Type) : NodeInfo {
 		}
 	}
 
-	fun getValue(value: JsonItem): Any? {
+	override fun getValue(value: JsonItem): Any? {
 		return when (type) {
 			Type.INTEGER -> value.asIntOrNull()
 			Type.LONG -> value.asLongOrNull()

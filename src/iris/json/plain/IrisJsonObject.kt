@@ -4,8 +4,8 @@ import iris.json.JsonEntry
 import iris.json.JsonItem
 import iris.json.JsonObject
 import iris.json.proxy.JsonProxyUtil
-import iris.json.serialization.ClassInfo
-import iris.json.serialization.NodeInfo
+import iris.json.serialization.Deserializer
+import iris.json.serialization.DeserializerClass
 
 /**
  * @created 14.04.2020
@@ -91,8 +91,8 @@ open class IrisJsonObject(private val entries: List<JsonEntry>) : IrisJsonItem()
 		}
 	}
 
-	override fun <T: Any>asObject(info: NodeInfo): T {
-		return (info as ClassInfo).getObject(entries)
+	override fun <T: Any>asObject(info: Deserializer): T {
+		return (info as DeserializerClass).getObject(entries)
 	}
 }
 

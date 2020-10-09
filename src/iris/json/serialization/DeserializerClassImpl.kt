@@ -14,9 +14,17 @@ import kotlin.reflect.KProperty
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 
-class ClassInfo(private val constructorFunction: KFunction<*>, private val fields: Map<String, PropertyInfo>, private val hasPolymorphisms: Boolean) : NodeInfo {
+class DeserializerClassImpl(private val constructorFunction: KFunction<*>, private val fields: Map<String, PropertyInfo>, private val hasPolymorphisms: Boolean) : DeserializerClass {
 
-	fun <T: Any>getObject(entries: List<JsonEntry>): T {
+	class PolymorphInfo(val sourceField: String, val inheritClasses: Map<Any, Deserializer>)
+
+	class PropertyInfo(/*val fieldName: String, */val property: KProperty<*>, val constructorParameter: KParameter? = null
+					   , val type: DeserializerPrimitiveImpl?
+					   , val customClass: Deserializer? = null
+					   , val polymorphInfo: PolymorphInfo? = null
+	)
+
+	override fun <T: Any>getObject(entries: List<JsonEntry>): T {
 		val info = this
 		val fields = info.fields
 		val hasPolymorphisms = info.hasPolymorphisms
@@ -48,9 +56,9 @@ class ClassInfo(private val constructorFunction: KFunction<*>, private val field
 				} else { // need delay initialization until we know source info
 					val item = delayedInit!![polymorphInfo.sourceField]
 					if (item == null)
-						delayedInit[polymorphInfo.sourceField] = Delayed(Delayed.Data(field, param, jsonItem))
+						delayedInit[polymorphInfo.sourceField] = Delayed(Delayed.Data(/*field, */param, jsonItem))
 					else
-						item.add(Delayed.Data(field, param, jsonItem))
+						item.add(Delayed.Data(/*field, */param, jsonItem))
 				}
 			} else {
 				val value = getValue(jsonItem, param)
@@ -89,7 +97,7 @@ class ClassInfo(private val constructorFunction: KFunction<*>, private val field
 	}
 
 	private class Delayed(val firstItem: Data) {
-		class Data(val field: String, val propertyInfo: PropertyInfo, val json: JsonItem)
+		class Data(/*val field: String, */val propertyInfo: PropertyInfo, val json: JsonItem)
 
 		var items: MutableList<Data>? = null
 		fun add(item: Data) {

@@ -7,8 +7,8 @@ import iris.json.JsonItem
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 
-class ListInfo(val type: NodeInfo) : NodeInfo {
-	fun getObject(items: List<JsonItem>): Collection<*> {
+class DeserializerCollectionImpl(val type: Deserializer) : DeserializerCollection {
+	override fun getObject(items: Collection<JsonItem>): Collection<*> {
 		val res = mutableListOf<Any?>()
 		for (item in items)
 			res.add(item.asObject(type))

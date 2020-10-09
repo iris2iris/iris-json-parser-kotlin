@@ -2,8 +2,8 @@ package iris.json.plain
 
 import iris.json.IrisJson
 import iris.json.JsonValue
-import iris.json.serialization.NodeInfo
-import iris.json.serialization.TypeInfo
+import iris.json.serialization.Deserializer
+import iris.json.serialization.DeserializerPrimitiveImpl
 import iris.sequence.*
 
 /**
@@ -126,8 +126,8 @@ class IrisJsonValue(private val data: IrisSequence, private val valueType: IrisJ
 		return ready
 	}
 
-	override fun <T : Any> asObject(info: NodeInfo): T {
-		return (info as TypeInfo).getValue(this) as T
+	override fun <T : Any> asObject(info: Deserializer): T {
+		return (info as DeserializerPrimitiveImpl).getValue(this) as T
 	}
 
 	override fun isPrimitive() = true

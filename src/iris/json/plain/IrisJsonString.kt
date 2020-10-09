@@ -1,7 +1,7 @@
 package iris.json.plain
 
 import iris.json.JsonString
-import iris.json.serialization.NodeInfo
+import iris.json.serialization.Deserializer
 import iris.sequence.IrisSequence
 
 /**
@@ -89,7 +89,7 @@ class IrisJsonString(private val data: IrisSequence) : IrisJsonItem(), JsonStrin
 		return ready
 	}
 
-	override fun <T : Any> asObject(info: NodeInfo): T {
+	override fun <T : Any> asObject(info: Deserializer): T {
 		return return obj() as T
 	}
 

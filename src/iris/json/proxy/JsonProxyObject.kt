@@ -5,7 +5,7 @@ import iris.json.JsonItem
 import iris.json.JsonObject
 import iris.json.plain.IrisJsonItem
 import iris.json.plain.IrisJsonNull
-import iris.json.serialization.NodeInfo
+import iris.json.serialization.Deserializer
 
 /**
  * @created 26.09.2020
@@ -39,7 +39,7 @@ class JsonProxyObject(private val map: Map<String, Any?>) : JsonProxyItem(map), 
 		return map
 	}
 
-	override fun <T : Any> asObject(info: NodeInfo): T {
+	override fun <T : Any> asObject(info: Deserializer): T {
 		return map as T
 	}
 

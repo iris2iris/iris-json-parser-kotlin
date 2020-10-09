@@ -1,7 +1,7 @@
 package iris.json.plain
 
 import iris.json.JsonItem
-import iris.json.serialization.SerializationCache
+import iris.json.serialization.DeserializerCache
 import kotlin.reflect.KClass
 
 /**
@@ -160,6 +160,6 @@ abstract class IrisJsonItem() : JsonItem {
 	override fun isObject() = false
 
 	override fun <T : Any> asObject(d: KClass<T>): T {
-		return asObject(SerializationCache.getInstance(d))
+		return asObject(DeserializerCache.getDeserializer(d))
 	}
 }

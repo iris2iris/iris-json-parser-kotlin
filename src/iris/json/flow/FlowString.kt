@@ -3,7 +3,7 @@ package iris.json.flow
 import iris.json.JsonString
 import iris.json.plain.IrisJsonItem
 import iris.json.plain.IrisJsonNull
-import iris.json.serialization.NodeInfo
+import iris.json.serialization.Deserializer
 import iris.sequence.IrisSequence
 
 /**
@@ -96,7 +96,7 @@ class FlowString(tokener: Tokener, val quote: Char) : FlowItem(tokener), JsonStr
 		return ready!!
 	}
 
-	override fun <T : Any> asObject(info: NodeInfo): T {
+	override fun <T : Any> asObject(info: Deserializer): T {
 		return obj() as T
 	}
 
