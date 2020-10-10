@@ -71,7 +71,7 @@ abstract class TokenerAbstractWithSequence() : Tokener {
 		return Tokener.PrimitiveData(seq.finish(), curType)
 	}
 
-	override fun readFieldName(quote: Char): CharSequence {
-			return readString(quote)
+	override fun readFieldName(quote: Char?): CharSequence {
+		return if (quote==null) readPrimitive().sequence else readString(quote)
 	}
 }

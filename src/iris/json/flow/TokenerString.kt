@@ -60,14 +60,22 @@ class TokenerString(source: String) : Tokener {
 			}
 		} while (pointer < len)
 		return IrisSequenceCharArray(source, start, pointer - 1)
-		//return stringCache.convertToString(IrisSequenceCharArray(source, start, pointer - 1))
 	}
 
-	override fun readFieldName(quote: Char): CharSequence {
-		val seq = readString(quote)
-		return seq
-		//return IrisSequenceCharArray(source, start, pointer - 1)
-		//return stringCache.convertToString(seq)
+	override fun readFieldName(quote: Char?): CharSequence {
+		//val seq = readString(quote)
+		return if (quote == null) readQuotelessFieldName() else readString(quote)
+	}
+
+	private fun readQuotelessFieldName(): CharSequence {
+		val first = pointer
+		val len = source.size
+		do {
+			if (!(source[pointer] in '0'..'9' || source[pointer] in 'a'..'z' || source[pointer] in 'A'..'Z'))
+				break
+			pointer++
+		} while (pointer < len)
+		return IrisSequenceCharArray(source, first, pointer)
 	}
 
 	override fun readPrimitive(): Tokener.PrimitiveData {
@@ -75,13 +83,20 @@ class TokenerString(source: String) : Tokener {
 		val first = pointer
 		val len = source.size
 		loop@ do {
-			val char = source[pointer]
+			/*val char = source[pointer]
 			when {
 				char.isDigit() -> {
 				}
 				char == '-' -> if (first != pointer) curType = IrisJson.ValueType.Constant
 				char == '.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
 				char.isLetter() -> curType = IrisJson.ValueType.Constant
+				else -> break@loop
+			}*/
+			when (source[pointer]) {
+				in '0'..'9' -> {}
+				'-' -> if (first != pointer) curType = IrisJson.ValueType.Constant
+				'.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
+				in 'a'..'z', in 'A'..'Z' -> curType = IrisJson.ValueType.Constant
 				else -> break@loop
 			}
 			pointer++

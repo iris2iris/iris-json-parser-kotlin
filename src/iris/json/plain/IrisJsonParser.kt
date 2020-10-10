@@ -124,15 +124,22 @@ class IrisJsonParser(source: String) {
 			skipWhitespaces()
 			char = source[pointer++]
 		}
-		if (!(char == '"' || char == '\''))
-			throw IllegalArgumentException("\" (quote) or \"'\" was expected in position $pointer\n" + getPlace())
-
-		val start = pointer
-		// ключ
-		readString(char)
-		val end = pointer - 1
-		return IrisSequenceCharArray(source, start, end)
-		//return String(source, start, end - start)
+		if (!(char == '"' || char == '\'')) {
+			if (char in 'a'..'z' || char in 'A'..'Z') {
+				val start = pointer - 1
+				// ключ
+				readPrimitive()
+				val end = pointer
+				return IrisSequenceCharArray(source, start, end)
+			} else
+				throw IllegalArgumentException("\" (quote) or \"'\" was expected in position $pointer\n" + getPlace())
+		} else {
+			val start = pointer
+			// ключ
+			readString(char)
+			val end = pointer - 1
+			return IrisSequenceCharArray(source, start, end)
+		}
 	}
 
 	private fun readArray(): IrisJsonArray {
@@ -175,8 +182,9 @@ class IrisJsonParser(source: String) {
 	private fun readString(quote: Char) {
 		var escaping = false
 		val len = source.size
+		var char: Char
 		do {
-			val char = source[pointer++]
+			char = source[pointer++]
 			if (char == '\\')
 				escaping = true
 			else if (escaping) {
@@ -192,12 +200,11 @@ class IrisJsonParser(source: String) {
 		val first = pointer
 		val len = source.size
 		loop@ do {
-			val char = source[pointer]
-			when {
-				char.isDigit() -> {}
-				char == '-' -> if (first != pointer) curType = IrisJson.ValueType.Constant
-				char == '.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
-				char.isLetter() -> curType = IrisJson.ValueType.Constant
+			when (source[pointer]) {
+				in '0'..'9' -> {}
+				'-' -> if (first != pointer) curType = IrisJson.ValueType.Constant
+				'.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
+				in 'a'..'z', in 'A'..'Z' -> curType = IrisJson.ValueType.Constant
 				else -> break@loop
 			}
 			pointer++

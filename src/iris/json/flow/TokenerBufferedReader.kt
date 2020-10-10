@@ -1,9 +1,7 @@
 package iris.json.flow
 
 import iris.sequence.CharArrayBuilder
-import java.io.File
 import java.io.Reader
-import java.io.StringReader
 
 /**
  * @created 20.09.2020
@@ -52,14 +50,12 @@ class TokenerBufferedReader(private val reader: Reader, private val buffer: Char
 		pointer--
 	}
 
-	private val timpl = TImpl()
+	fun close() {
+		reader.close()
+	}
 
 	override fun sequenceStart(): TokenSequence {
 		return TImpl()
-	}
-
-	fun close() {
-		reader.close()
 	}
 
 	private class TImpl : TokenSequence {
@@ -72,15 +68,6 @@ class TokenerBufferedReader(private val reader: Reader, private val buffer: Char
 
 		override fun append(char: Char) {
 			buff.append(char)
-		}
-	}
-
-	companion object {
-		@JvmStatic
-		fun main(args: Array<String>) {
-			val text = File("test.json").readText()
-			val t = JsonFlowParser.start(TokenerBufferedReader(StringReader(text)))
-			println(t.obj())
 		}
 	}
 }

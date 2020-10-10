@@ -38,9 +38,9 @@ class FlowString(tokener: Tokener, val quote: Char) : FlowItem(tokener), JsonStr
 
 	private fun init(): String {
 		parse()
-		val res = StringBuilder()
 		val data = data!!
 		val len = data.length
+		val res = StringBuilder(len)
 		if (len == 0)
 			return ""
 		var isEscape = false
@@ -81,9 +81,8 @@ class FlowString(tokener: Tokener, val quote: Char) : FlowItem(tokener), JsonStr
 		return if (fromIndex == 0) // no any escape
 			data.toString()
 		else {
-			if (fromIndex != len) {
+			if (fromIndex != len)
 				res.append(data, fromIndex, len)
-			}
 			res.toString()
 		}
 	}

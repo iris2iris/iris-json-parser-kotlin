@@ -14,7 +14,7 @@ interface Tokener {
 
 	fun readString(quote: Char): CharSequence
 
-	fun readFieldName(quote: Char): CharSequence
+	fun readFieldName(quote: Char?): CharSequence
 
 	fun readPrimitive(): PrimitiveData
 

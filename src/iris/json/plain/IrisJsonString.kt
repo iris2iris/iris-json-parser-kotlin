@@ -27,11 +27,11 @@ class IrisJsonString(private val data: IrisSequence) : IrisJsonItem(), JsonStrin
 	private var ready: String? = null
 
 	private fun init(): String {
-		val res = StringBuilder()
 		val len = data.length
 		var isEscape = false
 		var fromIndex = 0
 		var i = 0
+		val res = StringBuilder(len)
 		do {
 			val ch = data[i]
 			if (isEscape) {

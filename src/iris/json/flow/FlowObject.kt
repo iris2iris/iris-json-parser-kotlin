@@ -45,7 +45,7 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 	}
 
 	private fun parseNext(): JsonEntry? {
-		var char = tokener.nextChar()
+		var char: Char? = tokener.nextChar()
 		if (char == '}') {
 			isDone = true
 			return null
@@ -53,8 +53,14 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 		if (char == ',') {
 			char = tokener.nextChar()
 		}
-		if (!(char == '"' || char == '\''))
-			throw tokener.exception("\" (quote) or \"'\" was expected")
+		if (!(char == '"' || char == '\'')) {
+			if (char in 'a'..'z' || char in 'A'..'Z') {
+				char = null
+				tokener.back()
+			} else
+				throw tokener.exception("\" (quote) or \"'\" was expected")
+		}
+
 
 		val key = tokener.readFieldName(char)
 		char = tokener.nextChar()
@@ -135,6 +141,7 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 	}
 
 	override fun getEntries(): Collection<JsonEntry> {
+		parse()
 		return entries
 	}
 

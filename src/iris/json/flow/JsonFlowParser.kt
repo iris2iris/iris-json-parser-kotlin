@@ -34,16 +34,12 @@ object JsonFlowParser {
 			else -> throw source.exception("Character: \"$char\"")
 		}
 
-		if (type == IrisJson.Type.Value) { // primitives
-			source.back()
-			return FlowValue(source)
-		} else if (type == IrisJson.Type.Object) {
-			return FlowObject(source)
-		} else if (type == IrisJson.Type.String) {
-			return FlowString(source, char)
-		} else if (type == IrisJson.Type.Array) {
-			return FlowArray(source)
-		} else
-			throw source.exception("$type not realised yet")
+		return when (type) {
+			IrisJson.Type.Value -> { source.back(); FlowValue(source) }
+			IrisJson.Type.Object -> FlowObject(source)
+			IrisJson.Type.String -> FlowString(source, char)
+			IrisJson.Type.Array -> FlowArray(source)
+			else -> throw source.exception("$type not realised yet")
+		}
 	}
 }
