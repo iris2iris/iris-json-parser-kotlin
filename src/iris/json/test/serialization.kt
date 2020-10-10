@@ -3,9 +3,7 @@ package iris.json.test
 import iris.json.JsonItem
 import iris.json.asObject
 import iris.json.plain.IrisJsonParser
-import iris.json.serialization.JsonField
-import iris.json.serialization.PolymorphCaseString
-import iris.json.serialization.PolymorphData
+import iris.json.serialization.*
 
 /**
  * @created 08.10.2020
@@ -53,6 +51,39 @@ fun main() {
 	testMap(); println()
 	testJsonItem(); println()
 	testDefinedJsonField(); println()
+	testRegisteredDeserializer(); println()
+}
+
+class EnumDeserializer : DeserializerPrimitive {
+
+	enum class YesNoEnum(val value: String) {
+		Yes("yes"), No("no")
+	}
+
+	override fun getValue(item: JsonItem): Any? {
+		return deserialize(item)
+	}
+
+	override fun <T> deserialize(item: JsonItem): T {
+		return when(item.asString()) {
+			"yes" -> YesNoEnum.Yes
+			"no" -> YesNoEnum.No
+			else -> null
+		} as T
+	}
+}
+
+fun testRegisteredDeserializer() {
+	println("testRegisteredDeserializer:")
+	DeserializerFactory.registerDeserializer(EnumDeserializer.YesNoEnum::class, EnumDeserializer())
+	val parser = IrisJsonParser("""
+		{ 
+			"drunk": "yes",
+			"enough": "no" 
+		}""".trimMargin())
+	val item = parser.parse()
+	val list = item.asObject<Map<String, EnumDeserializer.YesNoEnum>>()
+	println(list)
 }
 
 fun testDefinedJsonField() {

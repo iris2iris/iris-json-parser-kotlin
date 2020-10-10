@@ -4,6 +4,7 @@
 - `Deserializer` reformat. `JsonItem` instances now don't need to know deserializers types except `Deserializer` itself.
 - `@JsonField` support to let json-fields be named in other way than in deserialized object
 - Added `DeserializerJsonItem` to support instances of `JsonItem`
+- `DeserializerFactory.registerDeserializer()` added to register custom deserializers
 
 ## v0.5.1
 - Deserialization improvements

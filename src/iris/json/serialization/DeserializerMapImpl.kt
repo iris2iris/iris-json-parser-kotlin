@@ -15,7 +15,7 @@ class DeserializerMapImpl(val valueDeserializer: Deserializer) : DeserializerMap
 		}
 	}
 
-	override fun <T : Any> deserialize(item: JsonItem): T {
+	override fun <T> deserialize(item: JsonItem): T {
 		return getMap<Map<String, *>>((item as JsonObject).getEntries()) as T
 	}
 }

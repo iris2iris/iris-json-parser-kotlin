@@ -7,7 +7,7 @@ import iris.json.JsonItem
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 class DeserializerJsonItem : Deserializer {
-	override fun <T : Any> deserialize(item: JsonItem): T {
+	override fun <T> deserialize(item: JsonItem): T {
 		return item as T
 	}
 }

@@ -25,7 +25,7 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 					   , val polymorphInfo: PolymorphInfo? = null
 	)
 
-	override fun <T : Any> deserialize(item: JsonItem): T {
+	override fun <T> deserialize(item: JsonItem): T {
 		return getObject((item as JsonObject).getEntries())
 	}
 

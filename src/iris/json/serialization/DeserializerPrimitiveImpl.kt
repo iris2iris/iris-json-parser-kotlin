@@ -56,24 +56,24 @@ class DeserializerPrimitiveImpl(val type: Type) : DeserializerPrimitive {
 		}
 	}
 
-	override fun <T : Any> deserialize(item: JsonItem): T {
+	override fun <T> deserialize(item: JsonItem): T {
 		return getValue(item) as T
 	}
 
-	override fun getValue(value: JsonItem): Any? {
+	override fun getValue(item: JsonItem): Any? {
 		return when (type) {
-			Type.INTEGER -> value.asIntOrNull()
-			Type.LONG -> value.asLongOrNull()
-			Type.DOUBLE -> value.asDoubleOrNull()
-			Type.FLOAT ->  value.asFloatOrNull()
-			Type.BOOLEAN ->  value.asBooleanOrNull()
-			Type.STRING ->  value.asStringOrNull()
-			Type.DATE ->  when (val obj = value.obj()) {
+			Type.INTEGER -> item.asIntOrNull()
+			Type.LONG -> item.asLongOrNull()
+			Type.DOUBLE -> item.asDoubleOrNull()
+			Type.FLOAT ->  item.asFloatOrNull()
+			Type.BOOLEAN ->  item.asBooleanOrNull()
+			Type.STRING ->  item.asStringOrNull()
+			Type.DATE ->  when (val obj = item.obj()) {
 				is Number -> Date(obj.toLong()*1000L)
 				is String -> format.parse(obj)
 				else -> obj
 			}
-			//else -> value.obj()
+			//else -> item.obj()
 		}
 	}
 }

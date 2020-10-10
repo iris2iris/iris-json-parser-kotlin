@@ -7,5 +7,5 @@ import iris.json.JsonItem
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 internal interface DeserializerPrimitive : Deserializer {
-	fun getValue(value: JsonItem): Any?
+	fun getValue(item: JsonItem): Any?
 }

@@ -16,7 +16,7 @@ class DeserializerCollectionImpl(val typeDeserializer: Deserializer) : Deseriali
 		return res
 	}
 
-	override fun <T : Any> deserialize(item: JsonItem): T {
+	override fun <T> deserialize(item: JsonItem): T {
 		return getObject((item as JsonArray).getList()) as T
 	}
 }

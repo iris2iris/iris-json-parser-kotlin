@@ -7,6 +7,6 @@ import iris.json.JsonItem
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 interface Deserializer {
-	fun <T: Any>deserialize(item: JsonItem): T
+	fun <T>deserialize(item: JsonItem): T
 }
 

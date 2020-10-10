@@ -1,6 +1,6 @@
 package iris.json
 
-import iris.json.serialization.DeserializerCache
+import iris.json.serialization.DeserializerFactory
 import kotlin.reflect.typeOf
 
 /**
@@ -67,6 +67,6 @@ interface JsonItem {
 }
 
 inline fun <reified T>JsonItem.asObject(): T {
-	val deserializer = DeserializerCache.getDeserializer(typeOf<T>())
+	val deserializer = DeserializerFactory.getDeserializer(typeOf<T>())
 	return deserializer.deserialize(this)
 }

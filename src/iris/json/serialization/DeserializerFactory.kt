@@ -12,12 +12,30 @@ import kotlin.reflect.jvm.jvmErasure
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 
-object DeserializerCache {
+object DeserializerFactory {
 	private val cache = mutableMapOf<KClass<*>, Deserializer>()
 	private val typeCache = mutableMapOf<KType, Deserializer>()
 
 	fun getDeserializer(d: KClass<*>): Deserializer {
 		return cache.getOrPut(d) { buildInstance(d) }
+	}
+
+	fun registerDeserializer(d: KClass<*>, deserializer: Deserializer, force: Boolean = false) {
+		cache[d] = deserializer
+		val supers = d.superclasses
+		if (supers.isEmpty())
+			return
+		val lastDes = if (force) null else cache[supers.last()]
+		if (lastDes == null) {
+			for (c in supers)
+				cache[c] = deserializer
+		} else {
+			for (c in supers) {
+				if (cache.contains(c))
+					break
+				cache[c] = deserializer
+			}
+		}
 	}
 
 	fun getDeserializer(type: KType): Deserializer {
@@ -43,7 +61,7 @@ object DeserializerCache {
 	private fun getMapType(type: KType): KType {
 		val (key, value) = type.arguments
 		if (!key.type!!.isSubtypeOf(CharSequence::class.starProjectedType))
-			throw IllegalStateException("Map key cannot be not CharSequence inherited")
+			throw IllegalStateException("Map key cannot be non CharSequence inherited")
 		return value.type!!
 	}
 
