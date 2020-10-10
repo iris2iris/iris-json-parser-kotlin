@@ -1,7 +1,6 @@
 package iris.json.plain
 
 import iris.json.JsonNull
-import iris.json.serialization.Deserializer
 
 /**
  * @created 14.04.2020
@@ -32,10 +31,6 @@ open class IrisJsonNull : IrisJsonItem(), JsonNull {
 
 	override fun toString(): String {
 		return "null"
-	}
-
-	override fun <T : Any> asObject(info: Deserializer): T {
-		return null as T
 	}
 
 	override fun isNull() = true

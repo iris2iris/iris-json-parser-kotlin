@@ -1,5 +1,6 @@
 package iris.json.serialization
 
+import iris.json.JsonItem
 import iris.json.serialization.DeserializerClassImpl.PolymorphInfo
 import iris.json.serialization.DeserializerClassImpl.PropertyInfo
 import kotlin.reflect.*
@@ -25,15 +26,17 @@ object DeserializerCache {
 				?.let {
 					return@getOrPut it
 				}
-			val kClass = type.jvmErasure
-			when {
-				kClass.isSubclassOf(Collection::class) ->
-					DeserializerCollectionImpl(getDeserializer(type.arguments.firstOrNull()?.type?: throw IllegalStateException("Don't know how I got here")))
-				kClass.isSubclassOf(Map::class) ->
-					DeserializerMapImpl(getDeserializer(getMapType(type)))
-				else ->
-					getDeserializer(kClass)
-			}
+
+			with(type.jvmErasure) { when {
+					isSubclassOf(Collection::class) ->
+						DeserializerCollectionImpl(getDeserializer(type.arguments.firstOrNull()?.type?: throw IllegalStateException("Don't know how I got here")))
+					isSubclassOf(Map::class) ->
+						DeserializerMapImpl(getDeserializer(getMapType(type)))
+					isSubclassOf(JsonItem::class) ->
+						DeserializerJsonItem()
+					else ->
+						getDeserializer(this)
+			}}
 		}
 	}
 
@@ -49,18 +52,22 @@ object DeserializerCache {
 		val constructorInfo = getFieldsOrder(d.constructors)
 		val (constr, constructorFields) = constructorInfo
 
-		val fieldsList = d.memberProperties.associateTo(mutableMapOf()) {
-			val name = it.name
-			val p = getProperty(it, constructorFields.find { it.name == name })
+		val mProperties = d.memberProperties
+		val fieldsList = mProperties.associateTo(HashMap(mProperties.size)) { property ->
+			val objectItemName = property.name
+			val jsonItemName = property.findAnnotation<JsonField>()?.name
+					?.let { t -> if(t.isNotEmpty()) t else objectItemName }
+					?: objectItemName
+			val p = getPropertyInfo(property, constructorFields.find { it.name == objectItemName })
 			if (!hasPolymorphies && p.polymorphInfo != null)
 				hasPolymorphies = true
-			name to p
+			jsonItemName to p
 		}
 
 		return DeserializerClassImpl(constr, fieldsList, hasPolymorphies)
 	}
 
-	private fun getProperty(it: KProperty<*>, constructorParameter: KParameter?): PropertyInfo {
+	private fun getPropertyInfo(it: KProperty<*>, constructorParameter: KParameter?): PropertyInfo {
 		val tType = DeserializerPrimitiveImpl.convertType(it.returnType, null)
 		var type: DeserializerPrimitiveImpl? = null
 		var inheritInfo: PolymorphInfo? = null

@@ -1,5 +1,6 @@
 package iris.json.serialization
 
+import iris.json.JsonArray
 import iris.json.JsonItem
 
 /**
@@ -7,11 +8,15 @@ import iris.json.JsonItem
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 
-class DeserializerCollectionImpl(val type: Deserializer) : DeserializerCollection {
+class DeserializerCollectionImpl(val typeDeserializer: Deserializer) : DeserializerCollection {
 	override fun getObject(items: Collection<JsonItem>): Collection<*> {
 		val res = mutableListOf<Any?>()
 		for (item in items)
-			res.add(item.asObject(type))
+			res.add(typeDeserializer.deserialize(item))
 		return res
+	}
+
+	override fun <T : Any> deserialize(item: JsonItem): T {
+		return getObject((item as JsonArray).getList()) as T
 	}
 }

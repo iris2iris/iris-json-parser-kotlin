@@ -2,6 +2,7 @@ package iris.json.serialization
 
 import iris.json.JsonEntry
 import iris.json.JsonItem
+import iris.json.JsonObject
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.reflect.KFunction
@@ -24,7 +25,11 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 					   , val polymorphInfo: PolymorphInfo? = null
 	)
 
-	override fun <T: Any>getObject(entries: List<JsonEntry>): T {
+	override fun <T : Any> deserialize(item: JsonItem): T {
+		return getObject((item as JsonObject).getEntries())
+	}
+
+	override fun <T: Any>getObject(entries: Collection<JsonEntry>): T {
 		val info = this
 		val fields = info.fields
 		val hasPolymorphisms = info.hasPolymorphisms
@@ -48,7 +53,7 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 				val sourceValue = result!![polymorphInfo.sourceField]
 				if (sourceValue != null) { // already know what type is it
 					val inherit = polymorphInfo.inheritClasses[sourceValue]!!
-					val newValue: Any? = jsonItem.asObject(inherit)
+					val newValue: Any? = inherit.deserialize(jsonItem)//jsonItem.asObject(inherit)
 					result[field] = newValue
 					param.constructorParameter?.let { constructorMap[it] = newValue }
 							?: run { otherFields += param.property to newValue }
@@ -68,7 +73,7 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 						val item = delayed.firstItem
 						val property = item.propertyInfo
 						val inherit = property.polymorphInfo!!.inheritClasses[value]!!
-						val newValue: Any = item.json.asObject(inherit)
+						val newValue: Any = inherit.deserialize(item.json)//.asObject(inherit)
 						item.propertyInfo.constructorParameter?.let { constructorMap[it] = newValue }
 								?: run { otherFields += property.property to newValue }
 
@@ -76,7 +81,7 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 							for (item in delayed.items!!) {
 								val property = item.propertyInfo
 								val inherit = property.polymorphInfo!!.inheritClasses[value]!!
-								val newValue: Any = item.json.asObject(inherit)
+								val newValue: Any = inherit.deserialize(item.json)//.asObject(inherit)
 								item.propertyInfo.constructorParameter?.let { constructorMap[it] = newValue }
 										?: run { otherFields += property.property to newValue }
 							}
@@ -113,7 +118,7 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 		}
 
 		property.customClass?.let {
-			return value.asObject(it)
+			return it.deserialize(value)
 		}
 		throw IllegalStateException("How we got here?")
 	}

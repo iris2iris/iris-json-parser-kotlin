@@ -8,5 +8,5 @@ package iris.json
 typealias JsonEntry = Pair<CharSequence, JsonItem>
 
 interface JsonObject: JsonItem, Iterable<JsonEntry> {
-	//class Entry(val key: CharSequence, val value: JsonItem)
+	fun getEntries(): Collection<JsonEntry>
 }

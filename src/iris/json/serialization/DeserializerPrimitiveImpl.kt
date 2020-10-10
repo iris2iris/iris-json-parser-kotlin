@@ -28,7 +28,7 @@ class DeserializerPrimitiveImpl(val type: Type) : DeserializerPrimitive {
 
 		private val format = SimpleDateFormat("YYYY-MM-dd HH:mm:ss")
 
-		fun convertType(s: KType, fieldData: Field?): DeserializerPrimitiveImpl? {
+		fun convertType(s: KType, fieldData: JsonField?): DeserializerPrimitiveImpl? {
 			return if (fieldData?.type.isNullOrBlank()) {
 				when (s.javaType.typeName) {
 					"java.util.Date" -> DATE
@@ -42,18 +42,22 @@ class DeserializerPrimitiveImpl(val type: Type) : DeserializerPrimitive {
 				}
 			} else {
 				when (fieldData!!.type) {
-					"datetime" -> DATE
-					"date" -> DATE
-					"integer", "int" -> INTEGER
-					"long" -> LONG
-					"double" -> DOUBLE
-					"float" -> FLOAT
-					"bool", "boolean" -> BOOLEAN
-					"string", "text" -> STRING
+					"Datetime" -> DATE
+					"Date" -> DATE
+					"Integer", "Int" -> INTEGER
+					"Long" -> LONG
+					"Double" -> DOUBLE
+					"Float" -> FLOAT
+					"bool", "Boolean" -> BOOLEAN
+					"String", "Text" -> STRING
 					else -> null
 				}
 			}
 		}
+	}
+
+	override fun <T : Any> deserialize(item: JsonItem): T {
+		return getValue(item) as T
 	}
 
 	override fun getValue(value: JsonItem): Any? {

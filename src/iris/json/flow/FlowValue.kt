@@ -4,8 +4,6 @@ import iris.json.IrisJson
 import iris.json.JsonValue
 import iris.json.plain.IrisJsonItem
 import iris.json.plain.IrisJsonNull
-import iris.json.serialization.Deserializer
-import iris.json.serialization.DeserializerPrimitive
 import iris.sequence.*
 
 /**
@@ -37,8 +35,8 @@ class FlowValue(tokener: Tokener) : FlowItem(tokener), JsonValue {
 		return when (data.type) {
             IrisJson.ValueType.Constant -> when (s) {
                 "null" -> null
-                "true" -> true
-                "false" -> false
+                "true", "1" -> true
+                "false", "0" -> false
                 else -> s.toString()
             }
             IrisJson.ValueType.Integer -> s.toLong()
@@ -142,11 +140,6 @@ class FlowValue(tokener: Tokener) : FlowItem(tokener), JsonValue {
 		if (data != null)
 			return
 		data = this.tokener.readPrimitive()
-	}
-
-	override fun <T : Any> asObject(info: Deserializer): T {
-		parse()
-		return (info as DeserializerPrimitive).getValue(this) as T
 	}
 
 	override fun isPrimitive() = true

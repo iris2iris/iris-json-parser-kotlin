@@ -1,7 +1,9 @@
 package iris.json.test
 
+import iris.json.JsonItem
 import iris.json.asObject
 import iris.json.plain.IrisJsonParser
+import iris.json.serialization.JsonField
 import iris.json.serialization.PolymorphCaseString
 import iris.json.serialization.PolymorphData
 
@@ -36,6 +38,11 @@ data class ListedClass(val listed: List<Male>)
 data class ListedInt(val listed: List<Int>)
 data class ListedListInt(val listed: List<List<Int>>)
 
+data class DefinedJsonField(
+	@JsonField(name = "object")
+	val obj: String
+)
+
 fun main() {
 	testUser(); println()
 	testListInt(); println()
@@ -44,6 +51,29 @@ fun main() {
 	testPureList(); println()
 	testPrimitive(); println()
 	testMap(); println()
+	testJsonItem(); println()
+	testDefinedJsonField(); println()
+}
+
+fun testDefinedJsonField() {
+	println("testDefinedJsonField:")
+	val parser = IrisJsonParser("""{ 
+		"object": "Other field name" 
+		}""".trimMargin())
+	val item = parser.parse()
+	val list = item.asObject<DefinedJsonField>()
+	println(list)
+}
+
+fun testJsonItem() {
+	println("testJsonItem:")
+	val parser = IrisJsonParser("""{ 
+		|"person1": {"name": "Akbar", "age": 35, "cashAmount": 12200.12, "property": {"name": "Домик в деревне"}}, 
+		|"person2": {"name": "Alla Who", "age": 15, "cashAmount": 23232.12, "property": {"name": "В центре высотка"}} 
+		|}""".trimMargin())
+	val item = parser.parse()
+	val list = item.asObject<Map<String, JsonItem>>()
+	println(list)
 }
 
 fun testMap() {

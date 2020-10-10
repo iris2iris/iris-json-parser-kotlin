@@ -3,8 +3,6 @@ package iris.json.flow
 import iris.json.JsonArray
 import iris.json.JsonItem
 import iris.json.proxy.JsonProxyUtil
-import iris.json.serialization.Deserializer
-import iris.json.serialization.DeserializerCollection
 
 /**
  * @created 20.09.2020
@@ -102,6 +100,11 @@ class FlowArray(tokener: Tokener) : FlowItem(tokener), JsonArray {
 		return get(ind)
 	}
 
+	override fun getList(): Collection<JsonItem> {
+		parse()
+		return items
+	}
+
 	override fun set(ind: Int, value: Any?): JsonItem {
 		items[ind] = JsonProxyUtil.wrap(value)
 		val obj = this.obj
@@ -150,10 +153,5 @@ class FlowArray(tokener: Tokener) : FlowItem(tokener), JsonArray {
 		override fun next(): JsonItem {
 			return get(pointer++)
 		}
-	}
-
-	override fun <T : Any> asObject(info: Deserializer): T {
-		parse()
-		return (info as DeserializerCollection).getObject(this.items) as T
 	}
 }

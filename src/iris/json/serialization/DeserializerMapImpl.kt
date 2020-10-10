@@ -1,19 +1,21 @@
 package iris.json.serialization
 
 import iris.json.JsonEntry
+import iris.json.JsonItem
+import iris.json.JsonObject
 
 /**
  * @created 09.10.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 class DeserializerMapImpl(val valueDeserializer: Deserializer) : DeserializerMap {
-	override fun <T> getMap(entries: List<JsonEntry>): Map<String, T> {
+	override fun <T> getMap(entries: Collection<JsonEntry>): Map<String, T> {
 		return entries.associate {(key, value) ->
-			key.toString() to (value.asObject(valueDeserializer) as T)
+			key.toString() to (valueDeserializer.deserialize(value) as T)
 		}
 	}
 
-	override fun <T: Any> getObject(entries: List<JsonEntry>): T {
-		return getMap<Map<String, *>>(entries) as T
+	override fun <T : Any> deserialize(item: JsonItem): T {
+		return getMap<Map<String, *>>((item as JsonObject).getEntries()) as T
 	}
 }

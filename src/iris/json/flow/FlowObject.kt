@@ -5,8 +5,6 @@ import iris.json.JsonItem
 import iris.json.JsonObject
 import iris.json.plain.IrisJsonNull
 import iris.json.proxy.JsonProxyUtil
-import iris.json.serialization.Deserializer
-import iris.json.serialization.DeserializerClass
 import java.util.*
 
 /**
@@ -136,9 +134,8 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 		return buffer
 	}
 
-	override fun <T : Any> asObject(info: Deserializer): T {
-		parse()
-		return (info as DeserializerClass).getObject(entries)
+	override fun getEntries(): Collection<JsonEntry> {
+		return entries
 	}
 
 	override fun isObject() = true

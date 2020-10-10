@@ -1,7 +1,6 @@
 package iris.json.plain
 
 import iris.json.JsonString
-import iris.json.serialization.Deserializer
 import iris.sequence.IrisSequence
 
 /**
@@ -25,7 +24,7 @@ class IrisJsonString(private val data: IrisSequence) : IrisJsonItem(), JsonStrin
 		return IrisJsonNull.Null
 	}
 
-	private var ready: String? = null// by lazy(LazyThreadSafetyMode.NONE) { init() }
+	private var ready: String? = null
 
 	private fun init(): String {
 		val res = StringBuilder()
@@ -87,10 +86,6 @@ class IrisJsonString(private val data: IrisSequence) : IrisJsonItem(), JsonStrin
 		if (ready == null)
 			ready = init()
 		return ready
-	}
-
-	override fun <T : Any> asObject(info: Deserializer): T {
-		return return obj() as T
 	}
 
 	override fun isPrimitive() = true

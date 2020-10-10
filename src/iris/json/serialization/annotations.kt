@@ -7,7 +7,7 @@ import kotlin.reflect.KClass
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 @Target(AnnotationTarget.PROPERTY)
-annotation class Field(val name: String = "", val type: String = "")
+annotation class JsonField(val name: String = "", val type: String = "")
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class PolymorphCaseString(val label: String, val instance: KClass<*>)

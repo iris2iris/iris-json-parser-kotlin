@@ -3,8 +3,6 @@ package iris.json.plain
 import iris.json.JsonArray
 import iris.json.JsonItem
 import iris.json.proxy.JsonProxyUtil
-import iris.json.serialization.Deserializer
-import iris.json.serialization.DeserializerCollectionImpl
 
 /**
  * @created 14.04.2020
@@ -26,6 +24,10 @@ class IrisJsonArray(private val items: List<IrisJsonItem>) : IrisJsonItem(), Jso
 	override fun get(key: String): IrisJsonItem {
 		val ind = key.toInt()
 		return get(ind)
+	}
+
+	override fun getList(): Collection<JsonItem> {
+		return items
 	}
 
 	override fun set(ind: Int, value: Any?): JsonItem {
@@ -74,9 +76,5 @@ class IrisJsonArray(private val items: List<IrisJsonItem>) : IrisJsonItem(), Jso
 			pointer++
 			return item
 		}
-	}
-
-	override fun <T : Any> asObject(info: Deserializer): T {
-		return (info as DeserializerCollectionImpl).getObject(this.items) as T
 	}
 }

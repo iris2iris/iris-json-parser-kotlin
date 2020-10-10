@@ -2,8 +2,6 @@ package iris.json.plain
 
 import iris.json.IrisJson
 import iris.json.JsonValue
-import iris.json.serialization.Deserializer
-import iris.json.serialization.DeserializerPrimitiveImpl
 import iris.sequence.*
 
 /**
@@ -30,11 +28,12 @@ class IrisJsonValue(private val data: IrisSequence, private val valueType: IrisJ
 
 	private fun init(): Any? {
 		val s = data
+
 		return when (valueType) {
 			IrisJson.ValueType.Constant -> when (s as CharSequence) {
 				"null" -> null
-				"true" -> true
-				"false" -> false
+				"true", "1" -> true
+				"false", "0" -> false
 				else -> s.toString()
 			}
 			IrisJson.ValueType.Integer -> s.toLong()
@@ -124,10 +123,6 @@ class IrisJsonValue(private val data: IrisSequence, private val valueType: IrisJ
 		ready = init()
 		done = true
 		return ready
-	}
-
-	override fun <T : Any> asObject(info: Deserializer): T {
-		return (info as DeserializerPrimitiveImpl).getValue(this) as T
 	}
 
 	override fun isPrimitive() = true
