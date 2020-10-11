@@ -17,37 +17,59 @@ import kotlin.reflect.jvm.jvmErasure
 object DeserializerFactory {
 	private val cache = mutableMapOf<KClass<*>, Deserializer>()
 	private val typeCache = mutableMapOf<KType, Deserializer>()
+	private val anyClass = Any::class
 
 	fun getDeserializer(d: KClass<*>, allowSuperclasses: Boolean = true): Deserializer {
-		return cache.getOrPut(d) {
-			if (allowSuperclasses) {
-				for (supers in d.superclasses)
-					cache[supers]?.let { return@getOrPut it.forSubclass(d) }
+		cache[d]?.let { return it }
+		if (allowSuperclasses) {
+			for (supers in d.superclasses) {
+				if (supers == anyClass) continue
+				cache[supers]?.let {
+					return it.forSubclass(d).also { cache[d] = it }
+				}
 			}
-			DeserializerClassBuilder.build(d)
 		}
+		val deser = DeserializerClassImpl()
+		cache[d] = deser
+		DeserializerClassBuilder.build(d, deser)
+		return deser
 	}
 
 	fun registerDeserializer(d: KClass<*>, deserializer: Deserializer) {
 		cache[d] = deserializer
 	}
 
-	fun getDeserializer(type: KType): Deserializer {
-		return typeCache.getOrPut(type) {
-			DeserializerPrimitiveImpl.convertType(type, null)
-				?.let { return@getOrPut it }
+	fun registerDeserializer(type: KType, deserializer: Deserializer) {
+		typeCache[type] = deserializer
+	}
 
-			with(type.jvmErasure) { when {
-					isSubclassOf(Collection::class) ->
-						DeserializerCollectionImpl(getDeserializer(type.arguments.firstOrNull()?.type?: throw IllegalStateException("Don't know how I got here")))
-					isSubclassOf(Map::class) ->
-						DeserializerMapImpl(getDeserializer(getMapType(type)))
-					isSubclassOf(JsonItem::class) ->
-						DeserializerJsonItem()
-					else ->
-						getDeserializer(this)
-			}}
-		}
+	fun getDeserializer(type: KType): Deserializer {
+		typeCache[type]
+			?.let { return it }
+
+		DeserializerPrimitiveImpl.convertType(type, null)
+			?.let {
+				return it.also { typeCache[type] = it }
+			}
+
+		return with(type.jvmErasure) { when {
+			isSubclassOf(Collection::class) -> {
+				val deser = DeserializerCollectionImpl()
+				typeCache[type] = deser
+				deser.typeDeserializer = getDeserializer(type.arguments.firstOrNull()?.type?: throw IllegalStateException("Don't know how I got here"))
+				deser
+			}
+			isSubclassOf(Map::class) -> {
+				val deser = DeserializerMapImpl()
+				typeCache[type] = deser
+				deser.valueDeserializer = getDeserializer(getMapType(type))
+				deser
+			}
+			isSubclassOf(JsonItem::class) ->
+				DeserializerJsonItem()
+			else ->
+				getDeserializer(this)
+		}}
 	}
 
 	private fun getMapType(type: KType): KType {

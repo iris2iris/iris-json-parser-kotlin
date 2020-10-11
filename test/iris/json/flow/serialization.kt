@@ -56,6 +56,40 @@ fun main() {
 	testRegisteredDeserializer(); println()
 	testQuotelessFieldNames(); println()
 	testSubclassRegister(); println()
+	testRecursiveClassFields(); println()
+	testRecursiveGenericClassFields(); println()
+}
+
+fun createJsonItem(text: String): JsonItem {
+	return JsonFlowParser.start(text)
+}
+
+data class RecursiveGenericClass (
+		var inner: List<RecursiveGenericClass>? = null,
+		var someData: String? = null
+)
+
+fun testRecursiveGenericClassFields() {
+	println("testRecursiveGenericClassFields:")
+	val item = createJsonItem("""{ 
+		inner: [{inner: [{someData: "3 level"}], someData: "2 level"}], someData: "1 level"		
+		}""".trimMargin())
+	val list = item.asObject<RecursiveGenericClass>()
+	println(list)
+}
+
+data class RecursiveClass (
+		var inner: RecursiveClass? = null,
+		var someData: String? = null
+)
+
+fun testRecursiveClassFields() {
+	println("testRecursiveClassFields:")
+	val item = createJsonItem("""{ 
+		inner: {inner: {someData: "3 level"}, someData: "2 level"}, someData: "1 level"		
+		}""".trimMargin())
+	val list = item.asObject<RecursiveClass>()
+	println(list)
 }
 
 fun testSubclassRegister() {

@@ -9,7 +9,10 @@ import kotlin.reflect.KClass
  * @created 09.10.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class DeserializerMapImpl(val valueDeserializer: Deserializer) : DeserializerMap {
+class DeserializerMapImpl : DeserializerMap {
+
+	lateinit var valueDeserializer: Deserializer
+
 	override fun <T> getMap(entries: Collection<JsonEntry>): Map<String, T> {
 		return entries.associate {(key, value) ->
 			key.toString() to (valueDeserializer.deserialize(value) as T)

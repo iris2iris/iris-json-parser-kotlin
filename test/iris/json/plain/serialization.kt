@@ -56,6 +56,41 @@ fun main() {
 	testRegisteredDeserializer(); println()
 	testQuotelessFieldNames(); println()
 	testSubclassRegister(); println()
+	testRecursiveClassFields(); println()
+	testRecursiveGenericClassFields(); println()
+}
+
+fun createJsonItem(text: String): JsonItem {
+	val parser = IrisJsonParser(text)
+	return parser.parse()
+}
+
+data class RecursiveGenericClass (
+	var inner: List<RecursiveGenericClass>? = null,
+	var someData: String? = null
+)
+
+fun testRecursiveGenericClassFields() {
+	println("testRecursiveGenericClassFields:")
+	val item = createJsonItem("""{ 
+		inner: [{inner: [{someData: "3 level"}], someData: "2 level"}], someData: "1 level"		
+		}""".trimMargin())
+	val list = item.asObject<RecursiveGenericClass>()
+	println(list)
+}
+
+data class RecursiveClass (
+	var inner: RecursiveClass? = null,
+	var someData: String? = null
+)
+
+fun testRecursiveClassFields() {
+	println("testRecursiveClassFields:")
+	val item = createJsonItem("""{ 
+		inner: {inner: {someData: "3 level"}, someData: "2 level"}, someData: "1 level"		
+		}""".trimMargin())
+	val list = item.asObject<RecursiveClass>()
+	println(list)
 }
 
 fun testSubclassRegister() {
@@ -80,11 +115,10 @@ fun testSubclassRegister() {
 		}
 	})
 
-	val parser = IrisJsonParser("""{ 
+	val item = createJsonItem("""{ 
 		|person1: {"type": "male", name: "Akbar", age: 35, "cashAmount": 12200.12, "property": {"name": "Домик в деревне"}}, 
 		|"person2": {"type": "female","name": "Alla Who", "height": 170, "income": 1214.81}
 		|}""".trimMargin())
-	val item = parser.parse()
 	val list = item.asObject<Map<String, Human>>()
 	println(list)
 }

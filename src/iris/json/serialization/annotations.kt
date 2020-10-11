@@ -15,4 +15,5 @@ annotation class PolymorphCaseString(val label: String, val instance: KClass<*>)
 @Target(AnnotationTarget.PROPERTY)
 annotation class PolymorphCaseInt(val label: Int, val instance: KClass<*>)
 
+@Target(AnnotationTarget.PROPERTY)
 annotation class PolymorphData(val sourceField: String, val strings: Array<PolymorphCaseString> = [], val ints: Array<PolymorphCaseInt> = [])

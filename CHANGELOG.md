@@ -1,5 +1,8 @@
 # Changelog
 
+## v0.5.2.1
+- Important bug fix: Recursive class references to themselves caused Stack overflow exception
+
 ## v0.5.2
 - `Deserializer` reformat. `JsonItem` instances now don't need to know deserializer types except `Deserializer` itself.
 - `@JsonField` support to let json-fields be named in other way than in deserialized object fields

@@ -4,6 +4,7 @@ import iris.json.JsonEntry
 import iris.json.JsonItem
 import iris.json.JsonObject
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.reflect.*
 
@@ -12,7 +13,11 @@ import kotlin.reflect.*
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 
-class DeserializerClassImpl(private val constructorFunction: KFunction<*>, private val fields: Map<String, PropertyInfo>, private val hasPolymorphisms: Boolean) : DeserializerClass {
+class DeserializerClassImpl : DeserializerClass {
+
+	var hasPolymorphisms = false
+	lateinit var fields: Map<String, PropertyInfo>
+	lateinit var constructorFunction: KFunction<*>
 
 	class PolymorphInfo(val sourceField: String, val inheritClasses: Map<Any, Deserializer>)
 
@@ -21,6 +26,8 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 					   , val customClass: Deserializer? = null
 					   , val polymorphInfo: PolymorphInfo? = null
 	)
+
+	class SetterPropertyException(message: String, cause: Throwable) : Throwable(message, cause)
 
 	override fun <T> deserialize(item: JsonItem): T {
 		return getObject((item as JsonObject).getEntries())
@@ -44,8 +51,14 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 			result = null
 		}
 
-		val otherFields = mutableListOf<Pair<KProperty<*>, Any?>>()
-		val constructorMap = HashMap<KParameter, Any?>(info.constructorFunction.parameters.size)
+		val conscructorParametersSize = info.constructorFunction.parameters.size
+		val otherSize = fields.size - conscructorParametersSize
+		val constructorMap = HashMap<KParameter, Any?>(conscructorParametersSize)
+		val otherFields = (if (otherSize == 0)
+			null
+		else
+			ArrayList<Pair<KProperty<*>, Any?>>(fields.size - conscructorParametersSize))
+
 		for ((key, jsonItem) in entries) {
 			val field = key.toString()
 			val param = fields[field]?: continue
@@ -54,10 +67,10 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 				val sourceValue = result!![polymorphInfo.sourceField]
 				if (sourceValue != null) { // already know what type is it
 					val inherit = polymorphInfo.inheritClasses[sourceValue]!!
-					val newValue: Any? = inherit.deserialize(jsonItem)//jsonItem.asObject(inherit)
+					val newValue: Any? = inherit.deserialize(jsonItem)
 					result[field] = newValue
 					param.constructorParameter?.let { constructorMap[it] = newValue }
-							?: run { otherFields += param.property to newValue }
+							?: run { otherFields!! += param.property to newValue }
 
 				} else { // need delay initialization until we know source info
 					val item = delayedInit!![polymorphInfo.sourceField]
@@ -76,7 +89,7 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 						val inherit = property.polymorphInfo!!.inheritClasses[value]!!
 						val newValue: Any = inherit.deserialize(item.json)
 						item.propertyInfo.constructorParameter?.let { constructorMap[it] = newValue }
-								?: run { otherFields += property.property to newValue }
+								?: run { otherFields!! += property.property to newValue }
 
 						if (delayed.items != null) {
 							for (item in delayed.items!!) {
@@ -84,7 +97,7 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 								val inherit = property.polymorphInfo!!.inheritClasses[value]!!
 								val newValue: Any = inherit.deserialize(item.json)
 								item.propertyInfo.constructorParameter?.let { constructorMap[it] = newValue }
-										?: run { otherFields += property.property to newValue }
+										?: run { otherFields!! += property.property to newValue }
 							}
 						}
 					}
@@ -92,12 +105,18 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 				}
 
 				param.constructorParameter?.let { constructorMap[it] = value }
-						?: run{ otherFields += param.property to value }
+						?: run{ otherFields!! += param.property to value }
 			}
 		}
 		val item = info.constructorFunction.callBy(constructorMap) as T
-		for (field in otherFields) {
-			(field.first as KMutableProperty<*>).setter.call(item, field.second)
+		if (otherFields != null) {
+			for (field in otherFields) {
+				try {
+					(field.first as KMutableProperty<*>).setter.call(item, field.second)
+				} catch (e: ClassCastException) {
+					throw SetterPropertyException("Property $field does not have available setter", e)
+				}
+			}
 		}
 		return item
 	}

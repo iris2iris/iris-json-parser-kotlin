@@ -9,9 +9,12 @@ import kotlin.reflect.KClass
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 
-class DeserializerCollectionImpl(val typeDeserializer: Deserializer) : DeserializerCollection {
+class DeserializerCollectionImpl : DeserializerCollection {
+
+	lateinit var typeDeserializer: Deserializer
+
 	override fun getObject(items: Collection<JsonItem>): Collection<*> {
-		val res = mutableListOf<Any?>()
+		val res = ArrayList<Any?>(items.size)
 		for (item in items)
 			res.add(typeDeserializer.deserialize(item))
 		return res

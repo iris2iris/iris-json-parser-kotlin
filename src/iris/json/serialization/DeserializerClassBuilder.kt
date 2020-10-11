@@ -12,9 +12,9 @@ import kotlin.reflect.full.memberProperties
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 object DeserializerClassBuilder {
-	fun build(d: KClass<*>): DeserializerClassImpl {
+	fun build(d: KClass<*>, targetClassImpl: DeserializerClassImpl = DeserializerClassImpl()): DeserializerClassImpl {
 		var hasPolymorphies = false
-		val constructorInfo = getFieldsOrder(d.constructors)
+		val constructorInfo = getBestConstructor(d)
 		val (constr, constructorFields) = constructorInfo
 
 		val mProperties = d.memberProperties
@@ -29,23 +29,28 @@ object DeserializerClassBuilder {
 			jsonItemName to p
 		}
 
-		return DeserializerClassImpl(constr, fieldsList, hasPolymorphies)
+		targetClassImpl.constructorFunction = constr
+		targetClassImpl.fields = fieldsList
+		targetClassImpl.hasPolymorphisms = hasPolymorphies
+		return targetClassImpl
 	}
 
 	private fun getPropertyInfo(it: KProperty<*>, constructorParameter: KParameter?): DeserializerClassImpl.PropertyInfo {
-		val tType = DeserializerPrimitiveImpl.convertType(it.returnType, null)
+
 		var type: DeserializerPrimitiveImpl? = null
 		var inheritInfo: DeserializerClassImpl.PolymorphInfo? = null
 		var innerClass: Deserializer? = null
-		if (tType != null) { // simple type int/string/boolean
-			type = tType
-		} else { // there some complex class
-			val data = it.findAnnotation<PolymorphData>()
-			if (data != null) { // is polymorphic
-				val cases = mutableMapOf<Any, Deserializer>()
-				data.strings.associateTo(cases) { it.label to DeserializerFactory.getDeserializer(it.instance) }
-				data.ints.associateTo(cases) { it.label to DeserializerFactory.getDeserializer(it.instance) }
-				inheritInfo = DeserializerClassImpl.PolymorphInfo(data.sourceField, cases)
+
+		val data = it.findAnnotation<PolymorphData>()
+		if (data != null) { // is polymorphic
+			val cases = mutableMapOf<Any, Deserializer>()
+			data.strings.associateTo(cases) { it.label to DeserializerFactory.getDeserializer(it.instance) }
+			data.ints.associateTo(cases) { it.label to DeserializerFactory.getDeserializer(it.instance) }
+			inheritInfo = DeserializerClassImpl.PolymorphInfo(data.sourceField, cases)
+		} else {
+			val tType = DeserializerPrimitiveImpl.convertType(it.returnType, null)
+			if (tType != null) { // simple type int/string/boolean
+				type = tType
 			} else {
 				innerClass = DeserializerFactory.getDeserializer(it.returnType)
 			}
@@ -54,13 +59,14 @@ object DeserializerClassBuilder {
 		return DeserializerClassImpl.PropertyInfo(/*it.name, */it, constructorParameter, type, innerClass, inheritInfo)
 	}
 
-	private fun getFieldsOrder(constructors: Collection<KFunction<*>>): Pair<KFunction<*>, List<KParameter>> {
-		var best: KFunction<*>? = null
+	private fun getBestConstructor(d: KClass<*>): Pair<KFunction<*>, List<KParameter>> {
+		val constructors = d.constructors
+		if (constructors.isEmpty())
+			throw IllegalArgumentException("No any constructor for $d")
+		var best: KFunction<*> = constructors.first()
 		for (c in constructors)
-			if (best == null || c.parameters.size > best.parameters.size)
+			if (c.parameters.size > best.parameters.size)
 				best = c
-		if (best == null)
-			throw IllegalArgumentException("No any constructor")
 		return best to best.parameters
 	}
 }
