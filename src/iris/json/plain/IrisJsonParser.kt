@@ -6,6 +6,8 @@ import iris.json.flow.TokenerString
 import iris.sequence.IrisSequenceCharArray
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @created 14.04.2020
@@ -52,8 +54,7 @@ class IrisJsonParser(source: String) {
 	}
 
 	private fun getPlace(): String {
-		return ""
-		//return '"' + source.substring(max(0, pointer - 10), min(pointer + 10, source.length - 1)) + '"'
+		return '"' + String(source, max(0, pointer - 10), min(pointer + 10, source.size - 1)) + '"'
 	}
 
 	private fun readObject(): IrisJsonObject {
