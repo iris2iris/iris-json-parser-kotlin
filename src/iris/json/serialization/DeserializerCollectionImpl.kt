@@ -2,6 +2,7 @@ package iris.json.serialization
 
 import iris.json.JsonArray
 import iris.json.JsonItem
+import kotlin.reflect.KClass
 
 /**
  * @created 08.10.2020
@@ -18,5 +19,9 @@ class DeserializerCollectionImpl(val typeDeserializer: Deserializer) : Deseriali
 
 	override fun <T> deserialize(item: JsonItem): T {
 		return getObject((item as JsonArray).getList()) as T
+	}
+
+	override fun forSubclass(d: KClass<*>): Deserializer {
+		return this
 	}
 }

@@ -5,10 +5,7 @@ import iris.json.JsonItem
 import iris.json.JsonObject
 import java.util.*
 import kotlin.collections.HashMap
-import kotlin.reflect.KFunction
-import kotlin.reflect.KMutableProperty
-import kotlin.reflect.KParameter
-import kotlin.reflect.KProperty
+import kotlin.reflect.*
 
 /**
  * @created 08.10.2020
@@ -29,7 +26,11 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 		return getObject((item as JsonObject).getEntries())
 	}
 
-	override fun <T: Any>getObject(entries: Collection<JsonEntry>): T {
+	override fun forSubclass(d: KClass<*>): Deserializer {
+		return this
+	}
+
+	override fun <T>getObject(entries: Collection<JsonEntry>): T {
 		val info = this
 		val fields = info.fields
 		val hasPolymorphisms = info.hasPolymorphisms
@@ -61,9 +62,9 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 				} else { // need delay initialization until we know source info
 					val item = delayedInit!![polymorphInfo.sourceField]
 					if (item == null)
-						delayedInit[polymorphInfo.sourceField] = Delayed(Delayed.Data(/*field, */param, jsonItem))
+						delayedInit[polymorphInfo.sourceField] = Delayed(Delayed.Data(param, jsonItem))
 					else
-						item.add(Delayed.Data(/*field, */param, jsonItem))
+						item.add(Delayed.Data(param, jsonItem))
 				}
 			} else {
 				val value = getValue(jsonItem, param)
@@ -73,7 +74,7 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 						val item = delayed.firstItem
 						val property = item.propertyInfo
 						val inherit = property.polymorphInfo!!.inheritClasses[value]!!
-						val newValue: Any = inherit.deserialize(item.json)//.asObject(inherit)
+						val newValue: Any = inherit.deserialize(item.json)
 						item.propertyInfo.constructorParameter?.let { constructorMap[it] = newValue }
 								?: run { otherFields += property.property to newValue }
 
@@ -81,7 +82,7 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 							for (item in delayed.items!!) {
 								val property = item.propertyInfo
 								val inherit = property.polymorphInfo!!.inheritClasses[value]!!
-								val newValue: Any = inherit.deserialize(item.json)//.asObject(inherit)
+								val newValue: Any = inherit.deserialize(item.json)
 								item.propertyInfo.constructorParameter?.let { constructorMap[it] = newValue }
 										?: run { otherFields += property.property to newValue }
 							}
@@ -102,7 +103,7 @@ class DeserializerClassImpl(private val constructorFunction: KFunction<*>, priva
 	}
 
 	private class Delayed(val firstItem: Data) {
-		class Data(/*val field: String, */val propertyInfo: PropertyInfo, val json: JsonItem)
+		class Data(val propertyInfo: PropertyInfo, val json: JsonItem)
 
 		var items: MutableList<Data>? = null
 		fun add(item: Data) {

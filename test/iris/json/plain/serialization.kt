@@ -3,6 +3,7 @@ package iris.json.plain
 import iris.json.JsonItem
 import iris.json.asObject
 import iris.json.serialization.*
+import kotlin.reflect.KClass
 
 /**
  * @created 08.10.2020
@@ -54,6 +55,38 @@ fun main() {
 	testDefinedJsonField(); println()
 	testRegisteredDeserializer(); println()
 	testQuotelessFieldNames(); println()
+	testSubclassRegister(); println()
+}
+
+fun testSubclassRegister() {
+	println("testSubclassRegister:")
+
+	DeserializerFactory.registerDeserializer(Human::class, object : Deserializer {
+
+		private val maleDeserializer = DeserializerFactory.getDeserializer(Male::class, false)
+		private val femaleDeserializer = DeserializerFactory.getDeserializer(Female::class, false)
+
+		override fun <T> deserialize(item: JsonItem): T {
+			val deserializer = when (item["type"].asString()) {
+				"male" -> maleDeserializer
+				"female" -> femaleDeserializer
+				else -> throw IllegalArgumentException("There are only 2 genders")
+			}
+			return deserializer.deserialize(item)
+		}
+
+		override fun forSubclass(d: KClass<*>): Deserializer {
+			return this
+		}
+	})
+
+	val parser = IrisJsonParser("""{ 
+		|person1: {"type": "male", name: "Akbar", age: 35, "cashAmount": 12200.12, "property": {"name": "Домик в деревне"}}, 
+		|"person2": {"type": "female","name": "Alla Who", "height": 170, "income": 1214.81}
+		|}""".trimMargin())
+	val item = parser.parse()
+	val list = item.asObject<Map<String, Human>>()
+	println(list)
 }
 
 fun testQuotelessFieldNames() {
@@ -83,6 +116,10 @@ class EnumDeserializer : DeserializerPrimitive {
 			"no" -> YesNoEnum.No
 			else -> null
 		} as T
+	}
+
+	override fun forSubclass(d: KClass<*>): Deserializer {
+		return this
 	}
 }
 

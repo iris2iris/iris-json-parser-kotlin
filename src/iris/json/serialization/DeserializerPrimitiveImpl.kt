@@ -3,8 +3,9 @@ package iris.json.serialization
 import iris.json.JsonItem
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.reflect.KClass
 import kotlin.reflect.KType
-import kotlin.reflect.jvm.javaType
+import kotlin.reflect.jvm.jvmErasure
 
 /**
  * @created 08.10.2020
@@ -14,7 +15,7 @@ import kotlin.reflect.jvm.javaType
 class DeserializerPrimitiveImpl(val type: Type) : DeserializerPrimitive {
 
 	enum class Type {
-		INTEGER, LONG, DOUBLE, FLOAT, BOOLEAN, STRING, DATE
+		ANY, INTEGER, LONG, DOUBLE, FLOAT, BOOLEAN, STRING, DATE
 	}
 	
 	companion object {
@@ -25,19 +26,30 @@ class DeserializerPrimitiveImpl(val type: Type) : DeserializerPrimitive {
 		val FLOAT = DeserializerPrimitiveImpl(Type.FLOAT)
 		val BOOLEAN = DeserializerPrimitiveImpl(Type.BOOLEAN)
 		val STRING = DeserializerPrimitiveImpl(Type.STRING)
+		val ANY = DeserializerPrimitiveImpl(Type.ANY)
+
+		private val dateClass = Date::class
+		private val intClass = Int::class
+		private val longClass = Long::class
+		private val doubleClass = Double::class
+		private val floatClass = Float::class
+		private val booleanClass = Boolean::class
+		private val stringClass = String::class
+		private val anyClass = Any::class
 
 		private val format = SimpleDateFormat("YYYY-MM-dd HH:mm:ss")
 
 		fun convertType(s: KType, fieldData: JsonField?): DeserializerPrimitiveImpl? {
 			return if (fieldData?.type.isNullOrBlank()) {
-				when (s.javaType.typeName) {
-					"java.util.Date" -> DATE
-					"int", "java.lang.Integer" -> INTEGER
-					"long", "java.lang.Long" -> LONG
-					"double", "java.lang.Double" -> DOUBLE
-					"float", "java.lang.Float" -> FLOAT
-					"boolean", "java.lang.Boolean" -> BOOLEAN
-					"java.lang.String" -> STRING
+				when (s.jvmErasure) {
+					dateClass -> DATE
+					intClass -> INTEGER
+					longClass -> LONG
+					doubleClass -> DOUBLE
+					floatClass -> FLOAT
+					booleanClass -> BOOLEAN
+					stringClass -> STRING
+					anyClass -> ANY
 					else -> null
 				}
 			} else {
@@ -50,6 +62,7 @@ class DeserializerPrimitiveImpl(val type: Type) : DeserializerPrimitive {
 					"Float" -> FLOAT
 					"bool", "Boolean" -> BOOLEAN
 					"String", "Text" -> STRING
+					"Any" -> ANY
 					else -> null
 				}
 			}
@@ -58,6 +71,10 @@ class DeserializerPrimitiveImpl(val type: Type) : DeserializerPrimitive {
 
 	override fun <T> deserialize(item: JsonItem): T {
 		return getValue(item) as T
+	}
+
+	override fun forSubclass(d: KClass<*>): Deserializer {
+		return this
 	}
 
 	override fun getValue(item: JsonItem): Any? {
@@ -73,6 +90,7 @@ class DeserializerPrimitiveImpl(val type: Type) : DeserializerPrimitive {
 				is String -> format.parse(obj)
 				else -> obj
 			}
+			Type.ANY -> item.obj()
 			//else -> item.obj()
 		}
 	}

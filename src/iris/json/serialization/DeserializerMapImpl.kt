@@ -3,6 +3,7 @@ package iris.json.serialization
 import iris.json.JsonEntry
 import iris.json.JsonItem
 import iris.json.JsonObject
+import kotlin.reflect.KClass
 
 /**
  * @created 09.10.2020
@@ -17,5 +18,9 @@ class DeserializerMapImpl(val valueDeserializer: Deserializer) : DeserializerMap
 
 	override fun <T> deserialize(item: JsonItem): T {
 		return getMap<Map<String, *>>((item as JsonObject).getEntries()) as T
+	}
+
+	override fun forSubclass(d: KClass<*>): Deserializer {
+		return this
 	}
 }
