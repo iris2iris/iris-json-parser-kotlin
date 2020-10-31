@@ -3,7 +3,6 @@ package iris.json.plain
 import iris.json.JsonEntry
 import iris.json.JsonItem
 import iris.json.JsonObject
-import iris.json.proxy.JsonProxyUtil
 
 /**
  * @created 14.04.2020
@@ -21,21 +20,20 @@ open class IrisJsonObject(private val entries: List<JsonEntry>) : IrisJsonItem()
 		return get(ind.toString())
 	}
 
-	override fun set(ind: Int, value: Any?): JsonItem {
+	override fun set(ind: Int, value: JsonItem): JsonItem {
 		return set(ind.toString(), value)
 	}
 
-	override fun set(key: String, value: Any?): JsonItem {
+	override fun set(key: String, value: JsonItem): JsonItem {
 		val el = entries as MutableList<JsonEntry>
 		val index = el.indexOfFirst { it.first == key }
-		val wrapValue = JsonProxyUtil.wrap(value)
 		if (index == -1)
-			el += JsonEntry(key, wrapValue)
+			el += JsonEntry(key, value)
 		else
-			el[index] = JsonEntry(key, wrapValue)
+			el[index] = JsonEntry(key, value)
 		val obj = obj
 		if (obj != null) {
-			obj[key] = value
+			obj[key] = value.obj()
 		}
 		return this
 	}

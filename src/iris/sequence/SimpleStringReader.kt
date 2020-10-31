@@ -16,7 +16,7 @@ class SimpleStringReader(private val source: CharSequence) : Reader() {
 	private val strSource = source as? String
 	private val buff = (source as? CharArraySource)
 
-	override fun read(cbuf: CharArray): Int {
+	/*override fun read(cbuf: CharArray): Int {
 		val length = source.length
 		val pointer = this.pointer
 		val realLen = min(length - pointer, cbuf.size)
@@ -39,10 +39,10 @@ class SimpleStringReader(private val source: CharSequence) : Reader() {
 			this.pointer = pointer
 		}
 		return realLen
-	}
+	}*/
 
 	override fun read(cbuf: CharArray, off: Int, len: Int): Int {
-		val length = source.length
+		val length = length
 		val pointer = this.pointer
 		val realLen = min(length - pointer, len)
 		if (realLen <= 0)

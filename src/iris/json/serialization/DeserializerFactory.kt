@@ -31,8 +31,7 @@ object DeserializerFactory {
 		}
 		val deser = DeserializerClassImpl()
 		cache[d] = deser
-		DeserializerClassBuilder.build(d, deser)
-		return deser
+		return DeserializerClassBuilder.build(d, deser)
 	}
 
 	fun registerDeserializer(d: KClass<*>, deserializer: Deserializer) {

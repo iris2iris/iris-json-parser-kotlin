@@ -2,13 +2,12 @@ package iris.json.plain
 
 import iris.json.JsonArray
 import iris.json.JsonItem
-import iris.json.proxy.JsonProxyUtil
 
 /**
  * @created 14.04.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class IrisJsonArray(private val items: List<IrisJsonItem>) : IrisJsonItem(), JsonArray {
+class IrisJsonArray(private val items: List<JsonItem>) : IrisJsonItem(), JsonArray {
 
 	override fun <A : Appendable> joinTo(buffer: A): A {
 		buffer.append('[')
@@ -17,28 +16,35 @@ class IrisJsonArray(private val items: List<IrisJsonItem>) : IrisJsonItem(), Jso
 		return buffer
 	}
 
-	override fun get(ind: Int): IrisJsonItem {
+	override fun get(ind: Int): JsonItem {
 		return items[ind]
 	}
 
-	override fun get(key: String): IrisJsonItem {
+	override fun get(key: String): JsonItem {
 		val ind = key.toInt()
 		return get(ind)
 	}
 
-	override fun getList(): Collection<JsonItem> {
+	override fun getList(): List<JsonItem> {
 		return items
 	}
 
-	override fun set(ind: Int, value: Any?): JsonItem {
-		(items as MutableList<Any?>)[ind] = JsonProxyUtil.wrap(value)
+	override val size: Int
+		get() = getList().size
+
+	override fun isEmpty() = items.isEmpty()
+
+	override fun isNotEmpty() = items.isNotEmpty()
+
+	override fun set(ind: Int, value: JsonItem): JsonItem {
+		(items as MutableList<Any?>)[ind] = value
 		val obj = this.obj
 		if (obj != null)
-			obj[ind] = value
+			obj[ind] = value.obj()
 		return this
 	}
 
-	override fun set(key: String, value: Any?): JsonItem {
+	override fun set(key: String, value: JsonItem): JsonItem {
 		return set(key.toInt(), value)
 	}
 
@@ -58,11 +64,11 @@ class IrisJsonArray(private val items: List<IrisJsonItem>) : IrisJsonItem(), Jso
 
 	override fun iterable() = this
 
-	override fun iterator(): Iterator<IrisJsonItem> {
+	override fun iterator(): Iterator<JsonItem> {
 		return Iter()
 	}
 
-	private inner class Iter : Iterator<IrisJsonItem> {
+	private inner class Iter : Iterator<JsonItem> {
 
 		private val size = items.size
 		private var pointer = 0
@@ -71,7 +77,7 @@ class IrisJsonArray(private val items: List<IrisJsonItem>) : IrisJsonItem(), Jso
 			return pointer < size
 		}
 
-		override fun next(): IrisJsonItem {
+		override fun next(): JsonItem {
 			val item = items[pointer]
 			pointer++
 			return item

@@ -17,7 +17,9 @@ class DeserializerClassImpl : DeserializerClass {
 
 	var hasPolymorphisms = false
 	lateinit var fields: Map<String, PropertyInfo>
-	lateinit var constructorFunction: KFunction<*>
+
+	lateinit var constructorStrategyFactory: ConstructorStrategyFactory
+	var conscructorParametersSize = 0
 
 	class PolymorphInfo(val sourceField: String, val inheritClasses: Map<Any, Deserializer>)
 
@@ -26,6 +28,66 @@ class DeserializerClassImpl : DeserializerClass {
 					   , val customClass: Deserializer? = null
 					   , val polymorphInfo: PolymorphInfo? = null
 	)
+
+	interface ConstructorStrategyFactory {
+		fun getInstance(): ConstructorStrategy
+	}
+
+	interface ConstructorStrategy {
+		fun setParameter(constructorParameter: KParameter, value: Any?)
+		fun execute(): Any?
+	}
+
+	class EmptyConstructorStrategyFactory(private val constructorFunction: KFunction<*>) : ConstructorStrategyFactory, ConstructorStrategy {
+		override fun getInstance() = this
+
+		override fun setParameter(constructorParameter: KParameter, value: Any?) {}
+
+		override fun execute(): Any? {
+			return constructorFunction.call()
+		}
+	}
+
+	class RawConstructorStrategyFactory(private val constructorFunction: KFunction<*>, private val params: Array<Any?>) : ConstructorStrategyFactory {
+		override fun getInstance(): ConstructorStrategy {
+			return RawConstructorStrategy()
+		}
+
+		inner class RawConstructorStrategy : ConstructorStrategy {
+
+			private val cParams = params.copyOf()
+
+			override fun setParameter(constructorParameter: KParameter, value: Any?) {
+				cParams[constructorParameter.index] = value
+			}
+
+			override fun execute(): Any? {
+				return constructorFunction.call(*cParams)
+			}
+		}
+	}
+
+	class MapConstructorStrategyFactory(private val constructorFunction: KFunction<*>, private val constructorParametersSize: Int) : ConstructorStrategyFactory {
+		override fun getInstance(): ConstructorStrategy {
+			return MapConstructorStrategy()
+		}
+
+		inner class MapConstructorStrategy : ConstructorStrategy {
+
+			private val map = HashMap<KParameter, Any?>(constructorParametersSize)
+
+			override fun setParameter(constructorParameter: KParameter, value: Any?) {
+				map[constructorParameter] = value
+			}
+
+			override fun execute(): Any? {
+				return constructorFunction.callBy(map)
+			}
+		}
+	}
+
+
+
 
 	class SetterPropertyException(message: String, cause: Throwable) : Throwable(message, cause)
 
@@ -51,9 +113,13 @@ class DeserializerClassImpl : DeserializerClass {
 			result = null
 		}
 
-		val conscructorParametersSize = info.constructorFunction.parameters.size
+		//val conscructorParametersSize = constructorParametersList.size
 		val otherSize = fields.size - conscructorParametersSize
-		val constructorMap = HashMap<KParameter, Any?>(conscructorParametersSize)
+		//val constructorMap = HashMap<KParameter, Any?>(conscructorParametersSize)
+		//val constructorList = constructorParametersList.copyOf()
+
+		val constructorStrategy = constructorStrategyFactory.getInstance()
+
 		val otherFields = (if (otherSize == 0)
 			null
 		else
@@ -69,7 +135,7 @@ class DeserializerClassImpl : DeserializerClass {
 					val inherit = polymorphInfo.inheritClasses[sourceValue]!!
 					val newValue: Any? = inherit.deserialize(jsonItem)
 					result[field] = newValue
-					param.constructorParameter?.let { constructorMap[it] = newValue }
+					param.constructorParameter?.let { constructorStrategy.setParameter(it, newValue)/*constructorList[it.order] = newValue*/ }
 							?: run { otherFields!! += param.property to newValue }
 
 				} else { // need delay initialization until we know source info
@@ -87,8 +153,8 @@ class DeserializerClassImpl : DeserializerClass {
 						val item = delayed.firstItem
 						val property = item.propertyInfo
 						val inherit = property.polymorphInfo!!.inheritClasses[value]!!
-						val newValue: Any = inherit.deserialize(item.json)
-						item.propertyInfo.constructorParameter?.let { constructorMap[it] = newValue }
+						val newValue: Any? = inherit.deserialize(item.json)
+						item.propertyInfo.constructorParameter?.let { constructorStrategy.setParameter(it, newValue)/* constructorList[it.order] = newValue*/ }
 								?: run { otherFields!! += property.property to newValue }
 
 						if (delayed.items != null) {
@@ -96,7 +162,7 @@ class DeserializerClassImpl : DeserializerClass {
 								val property = item.propertyInfo
 								val inherit = property.polymorphInfo!!.inheritClasses[value]!!
 								val newValue: Any = inherit.deserialize(item.json)
-								item.propertyInfo.constructorParameter?.let { constructorMap[it] = newValue }
+								item.propertyInfo.constructorParameter?.let { constructorStrategy.setParameter(it, newValue) /*constructorList[it.order] = newValue*/ }
 										?: run { otherFields!! += property.property to newValue }
 							}
 						}
@@ -104,11 +170,12 @@ class DeserializerClassImpl : DeserializerClass {
 					result!![field] = value
 				}
 
-				param.constructorParameter?.let { constructorMap[it] = value }
+				param.constructorParameter?.let { constructorStrategy.setParameter(it, value)/* constructorList[it.order] = value*/ }
 						?: run{ otherFields!! += param.property to value }
 			}
 		}
-		val item = info.constructorFunction.callBy(constructorMap) as T
+		//val item = info.constructorFunction.call(constructorList) as T
+		val item = constructorStrategy.execute() as T
 		if (otherFields != null) {
 			for (field in otherFields) {
 				try {

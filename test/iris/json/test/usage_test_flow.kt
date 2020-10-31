@@ -32,5 +32,5 @@ fun main() {
 
 	obj["object"]["message"]["attachments"] = 12
 
-	println(obj["object"]["message"]["attachments"])
+	println(obj["object"]["message"]["attachments"].asInt())
 }

@@ -16,7 +16,7 @@ class TokenerString(source: String) : Tokener {
 		const val CR = '\r'.toInt()
 	}
 
-	private val source = source.toCharArray()
+	val source = source.toCharArray()
 	var pointer: Int = 0
 
 	override fun nextChar(): Char {

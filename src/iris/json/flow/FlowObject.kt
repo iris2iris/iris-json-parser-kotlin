@@ -4,7 +4,6 @@ import iris.json.JsonEntry
 import iris.json.JsonItem
 import iris.json.JsonObject
 import iris.json.plain.IrisJsonNull
-import iris.json.proxy.JsonProxyUtil
 import java.util.*
 
 /**
@@ -83,22 +82,21 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 		return res
 	}
 
-	override fun set(key: String, value: Any?): JsonItem {
+	override fun set(key: String, value: JsonItem): JsonItem {
 		val el = entries
 		val index = el.indexOfFirst { it.first == key }
-		val wrapValue = JsonProxyUtil.wrap(value)
 		if (index == -1)
-			el += JsonEntry(key, wrapValue)
+			el += JsonEntry(key, value)
 		else
-			el[index] = JsonEntry(key, wrapValue)
+			el[index] = JsonEntry(key, value)
 		val obj = obj
 		if (obj != null) {
-			obj[key] = value
+			obj[key] = value.obj()
 		}
 		return this
 	}
 
-	override fun set(ind: Int, value: Any?): JsonItem {
+	override fun set(ind: Int, value: JsonItem): JsonItem {
 		return set(ind.toString(), value)
 	}
 

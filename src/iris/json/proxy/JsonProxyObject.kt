@@ -18,15 +18,15 @@ class JsonProxyObject(private val map: Map<String, Any?>) : JsonProxyItem(map), 
 		return get(ind.toString())
 	}
 
-	override operator fun set(key: String, value: Any?): JsonItem {
+	override operator fun set(key: String, value: JsonItem): JsonItem {
 		if (map is MutableMap<*, *>)
-			(map as MutableMap<String, Any?>)[key] = value
+			(map as MutableMap<String, Any?>)[key] = value.obj()
 		else
 			throw IllegalStateException("Source map object is not mutable")
 		return this
 	}
 
-	override fun set(ind: Int, value: Any?): JsonItem {
+	override fun set(ind: Int, value: JsonItem): JsonItem {
 		return set(ind.toString(), value)
 	}
 

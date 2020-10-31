@@ -12,7 +12,7 @@ Speed improvement is achieved by idea of Proxy pattern, where objects are create
 #### Deserialization
 🔥 New feature (v0.5). Deserialization to objects.
 
-Full source code on [iris/json/test/serialization.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/src/iris/json/test/serialization.kt)
+Full source code on [iris/json/test/serialization.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/test/iris/json/test/serialization.kt)
 ````kotlin
 val item = IrisJsonParser("""{"id": 3, 
 		|"person1": {"name": "Akbar", "age": 35, "cashAmount": 12200.12, "property": {"name": "Домик в деревне"}}, 
@@ -89,7 +89,7 @@ println("To Double: " + res.find("object.message.attachments[0].wall.id").asDoub
 ## Performance test
 
 #### Array of 50 elements
-Test code is in [iris/json/test/performance_array.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/src/iris/json/test/performance_array.kt) file. 
+Test code is in [iris/json/test/performance_array.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/test/iris/json/test/performance_array.kt) file. 
 
 Test JSON file is in [test_array.json](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/test_array.json) file.
 
@@ -114,7 +114,7 @@ POJO:       10
 
 #### Complex json-tree structure
 
-Test code is in [iris/json/test/performance_object_tree.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/src/iris/json/test/performance_object_tree.kt) file. 
+Test code is in [iris/json/test/performance_object_tree.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/test/iris/json/test/performance_object_tree.kt) file. 
 
 Test JSON file is in [test.json](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/test.json) file.
 

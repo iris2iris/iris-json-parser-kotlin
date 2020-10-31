@@ -1,6 +1,7 @@
 package iris.json.plain
 
 import iris.json.JsonItem
+import iris.json.PureJavaUser
 import iris.json.asObject
 import iris.json.serialization.*
 import kotlin.reflect.KClass
@@ -45,6 +46,7 @@ fun main() {
 	println("*** Iris Json Plain test ***\n")
 
 	testUser(); println()
+	testPureJavaUser(); println()
 	testListInt(); println()
 	testListListInt(); println()
 	testListedData(); println()
@@ -58,6 +60,19 @@ fun main() {
 	testSubclassRegister(); println()
 	testRecursiveClassFields(); println()
 	testRecursiveGenericClassFields(); println()
+}
+
+fun testPureJavaUser() {
+	println("testPureJavaUser:")
+	val item = createJsonItem("""{"id": 3, 
+		|"person1": {"name": "Akbar", "age": 35, "cashAmount": 12200.12, "property": {"name": "Домик в деревне"}}, 
+		|"type": "MaleFirst", 
+		|"person2": {"name": "Alla Who", "height": 170, "income": 1214.81}
+		|}""".trimMargin())
+
+	val user = item.asObject<PureJavaUser>()
+	println(user.person1)
+	println(user.person2)
 }
 
 fun createJsonItem(text: String): JsonItem {

@@ -11,6 +11,8 @@ interface JsonItem {
 	operator fun get(ind: Int): JsonItem
 	operator fun get(key: String): JsonItem
 
+	operator fun set(ind: Int, value: JsonItem): JsonItem
+	operator fun set(key: String, value: JsonItem): JsonItem
 	operator fun set(ind: Int, value: Any?): JsonItem
 	operator fun set(key: String, value: Any?): JsonItem
 

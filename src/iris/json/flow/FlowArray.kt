@@ -2,7 +2,6 @@ package iris.json.flow
 
 import iris.json.JsonArray
 import iris.json.JsonItem
-import iris.json.proxy.JsonProxyUtil
 
 /**
  * @created 20.09.2020
@@ -100,20 +99,37 @@ class FlowArray(tokener: Tokener) : FlowItem(tokener), JsonArray {
 		return get(ind)
 	}
 
-	override fun getList(): Collection<JsonItem> {
+	override fun getList(): List<JsonItem> {
 		parse()
 		return items
 	}
 
-	override fun set(ind: Int, value: Any?): JsonItem {
-		items[ind] = JsonProxyUtil.wrap(value)
+	override val size: Int
+		get() = getList().size
+
+	override fun isEmpty(): Boolean {
+		if (isDone) return items.isEmpty()
+		if (items.isNotEmpty()) return false
+		val res = parseNextAndAdd()
+		return res == null
+	}
+
+	override fun isNotEmpty(): Boolean {
+		if (isDone) return items.isNotEmpty()
+		if (items.isNotEmpty()) return true
+		val res = parseNextAndAdd()
+		return res != null
+	}
+
+	override fun set(ind: Int, value: JsonItem): JsonItem {
+		items[ind] = value
 		val obj = this.obj
 		if (obj != null)
-			obj[ind] = value
+			obj[ind] = value.obj()
 		return this
 	}
 
-	override fun set(key: String, value: Any?): JsonItem {
+	override fun set(key: String, value: JsonItem): JsonItem {
 		return set(key.toInt(), value)
 	}
 

@@ -1,6 +1,7 @@
 package iris.json.plain
 
 import iris.json.JsonItem
+import iris.json.proxy.JsonProxyUtil
 
 /**
  * @created 14.04.2020
@@ -16,14 +17,15 @@ abstract class IrisJsonItem() : JsonItem {
 		return when (val obj = obj()) {
 			is Int -> obj
 			is Number -> obj.toInt()
-			else -> null
+			else -> obj.toString().toIntOrNull()
 		}
 	}
 
 	override fun asInt(): Int {
 		return when (val obj = obj()) {
 			is Int -> obj
-			else -> (obj() as Number).toInt()
+			is Number -> obj.toInt()
+			else -> obj.toString().toInt()
 		}
 	}
 
@@ -31,14 +33,15 @@ abstract class IrisJsonItem() : JsonItem {
 		return when (val obj = obj()) {
 			is Long -> obj
 			is Number -> obj.toLong()
-			else -> null
+			else -> obj.toString().toLongOrNull()
 		}
 	}
 
 	override fun asLong(): Long {
 		return when (val obj = obj()) {
 			is Long -> obj
-			else -> (obj() as Number).toLong()
+			is Number -> obj.toLong()
+			else -> obj.toString().toLong()
 		}
 	}
 
@@ -46,14 +49,15 @@ abstract class IrisJsonItem() : JsonItem {
 		return when (val obj = obj()) {
 			is Double -> obj
 			is Number -> obj.toDouble()
-			else -> null
+			else -> obj.toString().toDoubleOrNull()
 		}
 	}
 
 	override fun asDouble(): Double {
 		return when (val obj = obj()) {
 			is Double -> obj
-			else -> (obj() as Number).toDouble()
+			is Number -> obj.toDouble()
+			else -> obj.toString().toDouble()
 		}
 	}
 
@@ -61,14 +65,15 @@ abstract class IrisJsonItem() : JsonItem {
 		return when (val obj = obj()) {
 			is Float -> obj
 			is Number -> obj.toFloat()
-			else -> null
+			else -> obj.toString().toFloatOrNull()
 		}
 	}
 
 	override fun asFloat(): Float {
 		return when (val obj = obj()) {
 			is Float -> obj
-			else -> (obj() as Number).toFloat()
+			is Number -> obj.toFloat()
+			else -> obj.toString().toFloat()
 		}
 	}
 
@@ -102,11 +107,11 @@ abstract class IrisJsonItem() : JsonItem {
 	}
 
 	override fun asStringOrNull(): String? {
-		return obj() as String?
+		return obj()?.toString()
 	}
 
 	override fun asString(): String {
-		return obj() as String
+		return obj()?.toString()!!
 	}
 
 	override fun find(tree: Array<String>): JsonItem {
@@ -131,12 +136,20 @@ abstract class IrisJsonItem() : JsonItem {
 		return find(tree.replace('[', '.').replace("]", "").replace(' ', '.').split('.'))
 	}
 
-	override fun set(ind: Int, value: Any?): JsonItem {
+	override fun set(ind: Int, value: JsonItem): JsonItem {
 		throw IllegalStateException("Set operation is not available")
 	}
 
-	override fun set(key: String, value: Any?): JsonItem {
+	override fun set(key: String, value: JsonItem): JsonItem {
 		throw IllegalStateException("Set operation is not available")
+	}
+
+	override fun set(ind: Int, value: Any?): JsonItem {
+		return set(ind, JsonProxyUtil.wrap(value))
+	}
+
+	override fun set(key: String, value: Any?): JsonItem {
+		return set(key, JsonProxyUtil.wrap(value))
 	}
 
 	override fun equals(other: Any?): Boolean {

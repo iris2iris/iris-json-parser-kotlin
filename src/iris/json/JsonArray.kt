@@ -5,5 +5,8 @@ package iris.json
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 interface JsonArray: JsonItem, Iterable<JsonItem> {
-	fun getList(): Collection<JsonItem>
+	fun getList(): List<JsonItem>
+	val size: Int
+	fun isEmpty(): Boolean
+	fun isNotEmpty(): Boolean
 }

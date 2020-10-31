@@ -18,22 +18,29 @@ class JsonProxyArray(private val items: List<Any?>) : JsonProxyItem(items), Json
 		return get(key.toInt())
 	}
 
-	override fun getList(): Collection<JsonItem> {
+	override fun getList(): List<JsonItem> {
 		return items.map { JsonProxyUtil.wrap(it) }
 	}
 
-	override fun set(ind: Int, value: Any?): JsonItem {
-		(items as MutableList<Any?>)[ind] = value
+	override fun set(ind: Int, value: JsonItem): JsonItem {
+		(items as MutableList<Any?>)[ind] = value.obj()
 		return this
 	}
 
-	override fun set(key: String, value: Any?): JsonItem {
+	override fun set(key: String, value: JsonItem): JsonItem {
 		return set(key.toInt(), value)
 	}
 
 	override fun asList(): List<Any?> {
 		return items
 	}
+
+	override val size: Int
+		get() = getList().size
+
+	override fun isEmpty() = items.isEmpty()
+
+	override fun isNotEmpty() = items.isNotEmpty()
 
 	override fun isArray() = true
 

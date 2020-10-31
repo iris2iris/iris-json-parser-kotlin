@@ -19,14 +19,14 @@ class DeserializerPrimitiveImpl(val type: Type) : DeserializerPrimitive {
 	}
 	
 	companion object {
-		val DATE = DeserializerPrimitiveImpl(Type.DATE)
-		val INTEGER = DeserializerPrimitiveImpl(Type.INTEGER)
-		val LONG = DeserializerPrimitiveImpl(Type.LONG)
-		val DOUBLE = DeserializerPrimitiveImpl(Type.DOUBLE)
-		val FLOAT = DeserializerPrimitiveImpl(Type.FLOAT)
-		val BOOLEAN = DeserializerPrimitiveImpl(Type.BOOLEAN)
-		val STRING = DeserializerPrimitiveImpl(Type.STRING)
-		val ANY = DeserializerPrimitiveImpl(Type.ANY)
+		private val DATE = DeserializerPrimitiveImpl(Type.DATE)
+		private val INTEGER = DeserializerPrimitiveImpl(Type.INTEGER)
+		private val LONG = DeserializerPrimitiveImpl(Type.LONG)
+		private val DOUBLE = DeserializerPrimitiveImpl(Type.DOUBLE)
+		private val FLOAT = DeserializerPrimitiveImpl(Type.FLOAT)
+		private val BOOLEAN = DeserializerPrimitiveImpl(Type.BOOLEAN)
+		private val STRING = DeserializerPrimitiveImpl(Type.STRING)
+		private val ANY = DeserializerPrimitiveImpl(Type.ANY)
 
 		private val dateClass = Date::class
 		private val intClass = Int::class

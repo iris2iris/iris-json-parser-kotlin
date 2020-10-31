@@ -137,8 +137,9 @@ class CharArrayBuilder(initialCapacity: Int = DEFAULT_CAPACITY) : Appendable, Ch
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (other !is CharSequence) return false
-		if (length != other.length) return false
-		for (i in 0 until length)
+		val len = length
+		if (len != other.length) return false
+		for (i in 0 until len)
 			if (buffer[i] != other[i])
 				return false
 		return true
