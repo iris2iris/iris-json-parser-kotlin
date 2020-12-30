@@ -16,7 +16,7 @@ import java.util.List;
 public final class PureJavaUser {
 
 	public int id;
-	public List<String> type;
+	public String type;
 
 	@PolymorphData(
 			sourceField = "type",
@@ -43,8 +43,7 @@ public final class PureJavaUser {
 
 	public PureJavaUser(int id, String type, Human person1, Human person2) {
 		this.id = id;
-		this.type = new ArrayList(1);
-		this.type.add(type);
+		this.type = type;
 		this.person1 = person1;
 		this.person2 = person2;
 	}

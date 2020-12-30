@@ -70,9 +70,15 @@ object DeserializerFactory {
 	}
 
 	private fun getMapType(type: KType): KType {
-		val type = type.jvmErasure.allSupertypes.find {
-				it.jvmErasure == Map::class
-			} ?: throw IllegalArgumentException("$type is not subclass of Map")
+
+		val type = with(type.jvmErasure) {
+			if (this == Map::class)
+				type
+			else
+				allSupertypes.find {
+					it.jvmErasure == Map::class
+				} ?: throw IllegalArgumentException("$type is not subclass of Map")
+		}
 		val (key, value) = type.arguments
 		if (!key.type!!.isSubtypeOf(CharSequence::class.starProjectedType))
 			throw IllegalStateException("Map key cannot be non CharSequence inherited")
