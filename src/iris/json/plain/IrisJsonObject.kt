@@ -1,5 +1,6 @@
 package iris.json.plain
 
+import iris.json.Configuration
 import iris.json.JsonEntry
 import iris.json.JsonItem
 import iris.json.JsonObject
@@ -8,9 +9,9 @@ import iris.json.JsonObject
  * @created 14.04.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-open class IrisJsonObject(private val entries: List<JsonEntry>) : IrisJsonItem(), JsonObject {
+open class IrisJsonObject(private val entries: List<JsonEntry>, private val configuration: Configuration) : IrisJsonItem(), JsonObject {
 
-	constructor(vararg items: Pair<String, JsonItem>) : this(items.asList())
+	constructor(vararg items: Pair<String, JsonItem>, configuration: Configuration) : this(items.asList(), configuration)
 
 	override fun get(key: String): JsonItem {
 		return (entries.find {it.first == key }?.second) ?: IrisJsonNull.Null
@@ -43,7 +44,7 @@ open class IrisJsonObject(private val entries: List<JsonEntry>) : IrisJsonItem()
 	override fun obj(): Any? {
 		if (obj != null)
 			return obj
-		val res = HashMap<String, Any?>(entries.size)
+		val res = configuration.mapObjectFactory.getMap(entries.size)
 		for (it in entries)
 			res[it.first.toString()] = it.second.obj()
 		obj = res

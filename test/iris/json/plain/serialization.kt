@@ -76,7 +76,7 @@ fun testPureJavaUser() {
 }
 
 fun createJsonItem(text: String): JsonItem {
-	val parser = IrisJsonParser(text)
+	val parser = JsonPlainParser(text)
 	return parser.parse()
 }
 
@@ -140,7 +140,7 @@ fun testSubclassRegister() {
 
 fun testQuotelessFieldNames() {
 	println("testQuotelessFieldNames:")
-	val parser = IrisJsonParser("""{ 
+	val parser = JsonPlainParser("""{ 
 		|person1: {name: "Akbar", age: 35, "cashAmount": 12200.12, "property": {"name": "Домик в деревне"}}, 
 		|person2: {name: "Alla Who", age: 15, "cashAmount": 23232.12, "property": {"name": "В центре высотка"}} 
 		|}""".trimMargin())
@@ -175,7 +175,7 @@ class EnumDeserializer : DeserializerPrimitive {
 fun testRegisteredDeserializer() {
 	println("testRegisteredDeserializer:")
 	DeserializerFactory.registerDeserializer(EnumDeserializer.YesNoEnum::class, EnumDeserializer())
-	val parser = IrisJsonParser("""
+	val parser = JsonPlainParser("""
 		{ 
 			"drunk": "yes",
 			"enough": "no" 
@@ -187,7 +187,7 @@ fun testRegisteredDeserializer() {
 
 fun testDefinedJsonField() {
 	println("testDefinedJsonField:")
-	val parser = IrisJsonParser("""{ 
+	val parser = JsonPlainParser("""{ 
 		"object": "Other field name" 
 		}""".trimMargin())
 	val item = parser.parse()
@@ -197,7 +197,7 @@ fun testDefinedJsonField() {
 
 fun testJsonItem() {
 	println("testJsonItem:")
-	val parser = IrisJsonParser("""{ 
+	val parser = JsonPlainParser("""{ 
 		|"person1": {"name": "Akbar", "age": 35, "cashAmount": 12200.12, "property": {"name": "Домик в деревне"}}, 
 		|"person2": {"name": "Alla Who", "age": 15, "cashAmount": 23232.12, "property": {"name": "В центре высотка"}} 
 		|}""".trimMargin())
@@ -208,7 +208,7 @@ fun testJsonItem() {
 
 fun testMap() {
 	println("testMap:")
-	val parser = IrisJsonParser("""{ 
+	val parser = JsonPlainParser("""{ 
 		|"person1": {"name": "Akbar", "age": 35, "cashAmount": 12200.12, "property": {"name": "Домик в деревне"}}, 
 		|"person2": {"name": "Alla Who", "age": 15, "cashAmount": 23232.12, "property": {"name": "В центре высотка"}} 
 		|}""".trimMargin())
@@ -219,7 +219,7 @@ fun testMap() {
 
 fun testPrimitive() {
 	println("testPrimitive:")
-	val parser = IrisJsonParser("""1""".trimMargin())
+	val parser = JsonPlainParser("""1""".trimMargin())
 	val item = parser.parse()
 	val list = item.asObject<Int>()
 	println(list)
@@ -227,7 +227,7 @@ fun testPrimitive() {
 
 fun testPureList() {
 	println("testPureList:")
-	val parser = IrisJsonParser("""[
+	val parser = JsonPlainParser("""[
 		|1,2,3,4,5
 		|,6,7,8,9,10
 		|]""".trimMargin())
@@ -238,7 +238,7 @@ fun testPureList() {
 
 fun testListListInt() {
 	println("testListListInt:")
-	val parser = IrisJsonParser("""{
+	val parser = JsonPlainParser("""{
 		|"listed":[
 		|[1,2,3,4,5]
 		|,[6,7,8,9,10]
@@ -250,7 +250,7 @@ fun testListListInt() {
 
 fun testListInt() {
 	println("testListInt:")
-	val parser = IrisJsonParser("""{
+	val parser = JsonPlainParser("""{
 		|"listed":[1,2,3,4,5]}""".trimMargin())
 	val item = parser.parse()
 	val list = item.asObject<ListedInt>()
@@ -259,7 +259,7 @@ fun testListInt() {
 
 fun testListedData() {
 	println("testListedData:")
-	val parser = IrisJsonParser("""{
+	val parser = JsonPlainParser("""{
 		|"listed":[
 		|{"name": "Alla Who", "age": 35, "cashAmount": 122.12121, "property": {"name": "Домик в деревне"}}
 		|, {"name": "Akbar", "age": 46, "cashAmount": 44.3, "property": {"name": "Деревня"}}
@@ -271,7 +271,7 @@ fun testListedData() {
 
 fun testUser() {
 	println("testUser:")
-	val parser = IrisJsonParser("""{"id": 3, 
+	val parser = JsonPlainParser("""{"id": 3, 
 		|"person1": {"name": "Akbar", "age": 35, "cashAmount": 12200.12, "property": {"name": "Домик в деревне"}}, 
 		|"type": "MaleFirst", 
 		|"person2": {"name": "Alla Who", "height": 170, "income": 1214.81}

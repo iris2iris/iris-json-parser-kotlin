@@ -3,10 +3,7 @@ package iris.json.serialization
 import iris.json.JsonItem
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
-import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.full.isSubtypeOf
-import kotlin.reflect.full.starProjectedType
-import kotlin.reflect.full.superclasses
+import kotlin.reflect.full.*
 import kotlin.reflect.jvm.jvmErasure
 
 /**
@@ -36,6 +33,7 @@ object DeserializerFactory {
 
 	fun registerDeserializer(d: KClass<*>, deserializer: Deserializer) {
 		cache[d] = deserializer
+		registerDeserializer(d.starProjectedType, deserializer)
 	}
 
 	fun registerDeserializer(type: KType, deserializer: Deserializer) {
@@ -72,6 +70,9 @@ object DeserializerFactory {
 	}
 
 	private fun getMapType(type: KType): KType {
+		val type = type.jvmErasure.allSupertypes.find {
+				it.jvmErasure == Map::class
+			} ?: throw IllegalArgumentException("$type is not subclass of Map")
 		val (key, value) = type.arguments
 		if (!key.type!!.isSubtypeOf(CharSequence::class.starProjectedType))
 			throw IllegalStateException("Map key cannot be non CharSequence inherited")

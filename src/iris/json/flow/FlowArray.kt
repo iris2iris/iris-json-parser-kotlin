@@ -7,7 +7,7 @@ import iris.json.JsonItem
  * @created 20.09.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class FlowArray(tokener: Tokener) : FlowItem(tokener), JsonArray {
+class FlowArray(private val parser: JsonFlowParser) : FlowItem(parser.tokener), JsonArray {
 
 	private val items = mutableListOf<JsonItem>()
 
@@ -60,7 +60,7 @@ class FlowArray(tokener: Tokener) : FlowItem(tokener), JsonArray {
 		if (char != ',')
 			tokener.back()
 
-		return JsonFlowParser.readItem(tokener)
+		return parser.readItem()
 	}
 
 	private fun parseNextAndAdd(): FlowItem? {

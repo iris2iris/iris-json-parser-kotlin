@@ -10,7 +10,7 @@ import java.util.*
  * @created 20.09.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
+class FlowObject(private val parser: JsonFlowParser) : FlowItem(parser.tokener), JsonObject {
 
 	override fun get(ind: Int): JsonItem {
 		return get(ind.toString())
@@ -44,6 +44,7 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 	}
 
 	private fun parseNext(): JsonEntry? {
+		val tokener = this.tokener
 		var char: Char? = tokener.nextChar()
 		if (char == '}') {
 			isDone = true
@@ -65,7 +66,7 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 		char = tokener.nextChar()
 		if (char != ':')
 			throw tokener.exception("\":\" was expected")
-		val value = JsonFlowParser.readItem(tokener)
+		val value = parser.readItem()
 		return JsonEntry(key, value)
 	}
 
@@ -75,7 +76,8 @@ class FlowObject(tokener: Tokener) : FlowItem(tokener), JsonObject {
 		if (obj != null)
 			return obj
 		parse()
-		val res = HashMap<String, Any?>(entries.size)
+		val res = parser.configuration.mapObjectFactory.getMap(entries.size)
+
 		for (it in entries)
 			res[it.first.toString()] = it.second.obj()
 		obj = res

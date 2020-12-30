@@ -14,9 +14,11 @@ class DeserializerMapImpl : DeserializerMap {
 	lateinit var valueDeserializer: Deserializer
 
 	override fun <T> getMap(entries: Collection<JsonEntry>): Map<String, T> {
-		return entries.associate {(key, value) ->
-			key.toString() to (valueDeserializer.deserialize(value) as T)
-		}
+		val res = HashMap<String, T>(entries.size)
+		val valueDeserializer = this.valueDeserializer
+		for ((key, value) in entries)
+			res[key.toString()] = (valueDeserializer.deserialize(value) as T)
+		return res
 	}
 
 	override fun <T> deserialize(item: JsonItem): T {

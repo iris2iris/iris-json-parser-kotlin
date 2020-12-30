@@ -2,7 +2,7 @@ package iris.json.test
 
 import iris.json.flow.JsonFlowParser
 import iris.json.flow.TokenerString
-import iris.json.plain.IrisJsonParser
+import iris.json.plain.JsonPlainParser
 import iris.json.proxy.JsonProxyObject
 import org.json.JSONObject
 import org.json.simple.parser.JSONParser
@@ -24,7 +24,7 @@ object PerformanceObjectTree {
 		var totalSimpleJson = 0.0
 		var totalPlainAccess = 0.0
 
-		val map = IrisJsonParser(testString).parse().asMap()
+		val map = JsonPlainParser(testString).parse().asMap()
 
 		// little warmup
 		testJsonParser(testString)
@@ -36,8 +36,8 @@ object PerformanceObjectTree {
 
 
 		repeat(100_000) {
-			totalJson += testJsonParser(testString)
-			totalSimpleJson += testSimpleJsonParser(testString)
+			//totalJson += testJsonParser(testString)
+			//totalSimpleJson += testSimpleJsonParser(testString)
 			totalIris += testIrisParser(testString)
 			totalIrisOld += testIrisParserOld(testString)
 			totalIrisProxy += testIrisProxy(map)
@@ -87,7 +87,7 @@ object PerformanceObjectTree {
 
 	fun testIrisParserOld(test: String): Long {
 		val start = System.nanoTime()
-		val rand = IrisJsonParser(test).parse()
+		val rand = JsonPlainParser(test).parse()
 		val d = rand["object"]["message"]["attachments"][0]["wall"]["id"].asLong()
 		if (d == 1L) // check for not to let compiler optimize code
 			print("true")

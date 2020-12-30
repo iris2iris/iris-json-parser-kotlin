@@ -1,5 +1,6 @@
 package iris.json.flow
 
+import iris.json.Configuration
 import iris.json.IrisJson
 import java.io.*
 import java.net.URL
@@ -8,23 +9,31 @@ import java.net.URL
  * @created 20.09.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-object JsonFlowParser {
+class JsonFlowParser(val tokener: Tokener, val configuration: Configuration) {
 
-	fun start(url: URL) = start(url.openStream())
+	companion object {
 
-	fun start(ins: InputStream) = readItem(reader(InputStreamReader(ins)))
+		fun start(url: URL, configuration: Configuration = Configuration.globalConfiguration) = start(url.openStream(), configuration)
 
-	fun start(reader: Reader) = readItem(reader(reader))
+		fun start(ins: InputStream, configuration: Configuration = Configuration.globalConfiguration) = readItem(reader(InputStreamReader(ins)), configuration)
 
-	fun start(file: File) = readItem(reader(FileReader(file)))
+		fun start(reader: Reader, configuration: Configuration = Configuration.globalConfiguration) = readItem(reader(reader), configuration)
 
-	fun start(text: String) = readItem(TokenerString(text))
+		fun start(file: File, configuration: Configuration = Configuration.globalConfiguration) = readItem(reader(FileReader(file)), configuration)
 
-	private fun reader(reader: Reader) = TokenerContentBuildReader(reader)
+		fun start(text: String, configuration: Configuration = Configuration.globalConfiguration) = readItem(TokenerString(text), configuration)
 
-	fun start(source: Tokener) = readItem(source)
+		private fun reader(reader: Reader) = TokenerContentBuildReader(reader)
 
-	fun readItem(source: Tokener): FlowItem {
+		fun start(source: Tokener, configuration: Configuration = Configuration.globalConfiguration) = readItem(source, configuration)
+
+		fun readItem(source: Tokener, configuration: Configuration = Configuration.globalConfiguration): FlowItem {
+			return JsonFlowParser(source, configuration).readItem()
+		}
+	}
+
+	fun readItem(): FlowItem {
+		val source = this.tokener
 		val char = source.nextChar()
 		val type = when {
 			char.isDigit() || char.isLetter() || char == '-' -> IrisJson.Type.Value
@@ -35,10 +44,12 @@ object JsonFlowParser {
 		}
 
 		return when (type) {
-			IrisJson.Type.Value -> { source.back(); FlowValue(source) }
-			IrisJson.Type.Object -> FlowObject(source)
+			IrisJson.Type.Value -> {
+				source.back(); FlowValue(source)
+			}
+			IrisJson.Type.Object -> FlowObject(this)
 			IrisJson.Type.String -> FlowString(source, char)
-			IrisJson.Type.Array -> FlowArray(source)
+			IrisJson.Type.Array -> FlowArray(this)
 			else -> throw source.exception("$type not realised yet")
 		}
 	}

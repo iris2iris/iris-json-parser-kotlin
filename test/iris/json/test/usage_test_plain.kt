@@ -1,6 +1,6 @@
 package iris.json.test
 
-import iris.json.plain.IrisJsonParser
+import iris.json.plain.JsonPlainParser
 import java.io.File
 
 /**
@@ -14,7 +14,7 @@ fun main() {
 
 	// basic start
 	// Demonstration of functional abilities
-	val parser = IrisJsonParser(testString)
+	val parser = JsonPlainParser(testString)
 	val res = parser.parse() // parsed to IrisJsonItem's
 
 	// stringifies result objects
