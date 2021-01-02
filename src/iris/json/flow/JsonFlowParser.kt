@@ -2,6 +2,7 @@ package iris.json.flow
 
 import iris.json.Configuration
 import iris.json.IrisJson
+import iris.json.Util
 import java.io.*
 import java.net.URL
 
@@ -36,7 +37,7 @@ class JsonFlowParser(val tokener: Tokener, val configuration: Configuration) {
 		val source = this.tokener
 		val char = source.nextChar()
 		val type = when {
-			char.isDigit() || char.isLetter() || char == '-' -> IrisJson.Type.Value
+			Util.isDigitOrAlpha(char) || char == '-' -> IrisJson.Type.Value
 			char == '{' -> IrisJson.Type.Object
 			char == '[' -> IrisJson.Type.Array
 			char == '"' || char == '\'' -> IrisJson.Type.String

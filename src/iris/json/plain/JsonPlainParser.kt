@@ -3,6 +3,7 @@ package iris.json.plain
 import iris.json.Configuration
 import iris.json.IrisJson
 import iris.json.JsonEntry
+import iris.json.Util
 import iris.json.flow.TokenerString
 import iris.sequence.IrisSequenceCharArray
 import java.io.*
@@ -50,11 +51,11 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 		skipWhitespaces()
 		val char = source[pointer++]
 		val type = when {
-			char.isDigit() || char.isLetter() || char == '-' -> IrisJson.Type.Value
+			Util.isDigitOrAlpha(char) || char == '-' -> IrisJson.Type.Value
 			char == '{' -> IrisJson.Type.Object
 			char == '[' -> IrisJson.Type.Array
 			char == '"' || char == '\'' -> IrisJson.Type.String
-			else -> throw IllegalArgumentException("Character: \"$char\" at $pointer\n" + getPlace())
+			else -> throw parseException("Unexpected character \"$char\" in object type detection state")
 		}
 
 		when (type) {
@@ -171,26 +172,71 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 	}
 
 	private fun readArray(): IrisJsonArray {
+
+		skipWhitespaces()
+		var char = source[pointer]
+		if (char == ']') {
+			pointer++
+			return IrisJsonArray(emptyList())
+		}
+
 		val entries = mutableListOf<IrisJsonItem>()
 		val len = source.size
 		do {
-			skipWhitespaces()
-			var char = source[pointer++]
-			if (char == ']')
-				break
-			if (char == ',') {
-				skipWhitespaces()
-			} else
-				pointer--
 
 			val value = readItem()
-			entries.add(value)
+			entries += value
+
 			skipWhitespaces()
 			char = source[pointer]
 			if (char == ']') {
 				pointer++
 				break
 			}
+			if (char != ',') {
+				throw parseException(""""," was excepted, but "$char" found""")
+			}
+			pointer++
+			skipWhitespaces()
+
+			char = source[pointer]
+			if (char == ']') {
+				if (!configuration.trailingCommaAllowed)
+					throw parseException("Trailing commas are not allowed in current configuration settings. ")
+				pointer++
+				break
+			}
+
+			/*if (char == ',') {
+				pointer++
+				skipWhitespaces()
+			}*//* else
+				pointer--*/
+
+
+
+			/*skipWhitespaces()
+			val char = source[pointer]
+			if (char == ']') {
+				pointer++
+				break
+			}
+			if (char == ',') {
+				pointer++
+				skipWhitespaces()
+			}*//* else
+				pointer--*/
+
+			/*val value = readItem()
+			entries.add(value)*/
+
+
+			//skipWhitespaces()
+			/*char = source[pointer]
+			if (char == ']') {
+				pointer++
+				break
+			}*/
 		} while (pointer < len)
 		return IrisJsonArray(entries)
 	}
@@ -228,15 +274,20 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 		val first = pointer
 		val len = source.size
 		do {
-			when (source[pointer]) {
-				in '0'..'9' -> {}
-				'-' -> if (first != pointer) curType = IrisJson.ValueType.Constant
-				'.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
-				in 'a'..'z', in 'A'..'Z' -> curType = IrisJson.ValueType.Constant
+			val char = source[pointer]
+			when {
+				Util.isDigit(char) -> {}
+				char == '-' -> if (first != pointer) curType = IrisJson.ValueType.Constant
+				char == '.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
+				Util.isAlpha(char) -> curType = IrisJson.ValueType.Constant
 				else -> break
 			}
 			pointer++
 		} while (pointer < len)
 		return curType
+	}
+
+	fun parseException(message: String): IllegalStateException {
+		return IllegalStateException("$message\nAt position $pointer: " + String(source.copyOfRange(max(0, pointer - 10), min(pointer + 10, source.size - 1))))
 	}
 }

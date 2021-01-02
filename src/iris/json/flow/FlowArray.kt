@@ -59,6 +59,15 @@ class FlowArray(private val parser: JsonFlowParser) : FlowItem(parser.tokener), 
 		}
 		if (char != ',')
 			tokener.back()
+		else {
+			val char = tokener.nextChar()
+			if (char == ']') {
+				if (!parser.configuration.trailingCommaAllowed)
+					throw tokener.exception("Trailing commas are not allowed in current configuration settings. ")
+				return null
+			}
+			tokener.back()
+		}
 
 		return parser.readItem()
 	}

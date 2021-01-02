@@ -14,6 +14,8 @@ class Configuration {
 		fun getMap(elementsAmount: Int): MutableMap<String, Any?>
 	}
 
+	var trailingCommaAllowed: Boolean = true
+
 	var mapObjectFactory: MapObjectFactory = object : MapObjectFactory {
 		override fun getMap(elementsAmount: Int): MutableMap<String, Any?> {
 			return HashMap(elementsAmount)

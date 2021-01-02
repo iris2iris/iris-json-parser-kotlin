@@ -6,10 +6,7 @@ import java.util.*
  * @created 01.08.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class IrisSequenceCharArray(val source: CharArray, val start: Int, val end: Int) : IrisSequence, CharArraySource {
-
-	constructor(source: CharArray) : this(source, 0, source.size)
-	constructor(source: CharArray, start: Int) : this(source, start, source.size)
+class IrisSequenceCharArray(val source: CharArray, val start: Int = 0, val end: Int = source.size) : IrisSequence, CharArraySource {
 
 	private val len = end - start
 	override val length: Int

@@ -2,6 +2,8 @@ package iris.json.flow
 
 import iris.json.IrisJson
 import iris.sequence.IrisSequenceCharArray
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @created 20.09.2020
@@ -37,12 +39,13 @@ class TokenerString(source: String) : Tokener {
 	}
 
 	override fun exception(s: String): IllegalArgumentException {
-		return IllegalArgumentException(s + " in position $pointer\n" + getPlace())
+		return IllegalArgumentException(s + "\nPosition $pointer: " + getPlace())
 	}
 
 	private fun getPlace(): String {
-		return ""
-		//return '"' + source.substring(max(0, pointer - 10), min(pointer + 10, source.length - 1)) + '"'
+		val start = max(0, pointer - 10)
+		val end = min(pointer + 10, source.size - 1)
+		return '"' + String(source.copyOfRange(start, end)) + '"'
 	}
 
 	override fun readString(quote: Char): CharSequence {
@@ -63,7 +66,6 @@ class TokenerString(source: String) : Tokener {
 	}
 
 	override fun readFieldName(quote: Char?): CharSequence {
-		//val seq = readString(quote)
 		return if (quote == null) readQuotelessFieldName() else readString(quote)
 	}
 
@@ -83,15 +85,6 @@ class TokenerString(source: String) : Tokener {
 		val first = pointer
 		val len = source.size
 		loop@ do {
-			/*val char = source[pointer]
-			when {
-				char.isDigit() -> {
-				}
-				char == '-' -> if (first != pointer) curType = IrisJson.ValueType.Constant
-				char == '.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
-				char.isLetter() -> curType = IrisJson.ValueType.Constant
-				else -> break@loop
-			}*/
 			when (source[pointer]) {
 				in '0'..'9' -> {}
 				'-' -> if (first != pointer) curType = IrisJson.ValueType.Constant
@@ -102,7 +95,6 @@ class TokenerString(source: String) : Tokener {
 			pointer++
 		} while (pointer < len)
 		return Tokener.PrimitiveData(IrisSequenceCharArray(source, first, pointer), curType)
-		//return Tokener.PrimitiveData(stringCache.convertToString(IrisSequenceCharArray(source, first, pointer)), curType)
 	}
 
 	override fun back() {
