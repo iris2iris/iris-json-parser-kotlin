@@ -44,19 +44,19 @@ class IrisJsonString(private val data: IrisSequence) : IrisJsonItem(), JsonStrin
 					'r' -> '\r'
 					't' -> '\t'
 					'u' -> 'u'
-					else -> '-'
+					else -> ch
 				}
-				if (ch != '-') {
-					res.append(data, fromIndex, i - 1)
-					if (repl == 'u') {
-						val d = data.subSequence(i + 1, i + 1 + 4).toString().toInt(16)
-						res.appendCodePoint(d)
-						i += 4
-					} else {
-						res.append(repl)
-					}
-					fromIndex = i + 1
+				//if (ch != '-') {
+				res.append(data, fromIndex, i - 1)
+				if (repl == 'u') {
+					val d = data.subSequence(i + 1, i + 1 + 4).toString().toInt(16)
+					res.appendCodePoint(d)
+					i += 4
+				} else {
+					res.append(repl)
 				}
+				fromIndex = i + 1
+				//}
 			} else {
 				if (ch == '\\')
 					isEscape = true

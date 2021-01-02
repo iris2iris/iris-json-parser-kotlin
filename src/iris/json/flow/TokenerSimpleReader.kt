@@ -49,6 +49,10 @@ class TokenerSimpleReader(private val reader: Reader): TokenerAbstractWithSequen
 		curCharInc()
 	}
 
+	override fun getSourceSequence(start: Int, end: Int): CharSequence {
+		return ""
+	}
+
 	override fun exception(s: String): IllegalArgumentException {
 		TODO(s)
 	}

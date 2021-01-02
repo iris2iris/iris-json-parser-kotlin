@@ -57,4 +57,8 @@ class TokenerContentBuildReader(private val reader: Reader, private val buffer: 
 	override fun back() {
 		pointer--
 	}
+
+	override fun getSourceSequence(start: Int, end: Int): CharSequence {
+		return ""
+	}
 }

@@ -70,4 +70,8 @@ class TokenerBufferedReader(private val reader: Reader, private val buffer: Char
 			buff.append(char)
 		}
 	}
+
+	override fun getSourceSequence(start: Int, end: Int): CharSequence {
+		return ""
+	}
 }

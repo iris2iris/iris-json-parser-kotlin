@@ -38,13 +38,17 @@ class TokenerString(source: String) : Tokener {
 		} while (pointer < len)
 	}
 
+	override fun getSourceSequence(start: Int, end: Int): CharSequence {
+		return IrisSequenceCharArray(source, start, if (end == 0) source.size else end)
+	}
+
 	override fun exception(s: String): IllegalArgumentException {
 		return IllegalArgumentException(s + "\nPosition $pointer: " + getPlace())
 	}
 
 	private fun getPlace(): String {
-		val start = max(0, pointer - 10)
-		val end = min(pointer + 10, source.size - 1)
+		val start = max(0, pointer - 20)
+		val end = min(pointer + 20, source.size - 1)
 		return '"' + String(source.copyOfRange(start, end)) + '"'
 	}
 
@@ -54,11 +58,11 @@ class TokenerString(source: String) : Tokener {
 		val start = this.pointer
 		do {
 			val char = source[pointer++]
-			if (char == '\\')
-				escaping = true
-			else if (escaping) {
+			if (escaping) {
 				escaping = false
-			} else if (char == quote) {
+			} else if (char == '\\')
+				escaping = true
+			else if (char == quote) {
 				break
 			}
 		} while (pointer < len)

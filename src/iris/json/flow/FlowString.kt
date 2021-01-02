@@ -58,9 +58,9 @@ class FlowString(tokener: Tokener, val quote: Char) : FlowItem(tokener), JsonStr
 					'r' -> '\r'
 					't' -> '\t'
 					'u' -> 'u'
-					else -> '-'
+					else -> ch
 				}
-				if (ch != '-') {
+				//if (ch != '-') {
 					res.append(data, fromIndex, i - 1)
 					if (repl == 'u') {
 						val d = data.subSequence(i + 1, i + 1 + 4).toString().toInt(16)
@@ -70,7 +70,7 @@ class FlowString(tokener: Tokener, val quote: Char) : FlowItem(tokener), JsonStr
 						res.append(repl)
 					}
 					fromIndex = i + 1
-				}
+				//}
 			} else {
 				if (ch == '\\')
 					isEscape = true

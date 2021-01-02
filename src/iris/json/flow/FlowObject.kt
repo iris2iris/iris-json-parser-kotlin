@@ -3,6 +3,7 @@ package iris.json.flow
 import iris.json.JsonEntry
 import iris.json.JsonItem
 import iris.json.JsonObject
+import iris.json.Util
 import iris.json.plain.IrisJsonNull
 import java.util.*
 
@@ -54,7 +55,7 @@ class FlowObject(private val parser: JsonFlowParser) : FlowItem(parser.tokener),
 			char = tokener.nextChar()
 		}
 		if (!(char == '"' || char == '\'')) {
-			if (char in 'a'..'z' || char in 'A'..'Z') {
+			if (char != null && Util.isAlpha(char)) {
 				char = null
 				tokener.back()
 			} else

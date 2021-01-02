@@ -259,11 +259,11 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 		var char: Char
 		do {
 			char = source[pointer++]
-			if (char == '\\')
-				escaping = true
-			else if (escaping) {
+			if (escaping) {
 				escaping = false
-			} else if (char == quote) {
+			} else if (char == '\\')
+				escaping = true
+			else if (char == quote) {
 				break
 			}
 		} while (pointer < len)

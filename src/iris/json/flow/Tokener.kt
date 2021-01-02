@@ -12,6 +12,8 @@ interface Tokener {
 
 	fun exception(s: String): IllegalArgumentException
 
+	fun getSourceSequence(start: Int = 0, end: Int = 0): CharSequence
+
 	fun readString(quote: Char): CharSequence
 
 	fun readFieldName(quote: Char?): CharSequence
