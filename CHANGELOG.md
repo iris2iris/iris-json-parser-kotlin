@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.6
+- Presence of `kotlin-reflect` library is now unnecessary.
+- Parse configuration added. `iris.json.Configuration`
+- Added toJsonString and appendToJsonString
+
 ## v0.5.2.1
 - Important bug fix: Recursive class references to themselves caused Stack overflow exception
 

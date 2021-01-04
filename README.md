@@ -14,11 +14,11 @@ Speed improvement is achieved by idea of Proxy pattern, where objects are create
 
 Full source code on [iris/json/test/serialization.kt](https://github.com/iris2iris/iris-json-parser-kotlin/blob/master/test/iris/json/test/serialization.kt)
 ````kotlin
-val item = IrisJsonParser("""{"id": 3, 
+val item = JsonPlainParser.parse("""{"id": 3, 
 		|"person1": {"name": "Akbar", "age": 35, "cashAmount": 12200.12, "property": {"name": "Домик в деревне"}}, 
 		|"type": "MaleFirst", 
 		|"person2": {"name": "Alla Who", "height": 170, "income": 1214.81}
-		|}""".trimMargin()).parse()
+		|}""".trimMargin())
 
 val user: User = item.asObject<User>()
 println(user.person1)
@@ -62,8 +62,7 @@ Prepares full JSON-tree information. Useful when lots of fields are requested.
 
 ```kotlin
 // Demonstration of functional abilities
-val parser = IrisJsonParser(testString)
-val res = parser.parse() // parsed to IrisJsonItem's
+val res = JsonPlainParser.parse(testString) // parsed to IrisJsonItem's
 
 // stringifies result objects
 println("IrisJsonItem.toString/JSON string: $res")
