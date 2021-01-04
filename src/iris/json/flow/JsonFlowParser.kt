@@ -1,7 +1,6 @@
 package iris.json.flow
 
 import iris.json.Configuration
-import iris.json.IrisJson
 import iris.json.Util
 import java.io.*
 import java.net.URL
@@ -37,20 +36,20 @@ class JsonFlowParser(val tokener: Tokener, val configuration: Configuration) {
 		val source = this.tokener
 		val char = source.nextChar()
 		val type = when {
-			Util.isDigitOrAlpha(char) || char == '-' -> IrisJson.Type.Value
-			char == '{' -> IrisJson.Type.Object
-			char == '[' -> IrisJson.Type.Array
-			char == '"' || char == '\'' -> IrisJson.Type.String
+			Util.isDigitOrAlpha(char) || char == '-' -> Util.Type.Value
+			char == '{' -> Util.Type.Object
+			char == '[' -> Util.Type.Array
+			char == '"' || char == '\'' -> Util.Type.String
 			else -> throw source.exception("Character: \"$char\"")
 		}
 
 		return when (type) {
-			IrisJson.Type.Value -> {
+			Util.Type.Value -> {
 				source.back(); FlowValue(source)
 			}
-			IrisJson.Type.Object -> FlowObject(this)
-			IrisJson.Type.String -> FlowString(source, char)
-			IrisJson.Type.Array -> FlowArray(this)
+			Util.Type.Object -> FlowObject(this)
+			Util.Type.String -> FlowString(source, char)
+			Util.Type.Array -> FlowArray(this)
 			else -> throw source.exception("$type not realised yet")
 		}
 	}

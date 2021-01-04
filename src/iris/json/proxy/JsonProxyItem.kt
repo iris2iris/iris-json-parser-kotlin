@@ -20,7 +20,7 @@ abstract class JsonProxyItem(private val obj: Any?) : IrisJsonItem() {
 		return obj
 	}
 
-	override fun <A : Appendable> joinTo(buffer: A): A {
+	override fun <A : Appendable> appendToJsonString(buffer: A): A {
 		buffer.append(obj.toString())
 		return buffer
 	}

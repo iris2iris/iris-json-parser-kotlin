@@ -6,6 +6,10 @@ import iris.json.JsonItem
  * @created 09.10.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-internal interface DeserializerPrimitive : Deserializer {
+interface DeserializerPrimitive : Deserializer {
 	fun getValue(item: JsonItem): Any?
+
+	enum class Type {
+		ANY, INTEGER, LONG, DOUBLE, FLOAT, BOOLEAN, STRING, DATE
+	}
 }

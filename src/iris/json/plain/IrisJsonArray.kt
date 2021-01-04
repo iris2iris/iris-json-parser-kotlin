@@ -9,7 +9,7 @@ import iris.json.JsonItem
  */
 class IrisJsonArray(private val items: List<JsonItem>) : IrisJsonItem(), JsonArray {
 
-	override fun <A : Appendable> joinTo(buffer: A): A {
+	override fun <A : Appendable> appendToJsonString(buffer: A): A {
 		buffer.append('[')
 		items.joinTo(buffer)
 		buffer.append(']')

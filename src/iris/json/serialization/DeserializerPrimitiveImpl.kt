@@ -1,6 +1,7 @@
 package iris.json.serialization
 
 import iris.json.JsonItem
+import iris.json.serialization.DeserializerPrimitive.Type
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.reflect.KClass
@@ -12,12 +13,8 @@ import kotlin.reflect.jvm.jvmErasure
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
 
-class DeserializerPrimitiveImpl(val type: Type) : DeserializerPrimitive {
+class DeserializerPrimitiveImpl(private val type: Type) : DeserializerPrimitive {
 
-	enum class Type {
-		ANY, INTEGER, LONG, DOUBLE, FLOAT, BOOLEAN, STRING, DATE
-	}
-	
 	companion object {
 		private val DATE = DeserializerPrimitiveImpl(Type.DATE)
 		private val INTEGER = DeserializerPrimitiveImpl(Type.INTEGER)

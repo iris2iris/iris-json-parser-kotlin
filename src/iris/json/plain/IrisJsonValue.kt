@@ -1,19 +1,19 @@
 package iris.json.plain
 
-import iris.json.IrisJson
 import iris.json.JsonValue
+import iris.json.Util
 import iris.sequence.*
 
 /**
  * @created 14.04.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class IrisJsonValue(private val data: IrisSequence, private val valueType: IrisJson.ValueType) : IrisJsonItem(), JsonValue {
+class IrisJsonValue(private val data: IrisSequence, private val valueType: Util.ValueType) : IrisJsonItem(), JsonValue {
 	override fun toString(): String {
 		return data.toString()
 	}
 
-	override fun <A : Appendable> joinTo(buffer: A): A {
+	override fun <A : Appendable> appendToJsonString(buffer: A): A {
 		data.joinTo(buffer)
 		return buffer
 	}
@@ -30,14 +30,14 @@ class IrisJsonValue(private val data: IrisSequence, private val valueType: IrisJ
 		val s = data
 
 		return when (valueType) {
-			IrisJson.ValueType.Constant -> when (s as CharSequence) {
+			Util.ValueType.Constant -> when (s as CharSequence) {
 				"null" -> null
 				"true", "1" -> true
 				"false", "0" -> false
 				else -> s.toString()
 			}
-			IrisJson.ValueType.Integer -> s.toLong()
-			IrisJson.ValueType.Float -> s.toDouble()
+			Util.ValueType.Integer -> s.toLong()
+			Util.ValueType.Float -> s.toDouble()
 			//else -> throw IllegalArgumentException("No argument: $valueType")
 		}
 	}

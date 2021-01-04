@@ -15,7 +15,7 @@ fun main() {
 
 	// stringifies objects to Appendable buffer
 	val b = StringBuilder()
-	obj.joinTo(b)
+	obj.appendToJsonString(b)
 	println("IrisJsonItem.joinTo/JSON string:   $b")
 
 	// Simple access to required object on objects tree

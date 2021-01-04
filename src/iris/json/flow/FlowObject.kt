@@ -122,7 +122,7 @@ class FlowObject(private val parser: JsonFlowParser) : FlowItem(parser.tokener),
 		}
 	}
 
-	override fun <A : Appendable> joinTo(buffer: A): A {
+	override fun <A : Appendable> appendToJsonString(buffer: A): A {
 		parse()
 		buffer.append("{")
 		var firstDone = false
@@ -134,7 +134,7 @@ class FlowObject(private val parser: JsonFlowParser) : FlowItem(parser.tokener),
 			buffer.append("\"")
 			buffer.append(entry.first)
 			buffer.append("\": ")
-			entry.second.joinTo(buffer)
+			entry.second.appendToJsonString(buffer)
 
 		}
 		buffer.append('}')

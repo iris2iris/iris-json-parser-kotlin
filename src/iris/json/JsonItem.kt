@@ -17,7 +17,8 @@ interface JsonItem {
 	operator fun set(key: String, value: Any?): JsonItem
 
 	fun obj(): Any?
-	fun <A: Appendable>joinTo(buffer: A): A
+	fun <A: Appendable>appendToJsonString(buffer: A): A
+	fun toJsonString(): String
 
 	fun iterable() : Iterable<JsonItem>
 
@@ -67,6 +68,8 @@ interface JsonItem {
 
 	fun find(tree: String): JsonItem
 }
+
+inline fun<T : JsonItem> JsonItem.cast(): T = this as T
 
 inline fun <reified T>JsonItem.asObject(): T {
 	val deserializer = DeserializerFactory.getDeserializer(typeOf<T>())

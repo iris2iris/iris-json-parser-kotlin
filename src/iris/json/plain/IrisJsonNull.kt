@@ -24,7 +24,7 @@ open class IrisJsonNull : IrisJsonItem(), JsonNull {
 		return null
 	}
 
-	override fun <A : Appendable> joinTo(buffer: A): A {
+	override fun <A : Appendable> appendToJsonString(buffer: A): A {
 		buffer.append("null")
 		return buffer
 	}

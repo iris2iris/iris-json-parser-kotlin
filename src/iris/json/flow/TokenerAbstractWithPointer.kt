@@ -1,6 +1,6 @@
 package iris.json.flow
 
-import iris.json.IrisJson
+import iris.json.Util.ValueType
 
 /**
  * @created 20.09.2020
@@ -47,7 +47,7 @@ abstract class TokenerAbstractWithPointer : Tokener {
 	}
 
 	override fun readPrimitive(): Tokener.PrimitiveData {
-		var curType = IrisJson.ValueType.Integer
+		var curType = ValueType.Integer
 		val first = pointer()
 		var isFirst = true
 		loop@ do {
@@ -55,9 +55,9 @@ abstract class TokenerAbstractWithPointer : Tokener {
 			when {
 				char.isDigit() -> {
 				}
-				char == '-' -> if (!isFirst) curType = IrisJson.ValueType.Constant
-				char == '.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
-				char.isLetter() -> curType = IrisJson.ValueType.Constant
+				char == '-' -> if (!isFirst) curType = ValueType.Constant
+				char == '.' -> if (curType == ValueType.Integer) curType = ValueType.Float
+				char.isLetter() -> curType = ValueType.Constant
 				else -> break@loop
 			}
 			if (isFirst)

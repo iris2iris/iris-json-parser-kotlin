@@ -9,7 +9,7 @@ import iris.sequence.IrisSequence
  */
 class IrisJsonString(private val data: IrisSequence) : IrisJsonItem(), JsonString {
 
-	override fun <A : Appendable> joinTo(buffer: A): A {
+	override fun <A : Appendable> appendToJsonString(buffer: A): A {
 		buffer.append('"')
 		data.joinTo(buffer)
 		buffer.append('"')

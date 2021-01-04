@@ -51,7 +51,7 @@ open class IrisJsonObject(private val entries: List<JsonEntry>, private val conf
 		return res
 	}
 
-	override fun <A : Appendable> joinTo(buffer: A): A {
+	override fun <A : Appendable> appendToJsonString(buffer: A): A {
 		buffer.append("{")
 		var firstDone = false
 		for (entry in entries) {
@@ -62,7 +62,7 @@ open class IrisJsonObject(private val entries: List<JsonEntry>, private val conf
 			buffer.append("\"")
 			buffer.append(entry.first)
 			buffer.append("\": ")
-			entry.second.joinTo(buffer)
+			entry.second.appendToJsonString(buffer)
 
 		}
 		buffer.append('}')

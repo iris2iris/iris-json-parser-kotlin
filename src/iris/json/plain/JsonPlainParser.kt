@@ -1,7 +1,6 @@
 package iris.json.plain
 
 import iris.json.Configuration
-import iris.json.IrisJson
 import iris.json.JsonEntry
 import iris.json.Util
 import iris.json.flow.TokenerString
@@ -51,31 +50,31 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 		skipWhitespaces()
 		val char = source[pointer++]
 		val type = when {
-			Util.isDigitOrAlpha(char) || char == '-' -> IrisJson.Type.Value
-			char == '{' -> IrisJson.Type.Object
-			char == '[' -> IrisJson.Type.Array
-			char == '"' || char == '\'' -> IrisJson.Type.String
+			Util.isDigitOrAlpha(char) || char == '-' -> Util.Type.Value
+			char == '{' -> Util.Type.Object
+			char == '[' -> Util.Type.Array
+			char == '"' || char == '\'' -> Util.Type.String
 			else -> throw parseException("Unexpected character \"$char\" in object type detection state")
 		}
 
 		when (type) {
-			IrisJson.Type.Value -> { // примитивы
+			Util.Type.Value -> { // примитивы
 				pointer--
 				val start = pointer
 				val value = readPrimitive()
 				val end = pointer
 				return IrisJsonValue(IrisSequenceCharArray(source, start, end), value)
 			}
-			IrisJson.Type.Object -> {
+			Util.Type.Object -> {
 				return readObject()
 			}
-			IrisJson.Type.String -> {
+			Util.Type.String -> {
 				val start = pointer
 				readString(char)
 				val end = pointer - 1
 				return IrisJsonString(IrisSequenceCharArray(source, start, end))
 			}
-			IrisJson.Type.Array -> {
+			Util.Type.Array -> {
 				return readArray()
 			}
 			else -> TODO("$type not realised yet $pointer\n" + getPlace())
@@ -269,17 +268,17 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 		} while (pointer < len)
 	}
 
-	private fun readPrimitive(): IrisJson.ValueType {
-		var curType = IrisJson.ValueType.Integer
+	private fun readPrimitive(): Util.ValueType {
+		var curType = Util.ValueType.Integer
 		val first = pointer
 		val len = source.size
 		do {
 			val char = source[pointer]
 			when {
 				Util.isDigit(char) -> {}
-				char == '-' -> if (first != pointer) curType = IrisJson.ValueType.Constant
-				char == '.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
-				Util.isAlpha(char) -> curType = IrisJson.ValueType.Constant
+				char == '-' -> if (first != pointer) curType = Util.ValueType.Constant
+				char == '.' -> if (curType == Util.ValueType.Integer) curType = Util.ValueType.Float
+				Util.isAlpha(char) -> curType = Util.ValueType.Constant
 				else -> break
 			}
 			pointer++

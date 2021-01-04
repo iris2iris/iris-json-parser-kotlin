@@ -6,6 +6,21 @@ package iris.json
  */
 object Util {
 
+	enum class Type {
+		Object
+		, Array
+		, String
+		, Value
+		, Null
+	}
+
+	enum class ValueType {
+		Integer,
+		Float,
+		Constant // among them: true, false, null
+	}
+
+
 	private val digitRange = '0'..'9'
 	private val alphaRange = 'a'..'z'
 	private val alphaUpperRange = 'A'..'Z'

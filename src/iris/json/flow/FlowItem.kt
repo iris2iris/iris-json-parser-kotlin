@@ -9,4 +9,8 @@ import iris.json.plain.IrisJsonItem
 abstract class FlowItem(protected val tokener: Tokener) : IrisJsonItem() {
 	abstract fun parse()
 	fun contentSource(start: Int = 0 , end: Int = 0) = tokener.getSourceSequence(start, end)
+
+	override fun toJsonString(): String {
+		return appendToJsonString(StringBuilder()).toString()
+	}
 }

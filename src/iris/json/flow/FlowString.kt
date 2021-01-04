@@ -13,7 +13,7 @@ class FlowString(tokener: Tokener, val quote: Char) : FlowItem(tokener), JsonStr
 
 	private var data: CharSequence? = null
 
-	override fun <A : Appendable> joinTo(buffer: A): A {
+	override fun <A : Appendable> appendToJsonString(buffer: A): A {
 		parse()
 		buffer.append('"')
 		(data as? IrisSequence)?.joinTo(buffer) ?: buffer.append(data)

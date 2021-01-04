@@ -169,4 +169,8 @@ abstract class IrisJsonItem() : JsonItem {
 	override fun isArray() = false
 
 	override fun isObject() = false
+
+	override fun toJsonString(): String {
+		return appendToJsonString(StringBuilder()).toString()
+	}
 }

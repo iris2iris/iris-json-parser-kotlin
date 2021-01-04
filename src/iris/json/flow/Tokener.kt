@@ -1,6 +1,6 @@
 package iris.json.flow
 
-import iris.json.IrisJson
+import iris.json.Util
 
 /**
  * @created 20.09.2020
@@ -20,7 +20,7 @@ interface Tokener {
 
 	fun readPrimitive(): PrimitiveData
 
-	class PrimitiveData(val sequence: CharSequence, val type: IrisJson.ValueType)
+	class PrimitiveData(val sequence: CharSequence, val type: Util.ValueType)
 
 	fun back()
 

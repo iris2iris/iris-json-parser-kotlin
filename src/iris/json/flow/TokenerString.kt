@@ -1,6 +1,6 @@
 package iris.json.flow
 
-import iris.json.IrisJson
+import iris.json.Util.ValueType
 import iris.sequence.IrisSequenceCharArray
 import kotlin.math.max
 import kotlin.math.min
@@ -85,15 +85,15 @@ class TokenerString(source: String) : Tokener {
 	}
 
 	override fun readPrimitive(): Tokener.PrimitiveData {
-		var curType = IrisJson.ValueType.Integer
+		var curType = ValueType.Integer
 		val first = pointer
 		val len = source.size
 		loop@ do {
 			when (source[pointer]) {
 				in '0'..'9' -> {}
-				'-' -> if (first != pointer) curType = IrisJson.ValueType.Constant
-				'.' -> if (curType == IrisJson.ValueType.Integer) curType = IrisJson.ValueType.Float
-				in 'a'..'z', in 'A'..'Z' -> curType = IrisJson.ValueType.Constant
+				'-' -> if (first != pointer) curType = ValueType.Constant
+				'.' -> if (curType == ValueType.Integer) curType = ValueType.Float
+				in 'a'..'z', in 'A'..'Z' -> curType = ValueType.Constant
 				else -> break@loop
 			}
 			pointer++

@@ -1,7 +1,7 @@
 package iris.json.flow
 
-import iris.json.IrisJson
 import iris.json.JsonValue
+import iris.json.Util.ValueType
 import iris.json.plain.IrisJsonItem
 import iris.json.plain.IrisJsonNull
 import iris.sequence.*
@@ -14,7 +14,7 @@ class FlowValue(tokener: Tokener) : FlowItem(tokener), JsonValue {
 
 	private var data: Tokener.PrimitiveData? = null
 
-	override fun <A : Appendable> joinTo(buffer: A): A {
+	override fun <A : Appendable> appendToJsonString(buffer: A): A {
 		parse()
 		buffer.append(data!!.sequence)
 		return buffer
@@ -33,14 +33,14 @@ class FlowValue(tokener: Tokener) : FlowItem(tokener), JsonValue {
 		val data = data!!
 		val s = data.sequence
 		return when (data.type) {
-            IrisJson.ValueType.Constant -> when (s) {
-                "null" -> null
-                "true", "1" -> true
-                "false", "0" -> false
-                else -> s.toString()
-            }
-            IrisJson.ValueType.Integer -> s.toLong()
-            IrisJson.ValueType.Float -> s.toDouble()
+			ValueType.Constant -> when (s) {
+				"null" -> null
+				"true", "1" -> true
+				"false", "0" -> false
+				else -> s.toString()
+			}
+			ValueType.Integer -> s.toLong()
+			ValueType.Float -> s.toDouble()
 			else -> throw IllegalArgumentException("No argument: ${data.type}")
 		}
 	}
