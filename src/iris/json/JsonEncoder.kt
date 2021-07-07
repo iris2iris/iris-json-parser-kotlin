@@ -18,7 +18,7 @@ object JsonEncoder {
 			is Map<*, *> -> encode2(obj as Map<Any, Any?>, sb, escapeUtf)
 			is Collection<*> -> array2String(obj, sb, escapeUtf)
 			is Array<*> -> array2String(obj, sb, escapeUtf)
-			else -> value2JsonString(obj, sb.append("null"), escapeUtf)
+			else -> value2JsonString(obj, sb, escapeUtf)
 		}
 	}
 
