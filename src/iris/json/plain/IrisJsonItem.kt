@@ -160,6 +160,10 @@ abstract class IrisJsonItem() : JsonItem {
 		}
 	}
 
+	override fun hashCode(): Int {
+		return obj().hashCode()
+	}
+
 	override fun isNull() = false
 
 	override fun isNotNull() = !isNull()

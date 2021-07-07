@@ -11,7 +11,14 @@ class IrisJsonArray(private val items: List<JsonItem>) : IrisJsonItem(), JsonArr
 
 	override fun <A : Appendable> appendToJsonString(buffer: A): A {
 		buffer.append('[')
-		items.joinTo(buffer)
+		if (items.isNotEmpty()) {
+			val first = items.first()
+			items.forEach {
+				if (first !== it)
+					buffer.append(", ")
+				it.appendToJsonString(buffer)
+			}
+		}
 		buffer.append(']')
 		return buffer
 	}

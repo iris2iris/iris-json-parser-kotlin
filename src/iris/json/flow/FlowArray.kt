@@ -12,8 +12,16 @@ class FlowArray(private val parser: JsonFlowParser) : FlowItem(parser.tokener), 
 	private val items = mutableListOf<JsonItem>()
 
 	override fun <A : Appendable> appendToJsonString(buffer: A): A {
+		parse()
 		buffer.append('[')
-		items.joinTo(buffer)
+		if (items.isNotEmpty()) {
+			val first = items.first()
+			items.forEach {
+				if (first !== it)
+					buffer.append(", ")
+				it.appendToJsonString(buffer)
+			}
+		}
 		buffer.append(']')
 		return buffer
 	}
