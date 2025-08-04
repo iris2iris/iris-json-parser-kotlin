@@ -1,7 +1,7 @@
 package iris.json.flow
 
 import iris.json.Util.ValueType
-import iris.sequence.IrisSequenceCharArray
+import iris.sequence.IrisSubSequence
 import kotlin.math.max
 import kotlin.math.min
 
@@ -9,7 +9,7 @@ import kotlin.math.min
  * @created 20.09.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class TokenerString(source: String) : Tokener {
+class TokenerString(val source: String) : Tokener {
 
 	companion object {
 		const val SPACE = ' '.toInt()
@@ -18,7 +18,6 @@ class TokenerString(source: String) : Tokener {
 		const val CR = '\r'.toInt()
 	}
 
-	val source = source.toCharArray()
 	var pointer: Int = 0
 
 	override fun nextChar(): Char {
@@ -27,7 +26,7 @@ class TokenerString(source: String) : Tokener {
 	}
 
 	private fun skipWhitespaces() {
-		val len = source.size
+		val len = source.length
 		do {
 			val char = source[pointer].toInt()
 			if (char > SPACE)
@@ -39,7 +38,7 @@ class TokenerString(source: String) : Tokener {
 	}
 
 	override fun getSourceSequence(start: Int, end: Int): CharSequence {
-		return IrisSequenceCharArray(source, start, if (end == 0) source.size else end)
+		return IrisSubSequence(source, start, if (end == 0) source.length else end)
 	}
 
 	override fun exception(s: String): IllegalArgumentException {
@@ -48,14 +47,15 @@ class TokenerString(source: String) : Tokener {
 
 	private fun getPlace(): String {
 		val start = max(0, pointer - 20)
-		val end = min(pointer + 20, source.size - 1)
-		return '"' + String(source.copyOfRange(start, end)) + '"'
+		val end = min(pointer + 20, source.length - 1)
+		return '"' + source.substring(start, end) + '"'
 	}
 
 	override fun readString(quote: Char): CharSequence {
 		var escaping = false
-		val len = source.size
+		val len = source.length
 		val start = this.pointer
+		var pointer = pointer
 		do {
 			val char = source[pointer++]
 			if (escaping) {
@@ -66,7 +66,8 @@ class TokenerString(source: String) : Tokener {
 				break
 			}
 		} while (pointer < len)
-		return IrisSequenceCharArray(source, start, pointer - 1)
+		this.pointer = pointer
+		return IrisSubSequence(source, start, pointer - 1)
 	}
 
 	override fun readFieldName(quote: Char?): CharSequence {
@@ -75,19 +76,19 @@ class TokenerString(source: String) : Tokener {
 
 	private fun readQuotelessFieldName(): CharSequence {
 		val first = pointer
-		val len = source.size
+		val len = source.length
 		do {
 			if (!(source[pointer] in '0'..'9' || source[pointer] in 'a'..'z' || source[pointer] in 'A'..'Z'))
 				break
 			pointer++
 		} while (pointer < len)
-		return IrisSequenceCharArray(source, first, pointer)
+		return IrisSubSequence(source, first, pointer)
 	}
 
 	override fun readPrimitive(): Tokener.PrimitiveData {
 		var curType = ValueType.Integer
 		val first = pointer
-		val len = source.size
+		val len = source.length
 		loop@ do {
 			when (source[pointer]) {
 				in '0'..'9' -> {}
@@ -98,7 +99,7 @@ class TokenerString(source: String) : Tokener {
 			}
 			pointer++
 		} while (pointer < len)
-		return Tokener.PrimitiveData(IrisSequenceCharArray(source, first, pointer), curType)
+		return Tokener.PrimitiveData(IrisSubSequence(source, first, pointer), curType)
 	}
 
 	override fun back() {

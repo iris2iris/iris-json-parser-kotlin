@@ -79,8 +79,10 @@ class FlowObject(private val parser: JsonFlowParser) : FlowItem(parser.tokener),
 		parse()
 		val res = parser.configuration.mapObjectFactory.getMap(entries.size)
 
-		for (it in entries)
-			res[it.first.toString()] = it.second.obj()
+		for (it in entries) {
+			val key = it.first.toString()
+			res[key] = it.second.obj()
+		}
 		obj = res
 		return res
 	}

@@ -4,11 +4,10 @@ import iris.json.Configuration
 import iris.json.JsonEntry
 import iris.json.Util
 import iris.json.flow.TokenerString
-import iris.sequence.IrisSequenceCharArray
+import iris.sequence.IrisSubSequence
 import java.io.*
 import java.net.URL
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.max
 import kotlin.math.min
 
@@ -40,7 +39,8 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 	}
 
 	private var pointer = 0
-	private val source: CharArray = source.toCharArray()
+	//private val source: CharArray = source.toCharArray()
+	private val source = source
 
 	fun parse(): IrisJsonItem {
 		return readItem()
@@ -63,16 +63,16 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 				val start = pointer
 				val value = readPrimitive()
 				val end = pointer
-				return IrisJsonValue(IrisSequenceCharArray(source, start, end), value)
+				return IrisJsonValue(IrisSubSequence(source, start, end), value)
 			}
 			Util.Type.Object -> {
 				return readObject()
 			}
 			Util.Type.String -> {
 				val start = pointer
-				readString(char)
+				/*val escapes = */readString(char)
 				val end = pointer - 1
-				return IrisJsonString(IrisSequenceCharArray(source, start, end))
+				return IrisJsonString(IrisSubSequence(source, start, end)/*, escapes*/)
 			}
 			Util.Type.Array -> {
 				return readArray()
@@ -82,7 +82,7 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 	}
 
 	private fun getPlace(): String {
-		return '"' + String(source, max(0, pointer - 10), min(pointer + 10, source.size - 1)) + '"'
+		return '"' + source.substring(max(0, pointer - 10), min(pointer + 10, source.length - 1)) + '"'
 	}
 
 	private fun readObject(): IrisJsonObject {
@@ -101,7 +101,7 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 		entries += key2 to value2
 		entries += key3 to value3
 
-		val len = source.size
+		val len = source.length
 		var char: Char
 		do {
 			skipWhitespaces()
@@ -120,7 +120,7 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 			// ключ
 			readString(char)
 			val end = pointer - 1
-			val key = IrisSequenceCharArray(source, start, end)
+			val key = IrisSubSequence(source, start, end)
 			skipWhitespaces()
 			char = source[pointer++]
 			if (char != ':')
@@ -158,7 +158,7 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 				// ключ
 				readPrimitive()
 				val end = pointer
-				return IrisSequenceCharArray(source, start, end)
+				return IrisSubSequence(source, start, end)
 			} else
 				throw IllegalArgumentException("\" (quote) or \"'\" was expected in position $pointer\n" + getPlace())
 		} else {
@@ -166,7 +166,7 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 			// ключ
 			readString(char)
 			val end = pointer - 1
-			return IrisSequenceCharArray(source, start, end)
+			return IrisSubSequence(source, start, end)
 		}
 	}
 
@@ -180,9 +180,9 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 		}
 
 		val entries = mutableListOf<IrisJsonItem>()
-		val len = source.size
+		val len = source.length
+		val source = source
 		do {
-
 			val value = readItem()
 			entries += value
 
@@ -205,43 +205,13 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 				pointer++
 				break
 			}
-
-			/*if (char == ',') {
-				pointer++
-				skipWhitespaces()
-			}*//* else
-				pointer--*/
-
-
-
-			/*skipWhitespaces()
-			val char = source[pointer]
-			if (char == ']') {
-				pointer++
-				break
-			}
-			if (char == ',') {
-				pointer++
-				skipWhitespaces()
-			}*//* else
-				pointer--*/
-
-			/*val value = readItem()
-			entries.add(value)*/
-
-
-			//skipWhitespaces()
-			/*char = source[pointer]
-			if (char == ']') {
-				pointer++
-				break
-			}*/
 		} while (pointer < len)
+
 		return IrisJsonArray(entries)
 	}
 
 	private fun skipWhitespaces() {
-		val len = source.size
+		val len = source.length
 		do {
 			val char = source[pointer].toInt()
 			if (char > TokenerString.SPACE)
@@ -252,26 +222,33 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 		} while (pointer < len)
 	}
 
-	private fun readString(quote: Char) {
+	private fun readString(quote: Char)/*: ArrayList<Int>?*/ {
 		var escaping = false
-		val len = source.size
+		val len = source.length
 		var char: Char
+		//var escapes: ArrayList<Int>? = null
+		var pointer = this.pointer
+		val offset = pointer + 1 // "+1" is correction because of pointer++
 		do {
 			char = source[pointer++]
 			if (escaping) {
 				escaping = false
-			} else if (char == '\\')
+			} else if (char == '\\') {
 				escaping = true
-			else if (char == quote) {
+				/*if (escapes == null) escapes = ArrayList()
+				escapes += pointer - offset*/
+			}else if (char == quote) {
 				break
 			}
 		} while (pointer < len)
+		this.pointer = pointer
+		//return escapes
 	}
 
 	private fun readPrimitive(): Util.ValueType {
 		var curType = Util.ValueType.Integer
 		val first = pointer
-		val len = source.size
+		val len = source.length
 		do {
 			val char = source[pointer]
 			when {
@@ -287,6 +264,6 @@ class JsonPlainParser(source: String, private val configuration: Configuration =
 	}
 
 	fun parseException(message: String): IllegalStateException {
-		return IllegalStateException("$message\nAt position $pointer: " + String(source.copyOfRange(max(0, pointer - 10), min(pointer + 10, source.size - 1))))
+		return IllegalStateException("$message\nAt position $pointer: " + source.subSequence(max(0, pointer - 10), min(pointer + 10, source.length - 1)))
 	}
 }

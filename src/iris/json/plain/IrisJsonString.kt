@@ -1,17 +1,18 @@
 package iris.json.plain
 
 import iris.json.JsonString
-import iris.sequence.IrisSequence
+import iris.sequence.toInt
 
 /**
  * @created 14.04.2020
  * @author [Ivan Ivanov](https://vk.com/irisism)
  */
-class IrisJsonString(private val data: IrisSequence) : IrisJsonItem(), JsonString {
+class IrisJsonString(private val data: CharSequence/*, private val escapes: ArrayList<Int>?*/) : IrisJsonItem(), JsonString {
 
 	override fun <A : Appendable> appendToJsonString(buffer: A): A {
 		buffer.append('"')
-		data.joinTo(buffer)
+		buffer.append(data)
+		//data.joinTo(buffer)
 		buffer.append('"')
 		return buffer
 	}
@@ -27,6 +28,42 @@ class IrisJsonString(private val data: IrisSequence) : IrisJsonItem(), JsonStrin
 	private var ready: String? = null
 
 	private fun init(): String {
+		/*if (data.isEmpty()) return ""
+		if (escapes == null) return data.toString()
+		val len = data.length
+		val data = data
+		var i = 0
+		var escIndex = 0
+		val res = StringBuilder(len)
+		do {
+			val escToIndex = if (escIndex >= escapes.size) len else escapes[escIndex++]
+			res.append(data, i, escToIndex)
+			i = escToIndex + 1
+			if (i >= len) break
+
+			val ch = data[i]
+			val repl = when (ch) {
+				'u' -> 'u'
+				'"' -> '"'
+				'n' -> '\n'
+				'b' -> '\b'
+				'/' -> '/'
+				'r' -> '\r'
+				't' -> '\t'
+				else -> ch
+			}
+			if (repl == 'u') {
+				val d = data.subSequence(i + 1, i + 1 + 4).toInt(16)
+				res.appendCodePoint(d)
+				i += 5 // uXXXX = 5 chars
+			} else {
+				res.append(repl)
+				i++
+			}
+		} while (i < len)
+
+		return res.toString()*/
+
 		val len = data.length
 		var isEscape = false
 		var fromIndex = 0
